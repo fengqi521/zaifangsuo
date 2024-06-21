@@ -1,0 +1,38 @@
+<script setup>
+import TagsView from "./TagsView/index.vue";
+</script>
+
+<template>
+  <section class="app-main">
+    <TagsView />
+    <div class="app-scrollbar app-container">
+      <router-view v-slot="{ Component, route }">
+        <keep-alive>
+          <component
+            :is="Component"
+            :key="route.path"
+            class="app-container-grow"
+          />
+        </keep-alive>
+      </router-view>
+    </div>
+  </section>
+</template>
+
+<style lang="scss" scoped>
+@import "@/styles/tools.scss";
+
+.app-main {
+  width: 100%;
+}
+
+.app-scrollbar {
+  flex-grow: 1;
+  overflow: auto;
+  @extend %scrollbar;
+}
+
+.app-container {
+  padding: calc( var(--tagsview-height) + 16px) 16px 16px 16px;
+}
+</style>
