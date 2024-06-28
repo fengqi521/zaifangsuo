@@ -190,11 +190,13 @@ onMounted(() => {
 <style lang="scss" scoped>
 .tags-view-container {
   position: fixed;
-  width: 100%;
+  left:var(--sidebar-width);
+  right:0;
   height: var(--tagsview-height);
   background: var(--background-color);
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  z-index: 4;
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;

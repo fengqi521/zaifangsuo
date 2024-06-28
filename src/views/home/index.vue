@@ -4,6 +4,7 @@ import { DEVICE_DATA,MESSAGE } from "@/constants";
 import Card from "./components/Card/index.vue";
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
+import Echart from './components/Echart/index.vue'
 
 const deviceLists = reactive([...DEVICE_DATA])
 const messages = reactive([...MESSAGE])
@@ -25,6 +26,7 @@ DEVICE_DATA.forEach((device, index) => {
   <div class="home-container">
     <!-- 左侧图表 -->
     <div class="home-left">
+      <Echart/>
       <Card :deviceCardLists="DEVICE_DATA" />
       <Device/>
     </div>

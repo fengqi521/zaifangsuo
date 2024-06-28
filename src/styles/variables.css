@@ -42,6 +42,13 @@
 
     /* table */
     --table-th-bg-color:#EEE;
+    --table-th-text-color:#2c393b;
+    --table-tbody-text-color:#666;
+
+    /* 标题 */
+    --panel-text-color:#666;
+    --panel-active-color:#2c393b;
+
     
     /* 主要颜色 */
     --background-color: #FFF;
