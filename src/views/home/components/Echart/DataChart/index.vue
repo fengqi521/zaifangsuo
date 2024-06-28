@@ -14,21 +14,28 @@ option.value.series[0].data = [
 option.value.graphic = ref([
   {
     type: "group",
-    left: "25%",
+    left: 'center',
     top: "center",
     bounding: "raw",
     children: [
       {
-        type: {
-          text: "合计",
+        type: "text",
+        style:{
+          text: "200",
           fontSize: 18,
           textAlign: "center",
           textVerticalAlign: "bottom",
-        },
+        }
       },
+      ,
       {
         type: "text",
-        style: { text: "200", textAlign: "center", textVerticalAlign: "top" ,fontSize:30},
+        style: {
+          text: "设备总数(个)",
+          textAlign: "center",
+          textVerticalAlign: "top",
+          fontSize: 12,
+        },
       },
     ],
   },
