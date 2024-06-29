@@ -293,39 +293,29 @@ export const getCommonPie = function () {
     },
     series: [{
       type: "pie",
-      center:['50%','45%'],
-      radius: ["45%", "65%"],
-      avoidLabelOverlap: true,
-      padAngle: 5,
+      center: ['50%', '45%'],
+      // avoidLabelOverlap: true,
+      // padAngle: 5,
       itemStyle: {
         borderRadius: 10,
         borderColor: "#fff",
         borderWidth: 2,
       },
-      // emphasis: {
-      //   label: {
-      //     show: false,
-      //     fontSize: 30,
-      //     fontWeight: "bold",
-      //   },
-      // },
       label: {
-        alignTo: 'edge',
-        formatter: '{name|{b}}\n{time|{c} 个}',
-        // edgeDistance: 80,
+        // alignTo: 'edge',
+        formatter: '{name|{b}}\n{count|{c} 个}',
         lineHeight: 18,
-        // distanceToLabelLine: 0,
         rich: {
-          time: {
+          count: {
             fontSize: 12,
             color: '#999'
           }
         }
       },
-      labelLine: {
-          length: 10,
-          length2: 0
-      },
+      // labelLine: {
+      //   length: 10,
+      //   length2: 0
+      // },
       data: []
     }],
   };

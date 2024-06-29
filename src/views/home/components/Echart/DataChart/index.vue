@@ -21,6 +21,7 @@ onMounted(() => {
     { value: 10, name: "离线", itemStyle: { color: offlineColor } },
   ];
   option.value.title[0].text = '26'
+  option.value.series[0].radius= ["45%", "65%"],
   // 初始化和设置 echarts 实例
   initEchart(dataContainer.value);
   setEchartOption(option.value);
@@ -36,6 +37,6 @@ onMounted(() => {
   width: 100%;
   height:100%;
   padding-right: 16px;
-  border-right: 1px dashed #eee;
+  border-right: 2px dashed #F0F0F0;
 }
 </style>

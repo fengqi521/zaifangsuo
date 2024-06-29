@@ -25,11 +25,11 @@ DEVICE_DATA.forEach((device, index) => {
 <template>
   <div class="home-container">
     <!-- 左侧图表 -->
-    <div class="home-left">
+    <!-- <div class="home-left"> -->
       <Echart/>
       <!-- <Card :deviceCardLists="DEVICE_DATA" /> -->
       <Device/>
-    </div>
+    <!-- </div> -->
     <!-- 报文数据 -->
     <Message :messages="messages"/>
   </div>
@@ -40,7 +40,7 @@ DEVICE_DATA.forEach((device, index) => {
 
   .home-left{
     // height:332px;
-    width:  calc(100% - var(--home-message-width) - 16px) ;
+    // width:  calc(100% - var(--home-message-width) - 16px) ;
   }
 }
 </style>
