@@ -1,59 +1,41 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
-import { getCommonPie } from "@/utils/chartdata";
+import { getCssVariableValue } from "@/utils"
+import { getCommonPie } from "@/utils/chartData";
+// 引入 ECharts 相关方法和函数
 const { initEchart, setEchartOption } = useEchartsHook();
 
+// 定义 ref 引用和初始化数据
 const dataContainer = ref(null);
 const option = ref(getCommonPie());
 
-option.value.series[0].data = [
-  { value: 16, name: "在线" },
-  { value: 10, name: "离线" },
-];
-option.value.graphic = ref([
-  {
-    type: "group",
-    left: 'center',
-    top: "center",
-    bounding: "raw",
-    children: [
-      {
-        type: "text",
-        style:{
-          text: "200",
-          fontSize: 18,
-          textAlign: "center",
-          textVerticalAlign: "bottom",
-        }
-      },
-      ,
-      {
-        type: "text",
-        style: {
-          text: "设备总数(个)",
-          textAlign: "center",
-          textVerticalAlign: "top",
-          fontSize: 12,
-        },
-      },
-    ],
-  },
-]);
+// 定义 CSS 变量名
+const onlineColor = getCssVariableValue('--chart-pie-online-color');
+const offlineColor = getCssVariableValue('--chart-pie-offline-color');
 
 onMounted(() => {
+  // 更新饼图数据和样式配置
+  option.value.series[0].data = [
+    { value: 16, name: "在线", itemStyle: { color: onlineColor } },
+    { value: 10, name: "离线", itemStyle: { color: offlineColor } },
+  ];
+  option.value.title[0].text = '26'
+  // 初始化和设置 echarts 实例
   initEchart(dataContainer.value);
   setEchartOption(option.value);
 });
 </script>
 
 <template>
-  <div ref="dataContainer" class="chart-container"></div>
+  <div ref="dataContainer" class="data-container"></div>
 </template>
 
 <style lang="scss" scoped>
-.chart-container {
+.data-container {
   width: 100%;
-  height: 400px;
+  height:100%;
+  padding-right: 16px;
+  border-right: 1px dashed #eee;
 }
 </style>

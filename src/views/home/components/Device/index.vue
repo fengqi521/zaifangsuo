@@ -3,8 +3,8 @@ import { ref, onMounted } from "vue";
 import ElTable from "@/components/ElTable/index.vue";
 
 const columns = ref([
-  { prop: "num", label: "序号", width: "180" },
-  { prop: "name", label: "设备名称", width: "180" },
+  { prop: "num", label: "序号"},
+  { prop: "name", label: "设备名称" },
   { prop: "code", label: "设备编号" },
   { prop: "type", label: "设备类型" },
   { prop: "group", label: "设备群组" },
@@ -186,7 +186,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .device-container {
   padding: 0 12px 16px 12px;
-  margin-top: 24px;
+  margin-top: 16px;
   background: var(--background-color);
   border-radius: 2px;
 

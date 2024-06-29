@@ -4,14 +4,20 @@
 :root {
     --body-text-color: #000;
     --body-text-size: 12px;
-    --body-bg-color:#f4f4f4;
+    --body-bg-color: #f4f4f4;
+
+    /* 主要颜色 */
+    --background-color: #FFF;
+    --text-color: #FFF;
+    --br-color: #F0F0F0;
+    --text-normal-color:#2c393b;
 
     /* 图标颜色 */
-    --icon-color:#1F57C3;
+    --icon-color: #1F57C3;
 
 
     /* nav */
-    --nav-header-text-color:#FFF;
+    --nav-header-text-color: #FFF;
     --nav-header-bg-color: #373737;
     --nav-header-height: 60px;
 
@@ -22,36 +28,37 @@
     --sidebar-width: 220px;
     --sidebar-menu-item-height: 64px;
     --sidebar-bg-color: #484848;
-    --sidebar-title-color:#ccc;
-    --sidebar-active-color:#FFF;
+    --sidebar-title-color: #ccc;
+    --sidebar-active-color: #FFF;
 
     /* tagsview */
-    --tagsview-height:32px;
+    --tagsview-height: 32px;
 
     /* 首页 */
-    --card-bg-1:#67afff;
-    --card-bg-2:#4F60FF;
-    --card-bg-3:#FFB73C;
-    --gap-width:16px;
+    --card-bg-1: #67afff;
+    --card-bg-2: #4F60FF;
+    --card-bg-3: #FFB73C;
+    --gap-width: 16px;
 
-    --home-message-width:360px;
-    --home-message-title-color:#999;
-    --home-message-info-color:#666;    
-    --home-message-item-bg:#EEE;
-    --home-message-date-color:#BBB;
+    --home-message-width: 360px;
+    --home-message-title-color: #999;
+    --home-message-info-color: #666;
+    --home-message-item-bg: #EEE;
+    --home-message-date-color: #BBB;
 
     /* table */
-    --table-th-bg-color:#EEE;
-    --table-th-text-color:#2c393b;
-    --table-tbody-text-color:#666;
+    --table-th-bg-color: #EEE;
+    --table-th-text-color: #2c393b;
+    --table-tbody-text-color: #666;
 
     /* 标题 */
-    --panel-text-color:#666;
-    --panel-active-color:#2c393b;
+    --panel-text-color: #666;
+    --panel-active-color: #2c393b;
 
-    
-    /* 主要颜色 */
-    --background-color: #FFF;
-    --text-color: #FFF;
-    --br-color:#F0F0F0;
+    /* 图形颜色 */
+    --chart-pie-online-color: #91CC75;
+    --chart-pie-offline-color: #EE6666;
+
+
+
 }

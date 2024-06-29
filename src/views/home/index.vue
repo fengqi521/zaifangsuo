@@ -1,12 +1,12 @@
 <script setup>
 import { reactive } from "vue";
 import { DEVICE_DATA,MESSAGE } from "@/constants";
-import Card from "./components/Card/index.vue";
+// import Card from "./components/Card/index.vue";
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
 import Echart from './components/Echart/index.vue'
 
-const deviceLists = reactive([...DEVICE_DATA])
+// const deviceLists = reactive([...DEVICE_DATA])
 const messages = reactive([...MESSAGE])
 const cardLists = [
   { field: "total", count: 26 },
@@ -27,7 +27,7 @@ DEVICE_DATA.forEach((device, index) => {
     <!-- 左侧图表 -->
     <div class="home-left">
       <Echart/>
-      <Card :deviceCardLists="DEVICE_DATA" />
+      <!-- <Card :deviceCardLists="DEVICE_DATA" /> -->
       <Device/>
     </div>
     <!-- 报文数据 -->
@@ -36,10 +36,11 @@ DEVICE_DATA.forEach((device, index) => {
 </template>
 <style lang="scss" scoped>
 .home-container {
-  display: flex;
+  position: relative;
 
   .home-left{
-    flex:1;
+    // height:332px;
+    width:  calc(100% - var(--home-message-width) - 16px) ;
   }
 }
 </style>

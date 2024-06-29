@@ -24,7 +24,7 @@ import { Sidebar, AppMain } from "./components";
     top: var( --nav-header-height);
     bottom: 0;
     left: 0;
-    // z-index: 1001;
+    z-index: 4;
     // overflow: hidden;
     padding: 24px 0;
     min-width: var(--sidebar-width);

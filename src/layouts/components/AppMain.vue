@@ -33,6 +33,7 @@ import TagsView from "./TagsView/index.vue";
 }
 
 .app-container {
+  height:100%;
   padding: calc( var(--tagsview-height) + 16px) 16px 16px 16px;
 }
 </style>

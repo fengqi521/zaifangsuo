@@ -12,11 +12,7 @@ const props = defineProps({
   <div class="home-message">
     <MessageSearch />
     <ul class="message-panel">
-      <li
-        class="message-item"
-        v-for="({ title, info, date }, index) in messages"
-        :key="index"
-      >
+      <li class="message-item" v-for="({ title, info, date }, index) in messages" :key="index">
         <!-- 信息日期 -->
         <p class="message-item-top">{{ date }}</p>
         <!-- 信息内容 -->
@@ -30,33 +26,37 @@ const props = defineProps({
 </template>
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
+
 .home-message {
-  margin-left: 16px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   padding: 8px;
   width: var(--home-message-width);
-  word-break: break-all;
+  height: calc(100vh - var(--nav-header-height) - var(--tagsview-height) - 32px);
   background: var(--background-color);
-  height: calc(
-    100vh - var(--nav-header-height) - var(--tagsview-height) - 32px
-  );
-  overflow: hidden;
   border-radius: 2px;
+  word-break: break-all;
+  overflow: hidden;
+
   .message-panel {
-    height: calc(
-      100vh - var(--nav-header-height) - var(--tagsview-height) - 82px
-    );
+    height: calc(100vh - var(--nav-header-height) - var(--tagsview-height) - 82px);
     overflow-y: auto;
     @extend %scrollbar;
   }
+
   .message-item {
     margin-bottom: 18px;
   }
+
   .message-item-bom {
     display: inline-block;
     padding: 8px 4px;
     min-height: 56px;
     background: var(--home-message-item-bg);
     border-radius: 4px;
+
     &:last-child {
       margin-bottom: 0;
     }

@@ -1,3 +1,6 @@
+import {
+  getCssVariableValue
+} from "@/utils"
 // 折线图公共配置
 export const getCommonEcharts = function (data_x) {
   return {
@@ -16,7 +19,12 @@ export const getCommonEcharts = function (data_x) {
         let res = "";
         let formatterName = "";
         params.forEach((current) => {
-          const { name, color, seriesName, value } = current;
+          const {
+            name,
+            color,
+            seriesName,
+            value
+          } = current;
           const selfMarker =
             `<span style="display:inline-block;margin:0 8px 2px 0;border-radius:6px;` +
             `width:6px;height:6px;background-color:${color};"></span>`;
@@ -60,36 +68,33 @@ export const getCommonEcharts = function (data_x) {
       containLabel: true,
       borderColor: "transparent",
     },
-    xAxis: [
-      {
-        type: "category",
-        boundaryGap: true,
-        minInterval: 7200,
-        data: data_x,
-        // 坐标轴刻度相关设置。
-        axisTick: {
-          show: false,
-        },
-        // 坐标轴线设置。
-        axisLine: {
-          show: true,
-          lineStyle: {
-            color: "#CCC",
-          },
-        },
-        // 坐标轴刻度标签的相关设置
-        axisLabel: {
-          color: "#666",
-          fontSize: 12,
-        },
-        // 坐标轴在 grid(网格) 区域中的分隔线。
-        splitLine: {
-          show: false,
+    xAxis: [{
+      type: "category",
+      boundaryGap: true,
+      minInterval: 7200,
+      data: data_x,
+      // 坐标轴刻度相关设置。
+      axisTick: {
+        show: false,
+      },
+      // 坐标轴线设置。
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#CCC",
         },
       },
-    ],
-    yAxis: [
-      {
+      // 坐标轴刻度标签的相关设置
+      axisLabel: {
+        color: "#666",
+        fontSize: 12,
+      },
+      // 坐标轴在 grid(网格) 区域中的分隔线。
+      splitLine: {
+        show: false,
+      },
+    }, ],
+    yAxis: [{
         type: "value",
         // 坐标轴刻度相关设置。
         axisTick: {
@@ -168,41 +173,36 @@ export const getCommonBars = function (data_x) {
       bottom: 0,
       borderColor: "transparent",
     },
-    xAxis: [
-      {
-        type: "value",
-        splitLine: {
-          show: false,
-        },
-        axisLine: {
-          show: false,
-        },
-        axisLabel: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
+    xAxis: [{
+      type: "value",
+      splitLine: {
+        show: false,
       },
-    ],
-    yAxis: [
-      {
-        type: "category",
-        data: data_x,
-        // 坐标轴在 grid(网格) 区域中的分隔线。
-        splitLine: {
-          show: false,
-        },
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
+      axisLine: {
+        show: false,
       },
-    ],
-    series: [
-      {
+      axisLabel: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+    }, ],
+    yAxis: [{
+      type: "category",
+      data: data_x,
+      // 坐标轴在 grid(网格) 区域中的分隔线。
+      splitLine: {
+        show: false,
+      },
+      axisLine: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+    }, ],
+    series: [{
         name: "在线",
         type: "bar",
         stack: "总量",
@@ -250,41 +250,84 @@ export const getCommonBars = function (data_x) {
 // 饼图公共配置
 export const getCommonPie = function () {
   return {
+    title: [{
+        text: 'Title 1', // 第一个标题的文本内容
+        left: 'center',
+        top: '36%',
+        textStyle: {
+          fontSize: 24,
+          fontWeight: 'bold',
+          color: getCssVariableValue('--panel-active-color'),
+        }
+      },
+      {
+        text: '设备总数(个)', // 第二个标题的文本内容
+        left: 'center',
+        top: '48%',
+        textStyle: {
+          fontSize: 12,
+          fontWeight: 'normal',
+          color: getCssVariableValue('--panel-text-color'),
+        }
+      }
+    ],
     tooltip: {
       trigger: "item",
     },
     legend: {
-      top: "5%",
-      left: "center",
-    },
-    series: [
-      {
-        name: "Access From",
-        type: "pie",
-        radius: ["50%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
+      bottom: 6,
+      right: 0,
+      itemWidth: 14,
+      itemHeight: 14,
+      textStyle: {
+        fontSize: 14,
+        lineHeight: 14,
+        color: getCssVariableValue('--text-normal-color'),
+        rich: {
+          a: {
+            verticalAlign: 'middle'
+          }
         },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 30,
-            fontWeight: "bold",
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-        data: []
+        padding: [0, 0, -2, 0]
       },
-    ],
+    },
+    series: [{
+      type: "pie",
+      center:['50%','45%'],
+      radius: ["45%", "65%"],
+      avoidLabelOverlap: true,
+      padAngle: 5,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: "#fff",
+        borderWidth: 2,
+      },
+      // emphasis: {
+      //   label: {
+      //     show: false,
+      //     fontSize: 30,
+      //     fontWeight: "bold",
+      //   },
+      // },
+      label: {
+        alignTo: 'edge',
+        formatter: '{name|{b}}\n{time|{c} 个}',
+        // edgeDistance: 80,
+        lineHeight: 18,
+        // distanceToLabelLine: 0,
+        rich: {
+          time: {
+            fontSize: 12,
+            color: '#999'
+          }
+        }
+      },
+      labelLine: {
+          length: 10,
+          length2: 0
+      },
+      data: []
+    }],
   };
 };
 
@@ -308,7 +351,12 @@ export const getCommonStackBar = function () {
         let res = "";
         let formatterName = "";
         params.reverse().forEach((current) => {
-          const { name, color, seriesName, value } = current;
+          const {
+            name,
+            color,
+            seriesName,
+            value
+          } = current;
           const selfMarker =
             `<span style="display:inline-block;margin:0 8px 2px 0;border-radius:6px;` +
             `width:6px;height:6px;background-color:${color};"></span>`;

@@ -134,7 +134,6 @@ const emit = defineEmits([
     }
 
     .el-table__body-wrapper{
-  
       font-size: 12px;
       color:var(--table-tbody-text-color)
     }
@@ -148,6 +147,10 @@ const emit = defineEmits([
     th {
       background: var(--table-th-bg-color);
     }
+
+   .cell{
+    line-height: 18px;
+   }
   }
   :deep(.el-pagination){
     margin-top:16px;
