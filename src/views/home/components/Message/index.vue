@@ -1,9 +1,11 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, defineProps,watch } from 'vue';
 import MessageSearch from "../MessageSearch/index.vue";
-import { RecycleScroller } from "vue-virtual-scroller";
-const drawStatus = ref(false)
-// import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
+import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
+
+const drawStatus = ref(false);
+const dynamicScrollerRef = ref(null);
+
 const props = defineProps({
     messages: {
         type: Array,
@@ -11,11 +13,26 @@ const props = defineProps({
     },
 });
 
-// 点击显示弹窗
+const items = computed(() => {
+    return props.messages.map((item, index) =>
+        Object.assign({}, { id: `data-id-${index}` }, item),
+    );
+});
+
 const handleChangeDrawer = () => {
-    console.log('点击')
     drawStatus.value = true;
-}
+};
+
+const scrollToBottom = () => {
+    // 通过 ref 获取 DynamicScroller 实例并调用 scrollToBottom 方法
+    if (dynamicScrollerRef.value) {
+        dynamicScrollerRef.value.scrollToBottom();
+    }
+};
+
+watch(()=>props.messages,(newVal,oldVal)=>{
+    scrollToBottom()
+})
 </script>
 
 <template>
@@ -23,21 +40,23 @@ const handleChangeDrawer = () => {
         <Icon iconClass="icon-shujukongzhitai" color="var(--text-color)" size="24px" />
     </div>
 
-    <el-drawer v-model="drawStatus" size="360px">
+    <el-drawer modal-class="message-container" v-model="drawStatus" :with-header="false" size="360px">
         <MessageSearch />
-        <RecycleScroller class="scrolling-content" :items="messages" :item-size="50">
-            <div slot-scope="{ item }" class="message-item">
-                <!-- 信息日期 -->
-                <p class="message-item-top">{{ item.date }}</p>
-                <!-- 信息内容 -->
-                <div class="message-item-bom">
-                    <p class="message-item-title">{{ item.title }}</p>
-                    <p class="message-item-info">{{ item.info }}</p>
-                </div>
-            </div>
-        </RecycleScroller>
+        <DynamicScroller class="message-scrollbar" ref="dynamicScrollerRef" :items="items" :min-item-size="24"
+            @resize="scrollToBottom">
+            <template #default="{ item, index, active }">
+                <DynamicScrollerItem :item="item" :data-index="index" :active="active" class="message-item">
+                    <p class="message-item-top">{{ item.date }}</p>
+                    <div class="message-item-bom">
+                        <p class="message-item-title">{{ item.title }}</p>
+                        <p class="message-item-info">{{ item.info }}</p>
+                    </div>
+                </DynamicScrollerItem>
+            </template>
+        </DynamicScroller>
     </el-drawer>
 </template>
+
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 
@@ -56,54 +75,47 @@ const handleChangeDrawer = () => {
     cursor: pointer;
 }
 
-.home-message {
-    // position: absolute;
-    // right: 0;
-    // top: 0;
-    // bottom: 0;
-    // padding: 8px;
-    // width: var(--home-message-width);
-    // height: calc(100vh - var(--nav-header-height) - var(--tagsview-height) - 32px);
-    // background: var(--background-color);
-    // border-radius: 2px;
-    // word-break: break-all;
-    // overflow: hidden;
+.message-container {
 
-    .message-panel {
-        height: calc(100vh - var(--nav-header-height) - var(--tagsview-height) - 82px);
-        overflow-y: auto;
+    :deep(.el-drawer) {
+
+        .el-drawer__body {
+            overflow: inherit;
+        }
+    }
+
+    .message-scrollbar {
+        height: calc(100% - 69px);
         @extend %scrollbar;
     }
 
     .message-item {
-        margin-bottom: 18px;
-    }
-
-    .message-item-bom {
-        display: inline-block;
-        padding: 8px 4px;
-        min-height: 56px;
-        background: var(--home-message-item-bg);
-        border-radius: 4px;
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-
-        .message-item-title {
-            margin-bottom: 12px;
-            color: var(--home-message-title-color);
-        }
-
-        .message-item-info {
-            line-height: 16px;
-            color: var(--home-message-info-color);
+        padding-bottom: 24px;
+        word-break: break-all;
+        &:last-child{
+            padding-bottom: 0;
         }
     }
+}
 
-    .message-item-top {
-        margin-bottom: 4px;
-        color: var(--home-message-date-color);
+.message-item-bom {
+    display: inline-block;
+    padding: 8px 4px;
+    background: var(--home-message-item-bg);
+    border-radius: 4px;
+
+    .message-item-title {
+        margin-bottom: 12px;
+        color: var(--home-message-title-color);
     }
+
+    .message-item-info {
+        line-height: 16px;
+        color: var(--home-message-info-color);
+    }
+}
+
+.message-item-top {
+    color: var(--home-message-date-color);
 }
 </style>

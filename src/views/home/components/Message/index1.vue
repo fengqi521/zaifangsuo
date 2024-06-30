@@ -22,6 +22,18 @@ const props = defineProps({
         </div>
       </li>
     </ul>
+<!-- 
+      <RecycleScroller class="scrolling-content" :items="items" :item-size="50" key-field="id">
+            <div slot-scope="{ item }" class="message-item">
+              
+                <p class="message-item-top">{{ item.date }}</p>
+             
+                <div class="message-item-bom">
+                    <p class="message-item-title">{{ item.title }}</p>
+                    <p class="message-item-info">{{ item.info }}</p>
+                </div>
+            </div>
+        </RecycleScroller>  -->
   </div>
 </template>
 <style lang="scss" scoped>

@@ -10,10 +10,11 @@
 </template>
 <style lang="scss" scoped>
 .search-container{
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+    padding-bottom: var(--el-drawer-padding-primary);
+    margin-bottom: 16px;
     border-bottom: 1px solid var( --br-color);
     text-align: center;
+    z-index: 4;
 
     :deep(.el-input){
         width:180px;
