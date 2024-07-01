@@ -59,6 +59,10 @@
     /* 图形颜色 */
     --chart-pie-online-color: #91CC75;
     --chart-pie-offline-color: #EE6666;
+    --chart-pie-value-color:#484848;
+    --chart-total-color:#FFB73C;
+    --chart-percent-color:#4F60FF;
+
 
 
 

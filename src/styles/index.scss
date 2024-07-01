@@ -14,7 +14,6 @@ html {
 body {
     margin: 0;
     padding: 0;
-    height: 100%;
     min-width: 1200px;
     color: var(--body-text-color);
     font-size: var(--body-text-size);
@@ -23,7 +22,6 @@ body {
     -webkit-font-smoothing: antialiased;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
         sans-serif;
-
     @extend %scrollbar;
 }
 

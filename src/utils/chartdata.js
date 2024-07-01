@@ -277,11 +277,11 @@ export const getCommonPie = function () {
     legend: {
       bottom: 6,
       right: 0,
-      itemWidth: 14,
-      itemHeight: 14,
+      itemWidth: 12,
+      itemHeight: 12,
       textStyle: {
-        fontSize: 14,
-        lineHeight: 14,
+        fontSize: 12,
+        lineHeight: 12,
         color: getCssVariableValue('--text-normal-color'),
         rich: {
           a: {
@@ -294,7 +294,7 @@ export const getCommonPie = function () {
     series: [{
       type: "pie",
       center: ['50%', '45%'],
-      // avoidLabelOverlap: true,
+      avoidLabelOverlap: false,
       // padAngle: 5,
       itemStyle: {
         borderRadius: 10,
@@ -303,19 +303,16 @@ export const getCommonPie = function () {
       },
       label: {
         // alignTo: 'edge',
-        formatter: '{name|{b}}\n{count|{c} 个}',
-        lineHeight: 18,
+        formatter: '{name|{b}}数(个)\n{count|{c}}',
+        lineHeight: 16,
         rich: {
           count: {
-            fontSize: 12,
-            color: '#999'
+            fontSize: 18,
+            fontWeight:'bold',
+            color: getCssVariableValue('--chart-pie-value-color')
           }
         }
       },
-      // labelLine: {
-      //   length: 10,
-      //   length2: 0
-      // },
       data: []
     }],
   };

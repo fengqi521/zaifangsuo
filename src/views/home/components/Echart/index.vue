@@ -17,7 +17,7 @@ import PercentChart from './PercentChart/index.vue'
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding: 16px;
-  height: 332px;
+  height: 362px;
   background: var(--background-color)
 }
 </style>
