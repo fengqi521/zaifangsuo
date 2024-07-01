@@ -20,11 +20,10 @@ import { Sidebar, AppMain } from "./components";
   .sidebar-container {
     padding: 24px 0;
     min-width: var(--sidebar-width);
-    // height: calc(100% - 48px);
     background-color: var(--sidebar-bg-color);
     border-right: var(--v3-sidebar-border-right);
     overflow-y: auto;
-    z-index: 4;
+    z-index: 3;
     @extend %scrollbar;
   }
 }

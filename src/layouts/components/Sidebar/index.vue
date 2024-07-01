@@ -70,10 +70,14 @@ const activeMenu = computed(() => {
   line-height: var(--sidebar-menu-item-height);
   color: var(--sidebar-title-color);
   font-size: 14px;
-  &.is-active,
-  &:hover {
+  &.is-active{
     color: var(--sidebar-active-color);
-    background: var(--nav-header-bg-color);
+    background: var(--sidebar-active-bg-color);
+  }
+
+  &:hover{
+    color: var(--sidebar-title-color);
+    background:var(--sidebar-hover-bg-color)
   }
 }
 
