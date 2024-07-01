@@ -5,17 +5,23 @@
     --body-text-color: #000;
     --body-text-size: 12px;
     --body-bg-color: #f4f4f4;
-    --drawer-bg-color:#001428;
+    --drawer-bg-color: #001428;
 
     /* 主要颜色 */
     --background-color: #FFF;
     --text-color: #FFF;
     --br-color: #F0F0F0;
-    --text-normal-color:#2c393b;
+    --text-normal-color: #2c393b;
+
+    /* 登录 */
+    --login-bg-color: #F6F9FF;
+    --login-icon-color: #A2B1CD;
 
     /* 图标颜色 */
     --icon-color: #1F57C3;
 
+    /* button颜色 */
+    --btn-login-color:#1F52C6;
 
     /* nav */
     --nav-header-text-color: #FFF;
@@ -59,9 +65,9 @@
     /* 图形颜色 */
     --chart-pie-online-color: #91CC75;
     --chart-pie-offline-color: #EE6666;
-    --chart-pie-value-color:#484848;
-    --chart-total-color:#FFB73C;
-    --chart-percent-color:#4F60FF;
+    --chart-pie-value-color: #484848;
+    --chart-total-color: #FFB73C;
+    --chart-percent-color: #4F60FF;
 
 
 
