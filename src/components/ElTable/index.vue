@@ -53,14 +53,13 @@
       :current-page.sync="currentPage"
       :page-size="pageSize"
       :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      v-slot:custom="{ total, range }"
+      layout="slot, prev, pager, next,sizes, jumper"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     >
-      <span class="pagination-info">
-        共 {{ total }} 条
-      </span>
+      <template #default>
+        <span class="pagination-info"> 共 {{ total }} 条数据 </span>
+      </template>
     </el-pagination>
   </div>
 </template>
@@ -126,34 +125,40 @@ const emit = defineEmits([
 
 <style lang="scss" scoped>
 .table-container {
+  text-align: right;
   :deep(.el-table) {
-    thead{
+    thead {
       font-size: 12px;
-      color:var(--table-th-text-color);
-      font-weight:bold;
+      color: var(--table-th-text-color);
+      font-weight: bold;
     }
 
-    .el-table__body-wrapper{
+    .el-table__body-wrapper {
       font-size: 12px;
-      color:var(--table-tbody-text-color)
+      color: var(--table-tbody-text-color);
     }
 
     th,
     td {
       border-right: none;
-      height:44px;
+      height: 44px;
     }
 
     th {
       background: var(--table-th-bg-color);
     }
 
-   .cell{
-    line-height: 18px;
-   }
+    .cell {
+      line-height: 18px;
+    }
   }
-  :deep(.el-pagination){
-    margin-top:16px;
+  :deep(.el-pagination) {
+    margin-top: 16px;
+    justify-content: flex-end;
+
+    .pagination-info {
+      color: var(--el-text-color-regular);
+    }
   }
 }
 </style>

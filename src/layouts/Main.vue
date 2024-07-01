@@ -10,6 +10,7 @@ import { Sidebar, AppMain } from "./components";
   </section>
 </template>
 <style lang="scss" scoped>
+@import "@/styles/tools.scss";
 .main-container {
   display: flex;
   flex-direction: row;
@@ -17,11 +18,14 @@ import { Sidebar, AppMain } from "./components";
   height: var(--main-height);
 
   .sidebar-container {
-    z-index: 4;
     padding: 24px 0;
     min-width: var(--sidebar-width);
+    // height: calc(100% - 48px);
     background-color: var(--sidebar-bg-color);
     border-right: var(--v3-sidebar-border-right);
+    overflow-y: auto;
+    z-index: 4;
+    @extend %scrollbar;
   }
 }
 </style>

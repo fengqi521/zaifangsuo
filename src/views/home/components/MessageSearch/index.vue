@@ -1,5 +1,6 @@
 <script setup>
-
+import {ref} from 'vue'
+const f = ref('')
 </script>
 <template>
     <div class="search-container">
