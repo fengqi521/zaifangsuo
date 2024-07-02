@@ -1,39 +1,40 @@
 <script lang="ts" setup>
-import { computed } from "vue"
+import { computed, onMounted, ref, watch } from "vue";
+import SidebarItemLink from "./SidebarItemLink.vue";
+import { getCssVariableValue } from "@/utils";
 
+// 定义变量
+
+const props = defineProps({
+  route: {
+    type: Object,
+    default: () => {},
+  },
+});
+
+const routeChildLength = computed(() => {
+  return props.route.children.length;
+});
 </script>
 
 <template>
-  <template v-if="!alwaysShowRootMenu && theOnlyOneChild && !theOnlyOneChild.children">
-    <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
-      <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
-        <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" />
-        <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
-        <template v-if="theOnlyOneChild.meta.title" #title>
-          {{ theOnlyOneChild.meta.title }}
-        </template>
-      </el-menu-item>
-    </SidebarItemLink>
-  </template>
-  <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
+  <!-- 只有一层 -->
+  <SidebarItemLink v-if="routeChildLength === 1" :path="route.path">
+    <el-menu-item :index="route.path">
+      <Icon :iconClass="route.icon" v-if="route.icon"/>
+      <template #title>
+        {{ route.children[0].meta.name }}
+      </template>
+    </el-menu-item>
+  </SidebarItemLink>
+  <!-- 多层 -->
+  <el-sub-menu v-else :index="route.path">
     <template #title>
-      <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
-      <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
-      <span v-if="props.item.meta?.title">{{ props.item.meta.title }}</span>
+      <!-- <SvgIcon
+        v-if="props.item.meta?.svgIcon"
+        :name="props.item.meta.svgIcon"
+      /> -->
+      <span v-if="props.route.meta?.title">{{ props.route.meta.title }}</span>
     </template>
   </el-sub-menu>
 </template>
-
-<style lang="scss" scoped>
-.svg-icon {
-  min-width: 1em;
-  margin-right: 12px;
-  font-size: 18px;
-}
-
-.el-icon {
-  width: 1em;
-  margin-right: 12px;
-  font-size: 18px;
-}
-</style>

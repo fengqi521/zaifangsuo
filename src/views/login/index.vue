@@ -1,16 +1,15 @@
 <script setup>
-import LoginForm from "./components/LoginForm/index.vue";
+import LoginForm from "./LoginForm/index.vue";
 </script>
 <template>
   <div class="login-container">
     <div class="login-wrapper">
-      <a class="logo"
-        ><img
+      <a class="logo"><img
           class="logo-avatar"
           src="@/assets/images/beijingDiKan.png"
           alt="北京地勘"
       /></a>
-      <div class='login-bg'></div>
+      <div class="login-bg"></div>
       <LoginForm />
     </div>
   </div>
@@ -45,7 +44,7 @@ import LoginForm from "./components/LoginForm/index.vue";
     }
   }
 
-  .login-bg{
+  .login-bg {
     width: 63%;
     height: 100%;
     background: url(@/assets/images/login-bg.png) right 50% / contain no-repeat;

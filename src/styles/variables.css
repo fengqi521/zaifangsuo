@@ -4,7 +4,7 @@
 :root {
     --body-text-color: #000;
     --body-text-size: 12px;
-    --body-bg-color: #f4f4f4;
+    --body-bg-color: #F6F4FC;
     --drawer-bg-color: #001428;
 
     /* 主要颜色 */
@@ -21,7 +21,8 @@
     --icon-color: #1F57C3;
 
     /* button颜色 */
-    --btn-login-color:#1F52C6;
+    --btn-bg-color:#1089FF;
+    --btn-hover-color:rgb(11, 95, 178);
 
     /* nav */
     --nav-header-text-color: #FFF;
@@ -70,6 +71,12 @@
     --chart-pie-value-color: #484848;
     --chart-total-color: #FFB73C;
     --chart-percent-color: #4F60FF;
+
+
+    /* 下拉框 */
+    --select-bg-color:rgb(228, 235, 249);
+    --select-text-color:rgb(78, 90, 113);
+    --select-border-color:rgb(107, 122, 153);
 
 
 

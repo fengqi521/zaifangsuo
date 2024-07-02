@@ -1,17 +1,16 @@
 <script setup>
 import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
-// import {SidebarItem} from './components/SidebarItem/index.vue'
-import { useAppStore } from "@/stores/modules/app";
-import { getSideData } from "@/api/index-demo";
-// 请求sidebar数据
-const appStore = useAppStore();
+import { usePermissionStore } from "@/stores/modules/permission";
+import SidebarItem from "./SidebarItem.vue";
+
+const { routes } = usePermissionStore();
 onMounted(async () => {
-  const result = await getSideData();
-  appStore.setSideLists(result);
+  // const result = await getSideData();
+  // appStore.setSideLists(result);
 });
 
 const backgroundColor = "var(--sidebar-bg-color)";
+
 const activeMenu = computed(() => {
   return "var(--icon-color)";
 });
@@ -20,33 +19,17 @@ const activeMenu = computed(() => {
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <el-menu
-      default-active="1"
-      class="el-menu-vertical-demo"
+      :default-active="activeMenu"
       :background-color="backgroundColor"
+      :unique-opened="true"
+      :collapse-transition="false"
     >
-      <el-menu-item index="1">
-        <Icon iconClass="icon-ai-home" color="#38b487" />
-        <span>首页</span>
-      </el-menu-item>
-      <el-menu-item index="2">
-        <Icon iconClass='icon-shujukanban' color="#FFF"/>
-        <span>设备管理</span>
-      </el-menu-item>
-      <el-sub-menu index="3">
-        <template #title>
-          <Icon iconClass='icon-yonghuguanli' color="#FFF"/>
-          <span>用户管理</span>
-        </template>
-        <el-menu-item index="3-1">
-          <template #title>用户管理</template>
-        </el-menu-item>
-        <el-menu-item index="3-2">
-          <template #title>权限管理</template>
-        </el-menu-item>
-        <el-menu-item index="3-3">
-          <template #title>角色管理</template>
-        </el-menu-item>
-      </el-sub-menu>
+      <SidebarItem
+        v-for="route in routes"
+        :key="route.path"
+        :route="route"
+        :base-path="route.path"
+      />
     </el-menu>
   </el-scrollbar>
 </template>
@@ -57,10 +40,6 @@ const activeMenu = computed(() => {
   min-height: 100%;
   width: 100% !important;
   user-select: none;
-
-  .iconfont {
-    margin-right: 15px;
-  }
 }
 
 :deep(.el-menu-item),
@@ -70,14 +49,26 @@ const activeMenu = computed(() => {
   line-height: var(--sidebar-menu-item-height);
   color: var(--sidebar-title-color);
   font-size: 14px;
-  &.is-active{
+
+  .iconfont {
+    margin-right: 16px;
+    color: var(--sidebar-title-color) !important;
+  }
+  &.is-active {
     color: var(--sidebar-active-color);
     background: var(--sidebar-active-bg-color);
+
+    .iconfont {
+      color: var(--sidebar-active-color) !important;
+    }
   }
 
-  &:hover{
+  &:hover {
     color: var(--sidebar-title-color);
-    background:var(--sidebar-hover-bg-color)
+    background: var(--sidebar-hover-bg-color);
+    .iconfont {
+      color: var(--sidebar-title-color) !important;
+    }
   }
 }
 
