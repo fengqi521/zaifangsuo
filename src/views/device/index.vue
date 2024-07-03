@@ -1,11 +1,11 @@
 <script setup>
 import { ref, reactive, provide } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
-import { WaterLevelChart } from "./components/index";
-import { getCommonLine } from "@/utils/chartData";
+import { RainLevelChart } from "./components/index";
+
 
 // 定义变量
-
+const currentType = ref("");
 // 表单数据
 const initialData = reactive({
   type: "",
@@ -80,27 +80,52 @@ const formItems = reactive([
   },
 ]);
 
-// 图表数据
+// 查询数据
+const handleSearchSubmit = (data) => {
+  const { type } = data;
 
-// 水位计值
-const waterCollectData = ref(getCommonLine());
-const waterChangeData = ref(getCommonLine());
+  const item = formItems[0].options.find(({ value }) => value === type);
+  if (item?.value) currentType.value = `${item.label}数据`;
+};
 
-provide("waterCollectOption", waterCollectData);
-provide("waterChangeOption", waterChangeData);
 </script>
 <template>
   <div>
     <!-- 查询条件 -->
-    <SearchForm :initialData="initialData" :formItems="formItems" />
+    <SearchForm
+      :initialData="initialData"
+      :formItems="formItems"
+      @submit="handleSearchSubmit"
+    />
+    <!-- 数据表头 -->
+    <div class="device-head">
+      <span>{{ currentType }}</span>
+    </div>
     <!-- 图表 -->
     <div class="device-chart">
-      <component :is="WaterLevelChart" />
+      <component :is="RainLevelChart" class="chart-item" />
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
-.device-chart{
-    background:var(--background-color)
+.device-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 16px;
+  height: 48px;
+  font-size: 14px;
+  color: var(--normal-title-color);
+  font-weight: 700;
+}
+.device-chart {
+  height: calc(100vh - var(--tagsview-height) - 48px);
+  padding: 20px;
+  background: var(--background-color);
+  overflow-y:auto;
+
+  .chart-item{
+    padding:16px;
+  }
 }
 </style>

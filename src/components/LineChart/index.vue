@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
-const { initEchart, setEchartOption } = useEchartsHook();
+const { initEchart, setEchartOption, updateEchartOption } = useEchartsHook();
 
 // 定义变量
 const lineContainer = ref(null);
@@ -17,13 +17,15 @@ onMounted(() => {
   initEchart(lineContainer.value);
   setEchartOption(props.option);
 });
+
+watch(
+  () => props.option,
+  (newOption, oldOption) => {
+    updateEchartOption(newOption);
+  },
+  { deep: true }
+);
 </script>
 <template>
-  <div class="line-container" ref="lineContainer"></div>
+  <div class="chart-container" ref="lineContainer"></div>
 </template>
-<style lang="scss" scoped>
-.line-container{
-  width:100%;
-  height:300px;
-}
-</style>

@@ -1,20 +1,38 @@
-import { ref, onUnmounted } from "vue";
+import { ref, markRaw, onUnmounted } from "vue";
 import * as echarts from "echarts";
 export function useEchartsHook() {
   const chart = ref(null);
   const initEchart = (ele) => {
-    if (ele) chart.value = echarts.init(ele);
+    if (ele && !chart.value) {
+      chart.value = markRaw(echarts.init(ele));
+      window.addEventListener("resize", resizeChart);
+    }
   };
-
   const setEchartOption = (option) => {
     if (chart.value && option) {
       chart.value.setOption(option);
-      window.addEventListener("resize", chart.value.resize);
-      onUnmounted(() => {
-        window.removeEventListener("resize", chart.value.resize);
-      });
     }
   };
 
-  return { initEchart, setEchartOption };
+  const updateEchartOption = (newOption) => {
+    if (chart.value) {
+      chart.value.clear();
+      setEchartOption(newOption);
+    }
+  };
+  const resizeChart = () => {
+    if (chart.value) {
+      chart.value.resize();
+    }
+  };
+
+  onUnmounted(() => {
+    if (chart.value) {
+      window.removeEventListener("resize", resizeChart);
+      chart.value.dispose();
+      chart.value = null;
+    }
+  });
+
+  return { initEchart, setEchartOption, updateEchartOption };
 }

@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, watch, defineEmits } from "vue";
 
 // Props: 传递表单配置、数据和验证规则
 const props = defineProps({
@@ -41,12 +41,19 @@ const props = defineProps({
 
 const formData = reactive({ ...props.initialData });
 const formRef = ref(null);
-
+watch(
+  () => props.initialData,
+  (newData) => {
+    formData = { ...newData };
+  },
+  { deep: true }
+);
+const emit = defineEmits(["submit"]);
 // 提交表单
 const onSubmit = async () => {
   const valid = await formRef.value.validate();
   if (valid) {
-    emit();
+    emit("submit", { ...formData });
     return;
   }
   console.log("error submit!");
@@ -75,15 +82,8 @@ const onReset = () => {
     min-width: 160px;
   }
 
-  .el-button {
-    border-radius: 0;
-  }
-
   :deep(.el-select__wrapper),
   :deep(.el-input__wrapper) {
-    color: var(--select-text-color);
-    border-radius: 0;
-    background: var(--select-bg-color);
     border: 1px solid var(--select-border-color);
   }
 
@@ -91,18 +91,6 @@ const onReset = () => {
   :deep(.el-range-editor.is-active:hover),
   :deep(.el-range-editor.is-active) {
     box-shadow: none;
-  }
-
-  :deep(.el-select__placeholder),
-  :deep( .el-range-input) {
-    color: var(--select-text-color);
-  }
-
-  .el-button--primary {
-    background: var(--btn-bg-color);
-    &:hover {
-      background: var(--btn-hover-color);
-    }
   }
 }
 </style>
