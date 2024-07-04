@@ -14,7 +14,11 @@
     --text-normal-color: #2c393b;
     --normal-title-color:#4E5A71;
     --normal-border-color:#D3DCEE;
+    --normal-icon-bg-color:rgb(78, 90, 113);
 
+    /* 滚动条 */
+    --scrollbar-thumb-color:#6b7a99;
+    --scrollbar-track-color:#d3dcee;
     /* 登录 */
     --login-bg-color: #F6F9FF;
     --login-icon-color: #A2B1CD;
@@ -81,6 +85,8 @@
     --select-border-color:rgb(107, 122, 153);
 
 
-
+    /* 图表 */
+    --bar-width:30;
+    --bar-gap:20
 
 }

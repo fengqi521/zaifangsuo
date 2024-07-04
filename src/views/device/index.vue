@@ -1,11 +1,16 @@
 <script setup>
-import { ref, reactive, provide } from "vue";
+import { ref, reactive, provide, onMounted, computed } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
-import { RainLevelChart } from "./components/index";
-
-
+import RainLevelChart  from "./components/RainLevelChart.vue";
+import { getCssVariableValue } from "@/utils";
+import { SENSOR } from "@/constants";
 // 定义变量
 const currentType = ref("");
+const searchFormRef = ref(null);
+const calcChartHeight = ref(0);
+const tagHeight = getCssVariableValue("--tagsview-height");
+const componentContainer = ref(null)
+
 // 表单数据
 const initialData = reactive({
   type: "",
@@ -25,14 +30,14 @@ const formItems = reactive([
       { label: "地面沉降位移计", value: "3" },
       { label: "水位计", value: "4" },
       { label: "土壤含水率", value: "5" },
-      { label: "雨量计", value: "6" },
-      { label: "断线传感器", value: "7" },
+      { label: "雨量计", value: "6" }, //显示
+      { label: "断线传感器", value: "7" }, // 显示
       { label: "静力水准仪", value: "8" },
       { label: "落石传感器", value: "9" },
       { label: "GNSS", value: "10" },
       { label: "次声", value: "11" },
       { label: "流速仪", value: "12" },
-      { label: "泥位计", value: "13" },
+      { label: "泥位计", value: "13" }, //显示
     ],
   },
   {
@@ -80,34 +85,45 @@ const formItems = reactive([
   },
 ]);
 
+// 表单元素高度
+onMounted(() => {
+  const searchFormRefHeight =
+    searchFormRef.value.$el.getBoundingClientRect().height;
+  calcChartHeight.value = `calc(100% - ${searchFormRefHeight}px -  ${tagHeight} - 18px)`;
+});
 // 查询数据
 const handleSearchSubmit = (data) => {
   const { type } = data;
 
   const item = formItems[0].options.find(({ value }) => value === type);
   if (item?.value) currentType.value = `${item.label}数据`;
+  componentContainer.value = SENSOR[type]
 };
-
 </script>
 <template>
-  <div>
+  <div class="device-container">
     <!-- 查询条件 -->
     <SearchForm
       :initialData="initialData"
       :formItems="formItems"
       @submit="handleSearchSubmit"
+      ref="searchFormRef"
     />
     <!-- 数据表头 -->
     <div class="device-head">
       <span>{{ currentType }}</span>
     </div>
     <!-- 图表 -->
-    <div class="device-chart">
-      <component :is="RainLevelChart" class="chart-item" />
+    <div class="device-chart" :style="{ height: calcChartHeight }">
+      <component :is="componentContainer" />
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
+@import "@/styles/tools.scss";
+.device-container {
+  height: 100%;
+}
 .device-head {
   display: flex;
   align-items: center;
@@ -119,13 +135,9 @@ const handleSearchSubmit = (data) => {
   font-weight: 700;
 }
 .device-chart {
-  height: calc(100vh - var(--tagsview-height) - 48px);
   padding: 20px;
   background: var(--background-color);
-  overflow-y:auto;
-
-  .chart-item{
-    padding:16px;
-  }
+  overflow-y: auto;
+  @extend %scrollbar;
 }
 </style>

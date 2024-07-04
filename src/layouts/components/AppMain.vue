@@ -11,7 +11,6 @@ import TagsView from "./TagsView/index.vue";
           <component
             :is="Component"
             :key="route.path"
-            class="app-container-grow"
           />
         </keep-alive>
       </router-view>

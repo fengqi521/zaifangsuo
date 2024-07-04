@@ -1,6 +1,7 @@
 import { getCssVariableValue } from "@/utils";
 import handleIconUrl from "@/assets/images/dataZoom-handle.png"; // 引入图片
-import { collapseItemProps } from "element-plus";
+import downloadIconUrl from "@/assets/images/download.png";
+import viewIconUrl from "@/assets/images/view.png";
 
 // 折线图公共配置
 export const getCommonLine = function () {
@@ -28,10 +29,10 @@ export const getCommonLine = function () {
         let formatterName = "";
         params.forEach((current) => {
           const { name, color, value, seriesName } = current;
-          formatterName = `<span style='display:block;font-weight:bold'>${name}</span><br/>`;
           const selfMarker =
-            `<span style="display:inline-block;vertical-align:middle;margin-right:6px;border-radius:6px;` +
+            `<span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
             `width:6px;height:6px;background-color:${color};"></span>`;
+          formatterName = `<span style='display:block;font-weight:bold'>${name}</span><br/>`;
 
           res += `${selfMarker}${seriesName}<span style='margin-left:24px;float:right'>${value}mm</span><br/>`;
         });
@@ -43,19 +44,36 @@ export const getCommonLine = function () {
         color: getCssVariableValue("--text-color"),
       },
     },
-    toolbox: {
-      feature: {
-        saveAsImage: {},
-        dataView: {
-          show: true,
-        },
-      },
-    },
+    // toolbox: {
+    //   itemSize:18,
+    //   feature: {
+    //     saveAsImage: {
+    //       show: true,
+    //       title: "",
+    //       icon: `image://${downloadIconUrl}`,
+    //     },
+    //     dataView: {
+    //       show: true,
+    //       title: "",
+    //       lang:['数据视图', '关闭'],
+    //       icon: `image://${viewIconUrl}`
+    //     },
+    //   },
+    //   tooltip: {
+    //     show: true,
+    //     formatter: function (param) {
+    //       return "<div>" + param.title + "</div>"; // 自定义的 DOM 结构
+    //     },
+    //     backgroundColor: "#222",
+    //     textStyle: {
+    //       fontSize: 12,
+    //     },
+    //     extraCssText: "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);", // 自定义的 CSS 样式
+    //   },
+    // },
     xAxis: [
       {
         type: "category",
-        boundaryGap: false,
-        // minInterval: 7200,
         data: [],
         // 坐标轴刻度相关设置。
         axisTick: {
@@ -73,6 +91,7 @@ export const getCommonLine = function () {
         axisLabel: {
           color: "#666",
           fontSize: 12,
+
           // align: "center",
         },
         // 坐标轴在 grid(网格) 区域中的分隔线。
@@ -96,7 +115,6 @@ export const getCommonLine = function () {
             },
           },
         },
-        // max: 500
       },
       {
         type: "value",
@@ -160,66 +178,121 @@ export const getCommonLine = function () {
   };
 };
 // 柱状图公共配置
-export const getCommonBars = function (data_x) {
+export const getCommonBar = function () {
   return {
     // 显示提示框组件，包括提示框浮层和 axisPointer。
     tooltip: {
       trigger: "axis",
       axisPointer: {
-        type: "none",
-        label: {
-          background: "rgba(0, 0, 0, 0.8)",
+        type: "line",
+        lineStyle: {
+          color: "rgb(228,235,249)",
+          type: "solid",
+          maxWidth: 50,
         },
-        crossStyle: {
-          color: "#FFFFFF",
-        },
+      },
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      formatter: (params) => {
+        let res = "";
+        let formatterName = "";
+        params.forEach((current) => {
+          const { name, color, value, seriesName } = current;
+          formatterName = `<span style='display:block;font-weight:bold'>${name}</span><br/>`;
+          const selfMarker =
+            `<span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
+            `width:6px;height:6px;background-color:${color};"></span>`;
+
+          res += `${selfMarker}${seriesName}<span style='margin-left:24px;float:right'>${value}mm</span><br/>`;
+        });
+        return formatterName + res;
+      },
+      extraCssText: "padding:12px",
+      textStyle: {
+        fontSize: 12,
+        color: getCssVariableValue("--text-color"),
       },
     },
     legend: {
+      show: false,
       itemWidth: 24,
       itemHeight: 12,
-      data: ["在线", "总量"],
       x: "left",
       itemGap: 16,
     },
     // 直角坐标系内绘图网格
     grid: {
-      show: true,
-      top: "16",
-      right: "3%",
-      bottom: 0,
-      borderColor: "transparent",
+      top: 36,
+      left: 10,
+      right: 16,
+      bottom: 50,
+      containLabel: true,
     },
     xAxis: [
       {
-        type: "value",
-        splitLine: {
-          show: false,
-        },
-        axisLine: {
-          show: false,
-        },
-        axisLabel: {
-          show: false,
-        },
+        type: "category",
+        // minInterval: 7200,
+        data: [],
+        // 坐标轴刻度相关设置。
         axisTick: {
+          show: false,
+          interval: 1,
+        },
+        // 坐标轴线设置。
+        axisLine: {
+          show: true,
+          margin: 12,
+          lineStyle: {
+            color: "#CCC",
+          },
+        },
+        // 坐标轴刻度标签的相关设置
+        axisLabel: {
+          color: "#666",
+          fontSize: 12,
+        },
+        // 坐标轴在 grid(网格) 区域中的分隔线。
+        splitLine: {
           show: false,
         },
       },
     ],
     yAxis: [
       {
-        type: "category",
-        data: data_x,
-        // 坐标轴在 grid(网格) 区域中的分隔线。
-        splitLine: {
+        name: "{title|日降雨量(mm)}",
+        type: "value",
+        nameTextStyle: {
+          fontSize: 12,
+          color: getCssVariableValue("--normal-title-color"),
+          fontWeight: "normal",
+          rich: {
+            title: {
+              padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
+              align: "left", // 左对齐
+            },
+          },
+        },
+        // max: 500
+      },
+      {
+        type: "value",
+        // 坐标轴刻度相关设置。
+        axisTick: {
           show: false,
         },
+        // 坐标轴线设置。
         axisLine: {
           show: false,
         },
-        axisTick: {
-          show: false,
+        // 坐标轴刻度标签的相关设置
+        axisLabel: {
+          color: "#999",
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: "#ECECEC",
+            width: 1,
+          },
         },
       },
     ],
@@ -265,6 +338,40 @@ export const getCommonBars = function (data_x) {
         barGap: "40%",
         barCategoryGap: "40%",
         color: ["#e2e8ec"],
+      },
+    ],
+    dataZoom: [
+      {
+        type: "slider",
+        height: 24,
+        bottom: 16,
+        borderColor: "#EFF2F6",
+        handleStyle: {
+          backgroundColor: "#D6DFF1",
+          width: 8,
+        },
+        textStyle: {
+          color: "",
+        },
+        handleSize: "100%", // 手柄大小
+        handleWidth: 8,
+        handleIcon: `image://${handleIconUrl}`, //手柄
+        fillerColor: "#D6DFF1", //条-填充颜色
+        backgroundColor: "#EFF2F6", //条-上
+        dataBackground: {
+          width: 8,
+          areaStyle: {
+            color: "#E0E6EE", //条下
+          },
+          lineStyle: {
+            opacity: 0,
+            color: "#C4CFDE", //背景-中分线
+          },
+        },
+      },
+      {
+        type: "inside",
+        height: 30,
       },
     ],
   };
