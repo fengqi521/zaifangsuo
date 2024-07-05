@@ -1,23 +1,18 @@
 <script setup>
-import { ref, reactive, provide, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
-import RainLevelChart  from "./components/RainLevelChart.vue";
 import { getCssVariableValue } from "@/utils";
-import { SENSOR } from "@/constants";
+import { SENSOR, initialFormData } from "@/constants";
+
 // 定义变量
 const currentType = ref("");
 const searchFormRef = ref(null);
 const calcChartHeight = ref(0);
-const tagHeight = getCssVariableValue("--tagsview-height");
-const componentContainer = ref(null)
+const tagHeight = parseFloat(getCssVariableValue("--tagsview-height")); // 确保 tagHeight 是数值
+const componentContainer = ref(null);
 
 // 表单数据
-const initialData = reactive({
-  type: "",
-  station: "",
-  rtu: "",
-  dateTimeRange: [],
-});
+const initialData = reactive(initialFormData);
 const formItems = reactive([
   {
     label: "传感器类型",
@@ -84,22 +79,37 @@ const formItems = reactive([
     },
   },
 ]);
-
-// 表单元素高度
+// 表单元素高度和初始化
 onMounted(() => {
-  const searchFormRefHeight =
-    searchFormRef.value.$el.getBoundingClientRect().height;
-  calcChartHeight.value = `calc(100% - ${searchFormRefHeight}px -  ${tagHeight} - 18px)`;
+  nextTick(() => {
+    const searchFormRefHeight =
+      searchFormRef.value?.$el.getBoundingClientRect().height || 0;
+    calcChartHeight.value = `calc(100% - ${searchFormRefHeight}px - ${tagHeight}px - 18px)`;
+    setShowComponent(initialData.type);
+  });
 });
+
 // 查询数据
 const handleSearchSubmit = (data) => {
   const { type } = data;
+  setShowComponent(type);
+  // 接口请求
+};
 
+// 重置表单
+const handleReset = () => {
+  Object.assign(initialData, initialFormData);
+  setShowComponent(initialData.type);
+};
+
+// 设置显示title和组件
+const setShowComponent = (type) => {
   const item = formItems[0].options.find(({ value }) => value === type);
   if (item?.value) currentType.value = `${item.label}数据`;
-  componentContainer.value = SENSOR[type]
+  componentContainer.value = SENSOR[type];
 };
 </script>
+
 <template>
   <div class="device-container">
     <!-- 查询条件 -->
@@ -107,6 +117,7 @@ const handleSearchSubmit = (data) => {
       :initialData="initialData"
       :formItems="formItems"
       @submit="handleSearchSubmit"
+      @reset="handleReset"
       ref="searchFormRef"
     />
     <!-- 数据表头 -->
@@ -119,6 +130,7 @@ const handleSearchSubmit = (data) => {
     </div>
   </div>
 </template>
+
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 .device-container {

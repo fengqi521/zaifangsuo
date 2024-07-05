@@ -24,7 +24,7 @@ export default defineConfig({
     /** 接口代理 */
     proxy: {
       "/api": {
-        target: "http://39.108.236.208/",
+        target: "http://192.168.100.178:8000",
         ws: true,
         /** 是否允许跨域 */
         changeOrigin: true,

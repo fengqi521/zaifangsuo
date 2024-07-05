@@ -39,7 +39,7 @@ const props = defineProps({
   },
 });
 
-const formData = reactive({ ...props.initialData });
+let formData = reactive({ ...props.initialData });
 const formRef = ref(null);
 watch(
   () => props.initialData,
@@ -48,7 +48,7 @@ watch(
   },
   { deep: true }
 );
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["submit",'reset']);
 // 提交表单
 const onSubmit = async () => {
   const valid = await formRef.value.validate();
@@ -62,6 +62,7 @@ const onSubmit = async () => {
 
 // 重置表单
 const onReset = () => {
+  emit('reset')
   formRef.value.resetFields();
 };
 </script>
@@ -73,9 +74,10 @@ const onReset = () => {
   align-items: center;
   background: var(--background-color);
   user-select: none;
+  padding:12px 0 0 12px;
 
   .el-form-item {
-    margin: 12px;
+    margin:0 12px 12px 0;
   }
 
   .el-select {

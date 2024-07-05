@@ -99,7 +99,7 @@ function createService() {
 /** get方法 **/
 function get(url, params = {}) {
   return new Promise((resolve, reject) => {
-    axios
+    service
       .get(url, {
         params: params,
       })
@@ -115,7 +115,7 @@ function get(url, params = {}) {
 /** post方法 **/
 function post(url, data) {
   return new Promise((resolve, reject) => {
-    axios.post(url, data).then(
+    service.post(url, data).then(
       (response) => {
         resolve(response.data);
       },
@@ -128,5 +128,5 @@ function post(url, data) {
 
 /** 用于网络请求的实例 */
 const service = createService();
-/** 用于网络请求的方法 */
-export const request = createRequest(service);
+
+export {get,post}

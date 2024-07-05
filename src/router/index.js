@@ -12,6 +12,10 @@ const Err401 = () => import("@/views/error-page/401.vue");
 // 设备数据
 const DeviceData = () => import("@/views/device/index.vue");
 
+// 基础管理
+const BaseProject = () => import("@/views/base/project/index.vue");
+const BaseStation = () => import("@/views/base/station/index.vue");
+
 // 用户管理
 const UserIndex = () => import("@/views/users/user/index.vue");
 const UserPermission = () => import("@/views/users/permission/index.vue");
@@ -20,17 +24,23 @@ export const constantRoutes = [
   {
     path: "/login",
     component: Login,
-    hidden: true,
+    meta: {
+      hidden: true,
+    },
   },
   {
     path: "/404",
     component: Err404,
-    hidden: true,
+    meta: {
+      hidden: true,
+    },
   },
   {
     path: "/401",
     component: Err401,
-    hidden: true,
+    meta: {
+      hidden: true,
+    },
   },
 ];
 export const dynamicRoutes = [
@@ -38,14 +48,13 @@ export const dynamicRoutes = [
     path: "/",
     component: Layout,
     redirect: "/home",
-    hidden: true,
-    icon:'icon-ai-home',
     children: [
       {
         path: "home",
         component: Home,
         meta: {
-          name: "首页",
+          title: "首页",
+          icon: "icon-ai-home",
           affix: true,
         },
       },
@@ -54,14 +63,13 @@ export const dynamicRoutes = [
   {
     path: "/device",
     component: Layout,
-    hidden: true,
-    icon:'icon-shuju',
     children: [
       {
         path: "",
         component: DeviceData,
         meta: {
-          name: "设备数据",
+          title: "设备数据",
+          icon: "icon-shuju",
           affix: true,
         },
       },
@@ -70,15 +78,25 @@ export const dynamicRoutes = [
   {
     path: "/base",
     component: Layout,
-    redirect: "/base/item",
-    hidden: true,
+    redirect: "/base/project",
+    meta: {
+      title: "基础管理",
+      icon: "icon-jichuguanli",
+    },
     children: [
       {
-        path: "base/item",
-        component: Home,
+        path: "project",
+        component: BaseProject,
         meta: {
-          name: "项目管理",
+          title: "项目管理",
           affix: true,
+        },
+      },
+      {
+        path: "station",
+        component: BaseStation,
+        meta: {
+          title: "监测站管理",
         },
       },
     ],
@@ -86,25 +104,34 @@ export const dynamicRoutes = [
   {
     path: "/user",
     component: Layout,
-    hidden: true,
+    meta: {
+      title: "用户管理",
+      icon: "icon-yonghuguanli",
+    },
     children: [
       {
         path: "index",
         component: UserIndex,
-        name: "用户管理",
+        meta: {
+          title: "用户管理",
+        },
       },
       {
         path: "permission",
         component: UserPermission,
-        name: "权限管理",
+        meta: {
+          title: "权限管理",
+        },
       },
       {
         path: "roles",
         component: UserRoles,
-        name: "角色管理",
+        meta: {
+          title: "角色管理",
+        },
       },
     ],
-  }
+  },
 ];
 const router = createRouter({
   history,

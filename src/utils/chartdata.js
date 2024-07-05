@@ -4,8 +4,20 @@ import downloadIconUrl from "@/assets/images/download.png";
 import viewIconUrl from "@/assets/images/view.png";
 
 // 折线图公共配置
-export const getCommonLine = function () {
+export const getCommonLine = function ({
+  seriesUnit = "mm",
+  yAxisTitlePadding = [0, 0, 0, 50],
+} = {}) {
   return {
+    color: [],
+    legend: {
+      show: false,
+      itemWidth: 18,
+      itemHeight: 10,
+      x: "right",
+      itemGap: 16,
+      data: [],
+    },
     grid: {
       top: 36,
       left: 10,
@@ -29,12 +41,12 @@ export const getCommonLine = function () {
         let formatterName = "";
         params.forEach((current) => {
           const { name, color, value, seriesName } = current;
-          const selfMarker =
-            `<span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
-            `width:6px;height:6px;background-color:${color};"></span>`;
-          formatterName = `<span style='display:block;font-weight:bold'>${name}</span><br/>`;
-
-          res += `${selfMarker}${seriesName}<span style='margin-left:24px;float:right'>${value}mm</span><br/>`;
+          formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
+          res +=
+            `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
+            `width:6px;height:6px;background-color:${color};"></span>${seriesName}</div><span>${value}${
+              seriesUnit ? seriesUnit : "mm"
+            }</span></div>`;
         });
         return formatterName + res;
       },
@@ -74,6 +86,8 @@ export const getCommonLine = function () {
     xAxis: [
       {
         type: "category",
+        // boundaryGap: true,
+        // minInterval: 7200,
         data: [],
         // 坐标轴刻度相关设置。
         axisTick: {
@@ -91,8 +105,7 @@ export const getCommonLine = function () {
         axisLabel: {
           color: "#666",
           fontSize: 12,
-
-          // align: "center",
+          rotate: -20,
         },
         // 坐标轴在 grid(网格) 区域中的分隔线。
         splitLine: {
@@ -110,7 +123,7 @@ export const getCommonLine = function () {
           fontWeight: "normal",
           rich: {
             title: {
-              padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
+              padding: yAxisTitlePadding ? yAxisTitlePadding : [0, 0, 0, 50], // 通过负的右边距将标题向左移动
               align: "left", // 左对齐
             },
           },
@@ -178,13 +191,29 @@ export const getCommonLine = function () {
   };
 };
 // 柱状图公共配置
-export const getCommonBar = function () {
+export const getCommonBar = function (unit) {
   return {
-    // 显示提示框组件，包括提示框浮层和 axisPointer。
+    legend: {
+      // 显示提示框组件，包括提示框浮层和 axisPointer。
+      show: false,
+      itemWidth: 24,
+      itemHeight: 12,
+      x: "left",
+      itemGap: 16,
+      data: [],
+    },
+    // 直角坐标系内绘图网格
+    grid: {
+      top: 36,
+      left: 10,
+      right: 16,
+      bottom: 50,
+      containLabel: true,
+    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
-        type: "line",
+        type: "shadow",
         lineStyle: {
           color: "rgb(228,235,249)",
           type: "solid",
@@ -197,12 +226,12 @@ export const getCommonBar = function () {
         let formatterName = "";
         params.forEach((current) => {
           const { name, color, value, seriesName } = current;
-          formatterName = `<span style='display:block;font-weight:bold'>${name}</span><br/>`;
-          const selfMarker =
-            `<span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
-            `width:6px;height:6px;background-color:${color};"></span>`;
-
-          res += `${selfMarker}${seriesName}<span style='margin-left:24px;float:right'>${value}mm</span><br/>`;
+          formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
+          res +=
+            `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
+            `width:6px;height:6px;background-color:${color};"></span>${seriesName}</div><span>${value}${
+              unit ? unit : "mm"
+            }</span></div>`;
         });
         return formatterName + res;
       },
@@ -211,21 +240,6 @@ export const getCommonBar = function () {
         fontSize: 12,
         color: getCssVariableValue("--text-color"),
       },
-    },
-    legend: {
-      show: false,
-      itemWidth: 24,
-      itemHeight: 12,
-      x: "left",
-      itemGap: 16,
-    },
-    // 直角坐标系内绘图网格
-    grid: {
-      top: 36,
-      left: 10,
-      right: 16,
-      bottom: 50,
-      containLabel: true,
     },
     xAxis: [
       {
@@ -266,7 +280,7 @@ export const getCommonBar = function () {
           fontWeight: "normal",
           rich: {
             title: {
-              padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
+              // padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
               align: "left", // 左对齐
             },
           },

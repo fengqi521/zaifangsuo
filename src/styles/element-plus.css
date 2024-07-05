@@ -3,7 +3,7 @@ html.normal {
     --el-dialog-padding-primary: 16px;
 
     /* 基础 */
-    --el-fill-color-blank: rgb(228, 235, 249);
+    /* --el-fill-color-blank: rgb(228, 235, 249); */
     --el-border-radius-base: 0;
     --el-text-color-placeholder: rgb(78, 90, 113);
     --el-text-color-regular:rgb(78, 90, 113);

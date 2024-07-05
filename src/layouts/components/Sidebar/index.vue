@@ -49,11 +49,14 @@ const activeMenu = computed(() => {
   line-height: var(--sidebar-menu-item-height);
   color: var(--sidebar-title-color);
   font-size: 14px;
-
+  .title-left {
+    margin-left: 24px;
+  }
   .iconfont {
-    margin-right: 16px;
+    margin-right: 18px;
     color: var(--sidebar-title-color) !important;
   }
+
   &.is-active {
     color: var(--sidebar-active-color);
     background: var(--sidebar-active-bg-color);

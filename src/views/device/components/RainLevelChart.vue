@@ -5,6 +5,7 @@ import { getCommonLine, getCommonBar } from "@/utils/chartData";
 import { getCssVariableValue } from "@/utils";
 const barWidth = getCssVariableValue("--bar-width");
 const barGap = getCssVariableValue("--bar-gap");
+const baseColor = getCssVariableValue('--chart-base-color')
 
 // 累计量
 const collectOption = reactive(getCommonLine());
@@ -2201,6 +2202,12 @@ onMounted(() => {
       type: "line",
       data: res.data.x,
       smooth: true,
+      lineStyle:{
+        color:baseColor
+      },
+      itemStyle:{
+        color:baseColor
+      }
     },
   ];
 
@@ -2226,14 +2233,18 @@ onMounted(() => {
     },
   };
   dayOption.xAxis[0].data = res1.data.xAxis;
+  dayOption.yAxis[0].name = "{title|日降雨量(mm/d)}";
   dayOption.series = [
     {
       name: "日降雨量",
       type: "bar",
-      barMaxWidth:barWidth,
+      barMaxWidth: barWidth,
       barGap,
       data: res1.data.x,
       z: 50,
+      itemStyle:{
+        color:baseColor
+      }
     },
   ];
 
@@ -2435,14 +2446,17 @@ onMounted(() => {
     },
   };
   hourRainOption.xAxis[0].data = res2.data.xAxis;
-  hourRainOption.yAxis[0].name = "{title|60分钟降雨量(mm)}";
+  hourRainOption.yAxis[0].name = "{title|60分钟降雨量(mm/h)}";
   hourRainOption.series = [
     {
       name: "60分钟降雨量",
       type: "bar",
-      barMaxWidth:barWidth,
+      barMaxWidth: barWidth,
       barGap,
       data: res2.data.x,
+      itemStyle:{
+        color:baseColor
+      },
       z: 50,
     },
   ];
@@ -2824,12 +2838,12 @@ onMounted(() => {
     },
   };
   halfRainOption.xAxis[0].data = res3.data.xAxis;
-  halfRainOption.yAxis[0].name = "{title|30分钟降雨量(mm)}";
+  halfRainOption.yAxis[0].name = "{title|30分钟降雨量(mm/30min)}";
   halfRainOption.series = [
     {
       name: "30分钟降雨量",
       type: "bar",
-      barMaxWidth:barWidth,
+      barMaxWidth: barWidth,
       barGap,
       data: res3.data.x,
       z: 50,
