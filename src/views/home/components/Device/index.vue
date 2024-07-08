@@ -130,10 +130,5 @@ onMounted(() => {
       color: var(--panel-active-color);
     }
   }
-
-  .device-main {
-    padding: 20px;
-    background: var(--background-color);
-  }
 }
 </style>

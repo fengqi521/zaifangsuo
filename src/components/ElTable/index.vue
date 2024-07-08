@@ -4,8 +4,8 @@
     <el-table
       v-bind="tableProps"
       height="484"
-      :data="tableData"
-      v-loading="loading"
+      :data="props.data"
+      v-loading="props.loading"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
     >
@@ -45,7 +45,6 @@
         </template>
       </el-table-column>
     </el-table>
-
   </div>
 </template>
 
@@ -63,22 +62,6 @@ const props = defineProps({
   defaultSort: Object,
   tableProps: Object,
 });
-const { data, pageSize = 10, total = 0 } = toRefs(props);
-
-// 状态
-const currentPage = ref(1);
-const tableData = ref(data.value);
-const loading = ref(props.loading || false);
-
-// 监听 data 变化
-watch(
-  () => data.value,
-  (newData) => {
-    tableData.value = newData;
-  },
-  { immediate: true }
-);
-
 
 // 排序改变处理函数
 const handleSortChange = (sortInfo) => {
@@ -100,7 +83,9 @@ const emit = defineEmits([
 
 <style lang="scss" scoped>
 .table-container {
+  padding: 20px;
   text-align: right;
+  background: var(--background-color);
   :deep(.el-table) {
     thead {
       font-size: 12px;
@@ -127,6 +112,5 @@ const emit = defineEmits([
       line-height: 18px;
     }
   }
- 
 }
 </style>
