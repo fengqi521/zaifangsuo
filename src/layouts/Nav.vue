@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { Logo, CurrentDate, Avatar, SignOut, Setting } from "./components";
+import { Logo, CurrentDate, Avatar } from "./components";
 const avatarUrl = ref("");
 onMounted(() => {
   avatarUrl.value =
@@ -15,7 +15,6 @@ onMounted(() => {
     <div class="layout-user">
       <CurrentDate />
       <Avatar :avatarUrl="avatarUrl" />
-      <SignOut />
     </div>
   </nav>
 </template>

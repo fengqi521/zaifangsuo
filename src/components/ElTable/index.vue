@@ -46,26 +46,11 @@
       </el-table-column>
     </el-table>
 
-    <!-- 分页 -->
-    <el-pagination
-      v-if="pagination"
-      background
-      :current-page.sync="currentPage"
-      :page-size="pageSize"
-      :total="total"
-      layout="slot, prev, pager, next,sizes, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    >
-      <template #default>
-        <span class="pagination-info"> 共 {{ total }} 条数据 </span>
-      </template>
-    </el-pagination>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, toRefs, defineEmits, defineProps } from "vue";
+import { ref, watch, toRefs } from "vue";
 
 // 组件 props
 const props = defineProps({
@@ -94,16 +79,6 @@ watch(
   { immediate: true }
 );
 
-// 分页改变处理函数
-const handleCurrentChange = (page) => {
-  currentPage.value = page;
-  emit("pagination-change", page, pageSize.value);
-};
-
-// 页面大小改变处理函数
-const handleSizeChange = (size) => {
-  emit("page-size-change", size);
-};
 
 // 排序改变处理函数
 const handleSortChange = (sortInfo) => {
@@ -152,13 +127,6 @@ const emit = defineEmits([
       line-height: 18px;
     }
   }
-  :deep(.el-pagination) {
-    margin-top: 16px;
-    justify-content: flex-end;
-
-    .pagination-info {
-      color: var(--el-text-color-regular);
-    }
-  }
+ 
 }
 </style>

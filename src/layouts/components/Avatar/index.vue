@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
-
+import { userHook } from "@/stores/modules/user";
+const open = ref(false);
 const props = defineProps({
   avatarUrl: {
     type: String,
@@ -15,24 +16,51 @@ const props = defineProps({
     default: "zhangheng",
   },
 });
+
+const handleChange = (val) => {
+  open.value = val;
+};
+
+// 退出登录
+const handleClickLogout = () => {
+  try {
+    userHook().logout();
+  } catch (error) {}
+};
 </script>
 <template>
-  <div class="user-container">
-    <!-- 头像 -->
-    <div class="user-avatar"><img :src="avatarUrl" /></div>
-    <!-- 用户名 -->
-    <div class="user-info">
-      <p class="user-item">{{ role }}</p>
-      <p class="user-item">{{ userName }}</p>
+  <el-dropdown placement="bottom-end" @visible-change="handleChange">
+    <div class="user-container">
+      <!-- 头像 -->
+      <div class="user-avatar"><img :src="avatarUrl" /></div>
+      <!-- 用户名 -->
+      <div class="user-info">
+        <p class="user-item">{{ role }}</p>
+        <p class="user-item">{{ userName }}</p>
+      </div>
+      <Icon
+        :class="{ 'user-icon': true, 'open-icon': open }"
+        iconClass="icon-shanglaxiala"
+        size="12px"
+        color="#FFF"
+      />
     </div>
-  </div>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item>修改密码</el-dropdown-item>
+        <el-dropdown-item @click="handleClickLogout">安全退出</el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
 </template>
 <style lang="scss" scoped>
 .user-container {
   display: flex;
   align-items: center;
-  height:32px;
-  margin-inline:30px 18px;
+  margin-left: 30px;
+  height: 32px;
+  color: var(--nav-header-text-color);
+  cursor: pointer;
 
   .user-avatar {
     width: 32px;
@@ -44,16 +72,23 @@ const props = defineProps({
       object-fit: cover;
       border-radius: 4px;
     }
-
   }
 
-  .user-info{
-    padding-inline:8px;
-    .user-item{
-      margin:0;
-      padding:2px 0
+  .user-info {
+    padding-inline: 8px;
+    .user-item {
+      margin: 0;
+      padding: 2px 0;
     }
   }
-}
 
+  .user-icon {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .open-icon {
+    transform: rotate(-180deg);
+    transition: transform 0.3s ease-in-out;
+  }
+}
 </style>

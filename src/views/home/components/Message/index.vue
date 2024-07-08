@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineProps, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import MessageSearch from "../MessageSearch/index.vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 

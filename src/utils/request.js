@@ -1,7 +1,7 @@
 import axios from "axios";
 // import { useUserStoreHook } from "@/store/modules/user"
 // import { ElMessage } from "element-plus"
-// import { get, merge } from "lodash-es"
+import { get, merge } from "lodash";
 // import { getToken } from "./cache/cookies"
 
 /** 退出登录并强制刷新页面（会重定向到登录页） */
@@ -16,14 +16,21 @@ function createService() {
   const service = axios.create();
   // 请求拦截
   service.interceptors.request.use(
-    (config) => config,
+    (config) => {
+      config.headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+      };
+      return config;
+    },
     // 发送失败
     (error) => Promise.reject(error)
   );
   // 响应拦截（可根据具体业务作出相应的调整）
   service.interceptors.response.use(
     (response) => {
-      // const apiData = response.data;
+      const apiData = response.data;
+      return apiData;
+      console.log(response);
       // // 二进制数据则直接返回
       // const responseType = response.request?.responseType;
       // if (responseType === "blob" || responseType === "arraybuffer")
@@ -89,44 +96,57 @@ function createService() {
         default:
           break;
       }
-      ElMessage.error(error.message);
+      // ElMessage.error(error.message);
       return Promise.reject(error);
     }
   );
   return service;
 }
 
-/** get方法 **/
-function get(url, params = {}) {
-  return new Promise((resolve, reject) => {
-    service
-      .get(url, {
-        params: params,
-      })
-      .then((response) => {
-        resolve(response.data);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
-
-/** post方法 **/
-function post(url, data) {
-  return new Promise((resolve, reject) => {
-    service.post(url, data).then(
-      (response) => {
-        resolve(response.data);
-      },
-      (err) => {
-        reject(err);
-      }
-    );
-  });
+/** 创建请求方法 */
+function createRequest(service) {
+  return function (config) {
+    // const token = getToken()
+    const defaultConfig = {
+      // headers: {
+      // 携带 Token
+      // Authorization: token ? `Bearer ${token}` : undefined,
+      // "Content-Type": "application/json",
+      // },
+      timeout: 30000,
+      baseURL: import.meta.env.VITE_BASE_API,
+      data: {},
+    };
+    // 合并配置 mergeConfig
+    const mergeConfig = merge(defaultConfig, config);
+    return service(mergeConfig);
+  };
 }
 
 /** 用于网络请求的实例 */
 const service = createService();
 
-export {get,post}
+/** 用于网络请求的方法 */
+const request = createRequest(service);
+
+/** 封装 POST 请求方法 */
+function postRequest(url, data = {}, config = {}) {
+  return request({
+    ...config,
+    url,
+    method: "post",
+    data,
+  });
+}
+
+// /** 封装 GET 请求方法 */
+function getRequest(url, params = {}, config = {}) {
+  return request({
+    ...config,
+    url,
+    method: "get",
+    params,
+  });
+}
+
+export { getRequest, postRequest };

@@ -6,6 +6,9 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    __VUE_PROD_DEVTOOLS__: true,
+  },
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
@@ -25,9 +28,10 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://192.168.100.178:8000",
-        ws: true,
+        ws: false,
         /** 是否允许跨域 */
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
       },
     },
     /** 预热常用文件，提高初始页面加载速度 */

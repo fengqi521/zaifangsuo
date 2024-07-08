@@ -63,13 +63,14 @@
     --home-message-date-color: #BBB;
 
     /* table */
-    --table-th-bg-color: #EEE;
+    --table-th-bg-color: #E3E5EC;
     --table-th-text-color: #2c393b;
     --table-tbody-text-color: #666;
 
     /* 标题 */
-    --panel-text-color: #666;
-    --panel-active-color: #2c393b;
+    --panel-text-color: #4E5A71;
+    --panel-bg-color:#E1E6ED;
+    --panel-active-color:#46B4E6;
 
     /* 图形颜色 */
     --chart-pie-online-color: #91CC75;

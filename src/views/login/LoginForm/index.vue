@@ -3,14 +3,16 @@ import { ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { usePermissionStore } from "@/stores/modules/permission";
 import formValidators from "@/utils/formValidators";
-import { CODE_SRC } from "@/constants";
+import loginApi from "@/api/login";
+import { useMessage } from "@/plugins/message";
 
-const router = useRouter();
 const { setPermissionRoutes } = usePermissionStore();
+const { success, error } = useMessage();
+const router = useRouter();
 
 // 定义变量
 const formRef = ref(null);
-const loginInfo = reactive({ username: "", password: "", code: "" });
+const loginInfo = reactive({ username: "", password: "", captcha: "" });
 const codeImg = ref("");
 const loginInfoRules = reactive({
   username: [
@@ -27,12 +29,12 @@ const loginInfoRules = reactive({
       message: "请输入密码",
       trigger: "blur",
     },
-    {
-      validator: formValidators.validatePassword,
-      trigger: "blur",
-    },
+    // {
+    //   validator: formValidators.validatePassword,
+    //   trigger: "blur",
+    // },
   ],
-  code: [
+  captcha: [
     {
       required: true,
       message: "请输入验证码",
@@ -40,24 +42,31 @@ const loginInfoRules = reactive({
   ],
 });
 
-// 初始化
-onMounted(() => {
-  getCode();
-});
-
 // 获取验证码
-const getCode = () => {
-  codeImg.value = CODE_SRC;
+const handleClickGetCode = () => {
+  codeImg.value = `${
+    import.meta.env.VITE_BASE_API
+  }/v1/captcha/create?${new Date()}`;
 };
+handleClickGetCode();
 
 // 提交表单
-const submitForm = async (formName) => {
-  const valid = await formRef.value.validate();
-  if (valid) {
-    setPermissionRoutes();
-    router.push("/");
-    return;
-  }
+const submitForm = async () => {
+  try {
+    const valid = await formRef.value.validate();
+    if (valid) {
+      const result = await loginApi.login(loginInfo);
+      if (!result?.code) {
+        success("登录成功");
+        // 保存token
+        // setPermissionRoutes(result?.menus);
+        router.push("/");
+      } else {
+        handleClickGetCode();
+        error(result.message);
+      }
+    }
+  } catch (error) {}
 };
 </script>
 <template>
@@ -68,6 +77,7 @@ const submitForm = async (formName) => {
       :model="loginInfo"
       :rules="loginInfoRules"
       label-width="auto"
+      @keyup.enter="submitForm"
     >
       <el-form-item prop="username">
         <el-input v-model="loginInfo.username" placeholder="请输入用户名">
@@ -100,11 +110,11 @@ const submitForm = async (formName) => {
           </template> -->
         </el-input>
       </el-form-item>
-      <el-form-item class="login-form-code" prop="code">
-        <el-input v-model="loginInfo.code" placeholder="请输入验证码" />
-        <img class="captcha-image" :src="codeImg" @click="getCode" />
+      <el-form-item class="login-form-code" prop="captcha">
+        <el-input v-model="loginInfo.captcha" placeholder="请输入验证码" />
+        <img class="captcha-image" :src="codeImg" @click="handleClickGetCode" />
       </el-form-item>
-      <el-button class="btn-primary" @click="submitForm()">登录</el-button>
+      <el-button class="btn-primary" @click="submitForm">登录</el-button>
     </el-form>
   </div>
 </template>
@@ -126,6 +136,8 @@ const submitForm = async (formName) => {
 
   .login-form-code {
     .captcha-image {
+      max-width: 70px;
+      height: 40px;
       margin-left: 6px;
       cursor: pointer;
     }

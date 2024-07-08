@@ -440,6 +440,7 @@ export const getCommonPie = function () {
         type: "pie",
         center: ["50%", "45%"],
         avoidLabelOverlap: false,
+        selectedMode: "single",
         // padAngle: 5,
         itemStyle: {
           borderRadius: 10,

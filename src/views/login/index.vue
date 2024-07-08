@@ -1,10 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import LoginForm from "./LoginForm/index.vue";
-import api from "@/api/test";
-onMounted(() => {
-  api.getMenu();
-});
+
 </script>
 <template>
   <div class="login-container">

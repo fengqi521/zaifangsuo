@@ -12,14 +12,16 @@ const Err401 = () => import("@/views/error-page/401.vue");
 // 设备数据
 const DeviceData = () => import("@/views/device/index.vue");
 
+// rtu管理
+const RtuData = () => import("@/views/rtu/index.vue");
+
 // 基础管理
-const BaseProject = () => import("@/views/base/project/index.vue");
-const BaseStation = () => import("@/views/base/station/index.vue");
+// const BaseProject = () => import("@/views/base/project/index.vue");
+// const BaseStation = () => import("@/views/base/station/index.vue");
 
 // 用户管理
-const UserIndex = () => import("@/views/users/user/index.vue");
+const UserList = () => import("@/views/users/list/index.vue");
 const UserPermission = () => import("@/views/users/permission/index.vue");
-const UserRoles = () => import("@/views/users/roles/index.vue");
 export const constantRoutes = [
   {
     path: "/login",
@@ -69,34 +71,23 @@ export const dynamicRoutes = [
         component: DeviceData,
         meta: {
           title: "设备数据",
-          icon: "icon-shuju",
+          icon: "icon-shebeishuju",
           affix: true,
         },
       },
     ],
   },
   {
-    path: "/base",
+    path: "/rtu",
     component: Layout,
-    redirect: "/base/project",
-    meta: {
-      title: "基础管理",
-      icon: "icon-jichuguanli",
-    },
     children: [
       {
-        path: "project",
-        component: BaseProject,
+        path: "",
+        component: RtuData,
         meta: {
-          title: "项目管理",
+          title: "rtu管理",
+          icon: "icon-a-RTUguanliweixuan",
           affix: true,
-        },
-      },
-      {
-        path: "station",
-        component: BaseStation,
-        meta: {
-          title: "监测站管理",
         },
       },
     ],
@@ -110,8 +101,8 @@ export const dynamicRoutes = [
     },
     children: [
       {
-        path: "index",
-        component: UserIndex,
+        path: "list",
+        component: UserList,
         meta: {
           title: "用户管理",
         },
@@ -121,13 +112,6 @@ export const dynamicRoutes = [
         component: UserPermission,
         meta: {
           title: "权限管理",
-        },
-      },
-      {
-        path: "roles",
-        component: UserRoles,
-        meta: {
-          title: "角色管理",
         },
       },
     ],
