@@ -36,22 +36,6 @@ const formItems = reactive([
     ],
   },
   {
-    label: "监测站",
-    prop: "station",
-    attrs: { placeholder: "请选择监测站" },
-    type: "el-select",
-    options: [
-      { label: "京拉线（G109）K31+110-0141-裂", value: 1 },
-      { label: "南雁路（S219）K28+600-0209-裂", value: 2 },
-      { label: "南雁路（S219）K28+600-0208-裂", value: 3 },
-      { label: "京门-G234-阳坡园西-0438-裂", value: 4 },
-      { label: "京门-G234-阳坡园西-0437-裂", value: 5 },
-      { label: "京门-G234-阳坡园西-0435-裂", value: 6 },
-      { label: "门头沟阳坡园西G234倾角位移计", value: 7 },
-      { label: "阳坡园倾角监测站", value: 8 },
-    ],
-  },
-  {
     label: "RTU",
     prop: "rtu",
     type: "el-select",

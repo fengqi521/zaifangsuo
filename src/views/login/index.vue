@@ -1,5 +1,4 @@
 <script setup>
-import { onMounted } from "vue";
 import LoginForm from "./LoginForm/index.vue";
 
 </script>

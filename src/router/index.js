@@ -20,8 +20,7 @@ const RtuData = () => import("@/views/rtu/index.vue");
 // const BaseStation = () => import("@/views/base/station/index.vue");
 
 // 用户管理
-const UserList = () => import("@/views/users/list/index.vue");
-const UserPermission = () => import("@/views/users/permission/index.vue");
+const UserList = () => import("@/views/users/index.vue");
 export const constantRoutes = [
   {
     path: "/login",
@@ -95,25 +94,15 @@ export const dynamicRoutes = [
   {
     path: "/user",
     component: Layout,
-    meta: {
-      title: "用户管理",
-      icon: "icon-yonghuguanli",
-    },
     children: [
       {
-        path: "list",
+        path: "",
         component: UserList,
         meta: {
           title: "用户管理",
+          icon:'icon-yonghuguanli'
         },
-      },
-      {
-        path: "permission",
-        component: UserPermission,
-        meta: {
-          title: "权限管理",
-        },
-      },
+      }
     ],
   },
 ];

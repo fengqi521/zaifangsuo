@@ -66,7 +66,7 @@ function createService() {
           // Token 过期时
           logout();
           break;
-        case 403:
+        case 302:
           error.message = "拒绝访问";
           break;
         case 404:

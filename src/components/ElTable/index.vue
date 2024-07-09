@@ -30,7 +30,14 @@
             :column="scope.column"
             :$index="scope.$index"
           >
+          <div v-if="Array.isArray(scope.row[column.prop])">
+            <p v-for="(item, index) in scope.row[column.prop]" :key="index">
+              {{ item.device_name }}
+            </p>
+          </div>
+          <div v-else>
             {{ scope.row[column.prop] }}
+          </div>
           </slot>
         </template>
       </el-table-column>
@@ -50,7 +57,6 @@
 
 <script setup>
 import { ref, watch, toRefs } from "vue";
-
 // 组件 props
 const props = defineProps({
   columns: Array,
@@ -82,6 +88,7 @@ const emit = defineEmits([
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/tools.scss';
 .table-container {
   padding: 20px;
   text-align: right;
@@ -102,6 +109,8 @@ const emit = defineEmits([
     td {
       border-right: none;
       height: 44px;
+      max-height: 76px;
+      overflow: hidden
     }
 
     th {
@@ -110,6 +119,8 @@ const emit = defineEmits([
 
     .cell {
       line-height: 18px;
+      max-height: 76px;
+      @extend %ellipsis
     }
   }
 }

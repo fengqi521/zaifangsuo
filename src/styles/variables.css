@@ -94,5 +94,8 @@
     --legend-bg-color-2: #9270CA;
     --legend-bg-color-3: #FF9D4D;
 
+    /* 删除色 */
+    --delete-text-color:#ff5859;
+
 
 }
