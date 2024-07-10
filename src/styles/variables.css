@@ -15,6 +15,7 @@
     --normal-title-color: #4E5A71;
     --normal-border-color: #D3DCEE;
     --normal-icon-bg-color: rgb(78, 90, 113);
+    --normal-icon-text-color:rgb(78, 90, 113);
 
     /* 滚动条 */
     --scrollbar-thumb-color: #6b7a99;
@@ -29,6 +30,7 @@
     /* button颜色 */
     --btn-bg-color: #1089FF;
     --btn-hover-color: rgb(11, 95, 178);
+    
 
     /* nav */
     --nav-header-text-color: #FFF;

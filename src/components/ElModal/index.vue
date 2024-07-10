@@ -26,6 +26,7 @@ const handleClickClose = () => {
   <div>
     <el-dialog
       :model-value="props.dialogVisible"
+      :destroy-on-close="true"
       :title="props.title"
       :width="props.width"
       @close="handleClickClose"

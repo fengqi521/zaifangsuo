@@ -74,6 +74,7 @@ const getLists = async (page, limit) => {
   loading.value = false;
 };
 getLists();
+
 //-------------添加修改用户信息---------------
 // 用户表单modal
 const dialogVisible = ref(false);
@@ -96,14 +97,28 @@ const handleEdit = (row) => {
 const handleClose = (val) => {
   dialogVisible.value = val;
   authorVisible.value = val;
-  
 };
 //---------------设备授权----------
+const transferValue = ref({ uid: "", did: [] });
 const authorVisible = ref(false);
-
+const updateTransferValue = (newVal) => {
+  transferValue.value.did = newVal;
+};
 // 显示授权
-const handleClickAuthor = () => {
+const handleClickShowAuthor = (row) => {
+  transferValue.value.did = [];
+  transferValue.value.uid = row.id;
   authorVisible.value = true;
+  transferValue.value.did = row.devices.map((item) => item.id);
+};
+
+// 授权
+const handleClickAuthor = (values) => {
+  userApi
+    .updateUser({ ...transferValue.value, did: values.join(",") })
+    .then((res) => {
+      console.log(res);
+    });
 };
 
 // ----------删除用户---------
@@ -143,15 +158,18 @@ const handleCloseDeleteModal = () => {
     <SearchForm :formItems="formItems" :initialData="initialData" />
 
     <ElTable
+      class="user-table"
       :loading="loading"
       :columns="columns"
       :data="userData"
       :tableProps="{ showSelection: false, border: true }"
     >
       <template #action="{ row }">
-        <span @click="handleClickAuthor(row)">设备授权</span>
-        <span @click="handleDelete(row)">删除</span>
-        <span @click="handleEdit(row)">修改</span>
+        <span class="btn author-btn" @click="handleClickShowAuthor(row)"
+          >设备授权</span
+        >
+        <span class="btn update-btn" @click="handleEdit(row)">修改</span>
+        <span class="btn delete-btn" @click="handleDelete(row)">删除</span>
       </template>
     </ElTable>
     <ElPagination
@@ -170,7 +188,14 @@ const handleCloseDeleteModal = () => {
       @get-list="getLists(1)"
     />
 
-    <Author :dialogVisible="authorVisible" :deviceOptions="deviceOptions"       @handle-close="handleClose"/>
+    <Author
+      :dialogVisible="authorVisible"
+      :deviceOptions="deviceOptions"
+      :data="transferValue.did"
+      @update:transfer-value="updateTransferValue"
+      @handle-close="handleClose"
+      @handle-submit="handleClickAuthor"
+    />
     <ElModal
       class="message-box"
       title="删除确认"
@@ -192,6 +217,17 @@ const handleCloseDeleteModal = () => {
   </div>
 </template>
 <style lang="scss" scoped>
+.user-table {
+  .btn {
+    margin-inline: 4px;
+    color: var(--normal-icon-text-color);
+    cursor: pointer;
+  }
+
+  .delete-btn{
+    color:var(--delete-text-color)
+  }
+}
 .message-box {
   :deep(.el-dialog) {
     width: 420px;
