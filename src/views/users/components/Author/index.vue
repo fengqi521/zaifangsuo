@@ -37,7 +37,11 @@ const handleClose = () => {
   emit("handle-close", false);
 };
 
-//
+const handleChangRight = (values,s)=>{
+   console.log(values,s)
+}
+
+// 提交
 const handleChange = (values) => {
   emit("handle-submit", values);
 };
@@ -53,12 +57,13 @@ const handleChange = (values) => {
       <el-transfer
         v-model="transferValue"
         @change="handleChange"
-        :data="deviceOptions"
+        :data="props.deviceOptions"
         :titles="['未授权设备', '已授权设备']"
         :button-texts="['取消授权', '设备授权']"
         :filter-method="filterMethod"
         filterable
         filter-placeholder="查询数据"
+        @right-check-change	="handleChangRight"
       />
     </template>
     <template v-slot:footer>

@@ -1,4 +1,6 @@
 <script setup>
+import { watch } from 'vue';
+
 const props = defineProps({
   currentPage: {
     type: [String, Number],
@@ -13,7 +15,11 @@ const props = defineProps({
     default: 0,
   },
 });
-const emit = defineEmits(["handle-change-page"]);
+
+watch(()=>props.total,(val)=>{
+  console.log(val,'=fffffffffff')
+})
+const emit = defineEmits(["pagination-change", "page-size-change"]);
 
 // 分页改变处理函数
 const handleCurrentChange = (page) => {
@@ -29,17 +35,17 @@ const handleSizeChange = (size) => {
 <template>
   <!-- 分页 -->
   <el-pagination
-    v-if="total"
+    v-if="props.total"
     class="pagination"
-    :current-page.sync="currentPage"
-    :page-size="pageSize"
-    :total="total"
+    :current-page="props.currentPage"
+    :page-size="props.pageSize"
+    :total="props.total"
     layout="slot, prev, pager, next,sizes, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   >
     <template #default>
-      <span class="pagination-info"> 共 {{ total }} 条数据 </span>
+      <span class="pagination-info"> 共 {{ props.total }} 条数据 </span>
     </template>
   </el-pagination>
 </template>

@@ -1,4 +1,4 @@
-import { resolve } from "path"
+import { resolve } from "path";
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
@@ -31,7 +31,7 @@ export default defineConfig({
         ws: false,
         /** 是否允许跨域 */
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // 重写路径
+        rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径
       },
     },
     /** 预热常用文件，提高初始页面加载速度 */
@@ -40,5 +40,4 @@ export default defineConfig({
     },
   },
   plugins: [vue(), vueJsx()],
-
 });

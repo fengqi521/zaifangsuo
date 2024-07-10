@@ -1,5 +1,5 @@
 import { ref, watchEffect } from "vue";
-import { setThemeName, getThemeName } from "@/utils/cache";
+import { setThemeName, getThemeName } from "@/utils/cache/localStorage";
 
 const DEFAULT_THEME_NAME = "normal";
 /** 主题列表 */

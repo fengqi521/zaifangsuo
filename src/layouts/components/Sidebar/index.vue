@@ -1,14 +1,9 @@
 <script setup>
 import { computed, onMounted } from "vue";
-import { usePermissionStore } from "@/stores/modules/permission";
+import { usePermissionStoreHook } from "@/store/modules/permission";
 import SidebarItem from "./SidebarItem.vue";
 
-const { routes } = usePermissionStore();
-onMounted(async () => {
-  // const result = await getSideData();
-  // appStore.setSideLists(result);
-});
-
+const { routes } = usePermissionStoreHook();
 const backgroundColor = "var(--sidebar-bg-color)";
 
 const activeMenu = computed(() => {

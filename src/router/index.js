@@ -14,6 +14,7 @@ const DeviceData = () => import("@/views/device/index.vue");
 
 // rtu管理
 const RtuData = () => import("@/views/rtu/index.vue");
+const RtuDetail = () => import("@/views/rtu/detail/index.vue");
 
 // 基础管理
 // const BaseProject = () => import("@/views/base/project/index.vue");
@@ -57,6 +58,7 @@ export const dynamicRoutes = [
           title: "首页",
           icon: "icon-ai-home",
           affix: true,
+          roles: [1, 2, 3, 4, 5],
         },
       },
     ],
@@ -72,6 +74,7 @@ export const dynamicRoutes = [
           title: "设备数据",
           icon: "icon-shebeishuju",
           affix: true,
+          roles: [1],
         },
       },
     ],
@@ -87,7 +90,12 @@ export const dynamicRoutes = [
           title: "rtu管理",
           icon: "icon-a-RTUguanliweixuan",
           affix: true,
+          roles: [1],
         },
+      },
+      {
+        path: "detail/:id",
+        component: RtuDetail,
       },
     ],
   },
@@ -100,9 +108,10 @@ export const dynamicRoutes = [
         component: UserList,
         meta: {
           title: "用户管理",
-          icon:'icon-yonghuguanli'
+          icon: "icon-yonghuguanli",
+          roles: [1],
         },
-      }
+      },
     ],
   },
 ];

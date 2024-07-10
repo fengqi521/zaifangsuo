@@ -1,56 +1,56 @@
-import router from "@/router"
-// import { useUserStoreHook } from "@/store/modules/user"
-// import { usePermissionStoreHook } from "@/store/modules/permission"
-import { ElMessage } from "element-plus"
-// import { getToken } from "@/utils/cache/cookies"
-// import routeSettings from "@/config/route"
-// import isWhiteList from "@/config/white-list"
-import NProgress from "nprogress"
-import "nprogress/nprogress.css"
+import router from "@/router";
+import { userInfoStoreHook } from "@/store/modules/user";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
-NProgress.configure({ showSpinner: false })
+const isWhiteList = (path) => {
+  return ["/login", "/404", "/401"].indexOf(path) > -1;
+};
 
-router.beforeEach(async (to, _from, next) => {
-  NProgress.start()
-  // const userStore = useUserStoreHook()
-  // const permissionStore = usePermissionStoreHook()
-  const token = ''
-  console.log(token,'====')
-  // 如果没有登陆
-  if (!token) {
+NProgress.configure({ showSpinner: false });
+router.beforeEach(async (to, from, next) => {
+  const { setRoutes, dynamicRealRoutes } = usePermissionStoreHook();
+  const { userInfo, getUserInfo } = userInfoStoreHook();
+  const { uid } = userInfo;
+
+  
+  NProgress.start();
+
+  try {
+    await getUserInfo(); // 确保 getUserInfo 是异步的并等待其完成
+  } catch (error) {}
+
+  // 未登录
+  if (!uid) {
     // 如果在免登录的白名单中，则直接进入
-    // if (isWhiteList(to)) return next()
-    // 其他没有访问权限的页面将被重定向到登录页面
-    return next("/login")
-  }
+    if (isWhiteList(to.path)) return next();
 
+    // 其他没有访问权限的页面将被重定向到登录页面
+    return next({ path: "/login", replace: true });
+  }
   // 如果已经登录，并准备进入 Login 页面，则重定向到主页
   if (to.path === "/login") {
-    return next({ path: "/" })
+    return next({ path: "/" });
   }
 
   // 否则要重新获取权限角色
   try {
-  //   await userStore.getInfo()
-  //   // 注意：角色必须是一个数组！ 例如: ["admin"] 或 ["developer", "editor"]
-  //   const roles = userStore.roles
-  //   // 生成可访问的 Routes
-  //   routeSettings.dynamic ? permissionStore.setRoutes(roles) : permissionStore.setAllRoutes()
-  //   // 将 "有访问权限的动态路由" 添加到 Router 中
-  //   permissionStore.addRoutes.forEach((route) => router.addRoute(route))
-  //   // 确保添加路由已完成
-  //   // 设置 replace: true, 因此导航将不会留下历史记录
-    next({ ...to, replace: true })
+    //   await userStore.getInfo()
+    //   const roles = userStore.roles
+    setRoutes(roles);
+    //   // 将 "有访问权限的动态路由" 添加到 Router 中
+    dynamicRealRoutes.forEach((route) => router.addRoute(route));
+    //   // 设置 replace: true, 因此导航将不会留下历史记录
+    next({ ...to, replace: true });
   } catch (err) {
-  //   // 过程中发生任何错误，都直接重置 Token，并重定向到登录页面
-  //   userStore.resetToken()
-  //   ElMessage.error(err.message || "路由守卫过程发生错误")
-    next("/login")
+    //   userStore.resetToken()
+    next("/login");
   }
-})
+});
 
 router.afterEach((to) => {
   // setRouteChange(to)
   // setTitle(to.meta.title)
-  NProgress.done()
-})
+  NProgress.done();
+});

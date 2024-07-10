@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from "vue";
-import { userHook } from "@/stores/modules/user";
+import { useRouter } from "vue-router";
+import { success, error } from "@/plugins/message";
+import { userInfoStoreHook } from "@/store/modules/user";
 const open = ref(false);
+const router = useRouter();
+
 const props = defineProps({
   avatarUrl: {
     type: String,
@@ -24,7 +28,17 @@ const handleChange = (val) => {
 // 退出登录
 const handleClickLogout = () => {
   try {
-    userHook().logout();
+    userInfoStoreHook()
+      .logout()
+      .then(() => {
+        success("退出成功,即将跳转登录页");
+        setTimeout(() => {
+          router.push({ path: "/login" });
+        }, 2000);
+      })
+      .catch((error) => {
+        error(error.message);
+      });
   } catch (error) {}
 };
 </script>

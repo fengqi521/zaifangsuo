@@ -1,16 +1,18 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { usePermissionStore } from "@/stores/modules/permission";
+import { usePermissionStoreHook } from "@/store/modules/permission";
+import { userInfoStoreHook } from "@/store/modules/user";
+
 import formValidators from "@/utils/formValidators";
 import loginApi from "@/api/login";
 import { useMessage } from "@/plugins/message";
 
-const { setPermissionRoutes } = usePermissionStore();
 const { success, error } = useMessage();
 const router = useRouter();
 
 // 定义变量
+const loading =ref(false)
 const formRef = ref(null);
 const loginInfo = reactive({ username: "", password: "", captcha: "" });
 const codeImg = ref("");
@@ -44,33 +46,56 @@ const loginInfoRules = reactive({
 
 // 获取验证码
 const handleClickGetCode = () => {
-  codeImg.value = `${
-    import.meta.env.VITE_BASE_API
-  }/v1/captcha/create?${new Date()}`;
+  loginApi.getCaptcha().then((res) => {
+    if (!res.code) {
+      codeImg.value = res.data.src;
+    }
+  });
 };
 handleClickGetCode();
 
 // 提交表单
 const submitForm = async () => {
+  loading.value = true;
   try {
     const valid = await formRef.value.validate();
     if (valid) {
-      const result = await loginApi.login(loginInfo);
-      if (!result?.code) {
-        success("登录成功");
-        // 保存token
-        // setPermissionRoutes(result?.menus);
-        router.push("/");
-      } else {
-        handleClickGetCode();
-        error(result.message);
-      }
+      userInfoStoreHook()
+        .login(loginInfo)
+        .then(() => {
+          success("登录成功");
+          router.push({ path: "/" });
+        })
+        .catch((error) => {
+          error(error.message);
+          handleClickGetCode();
+        })
+        .finally(() => {
+          loading.value =false;
+        });
+      // const result = await loginApi.login(loginInfo);
+      // if (!result?.code) {
+      //   success("登录成功");
+      //   // 保存用户名
+      //   userInfoStore().setUserInfo({
+      //     name: result.data.user_name,
+      //     uid: result.data.id,
+      //     role: result.data.role,
+      //   });
+      //   // 设置用户路由权限
+      //   setPermissionRoutes(result?.data?.menus);
+      //   console.log(router,'========')
+      //   router.push({path:'/'});
+      // } else {
+      //   handleClickGetCode();
+      //   error(result.message);
+      // }
     }
   } catch (error) {}
 };
 </script>
 <template>
-  <div class="login-form">
+  <div class="login-form" v-loading="loading">
     <!-- <h3>地质安全及地质资源监测系统</h3> -->
     <el-form
       ref="formRef"

@@ -18,6 +18,10 @@ export default {
    * @returns   {boolean} 手机号格式是否正确
    */
   validatePhoneNumber: (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
     const reg = /^(?:(?:\+|00)86)?1\d{10}$/;
     if (!reg.test(value)) {
       return callback(new Error("手机号格式错误"));

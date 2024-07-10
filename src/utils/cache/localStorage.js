@@ -1,6 +1,5 @@
 /** 统一处理 localStorage */
 import cacheKey from "@/constants/cache-key";
-
 // 存储sidebar数据
 export const setSideBarLists = (lists) => {
   localStorage.setItem(cacheKey.SIDEBAR_DATA, JSON.stringify(lists));

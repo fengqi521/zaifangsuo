@@ -56,7 +56,6 @@ const onSubmit = async () => {
     emit("submit", { ...formData });
     return;
   }
-  console.log("error submit!");
   return false;
 };
 

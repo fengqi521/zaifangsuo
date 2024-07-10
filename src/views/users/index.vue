@@ -30,10 +30,11 @@ const columns = ref([
   { prop: "create_time", label: "创建时间" },
 ]);
 
-const searchModel = reactive({
+const initSearchData = {
   page: 1,
   limit: 10,
-});
+};
+const searchModel = ref({ ...initSearchData });
 const total = ref(0);
 
 // 选中数据
@@ -55,15 +56,14 @@ const getDeviceAuthList = async () => {
   }
 };
 getDeviceAuthList();
+
 // 获取用户列表
 const getLists = async (page, limit) => {
   loading.value = true;
-  Object.assign(searchModel, {
-    ...(page && { page }),
-    ...(limit && { limit }),
-  });
+  page && (searchModel.value.page = page);
+  limit && (searchModel.value.limit = limit);
   try {
-    const result = await userApi.getUserList(searchModel);
+    const result = await userApi.getUserList(searchModel.value);
     if (!result?.code) {
       userData.value = result.data.list;
       total.value = result.data.total_count;
@@ -74,6 +74,18 @@ const getLists = async (page, limit) => {
   loading.value = false;
 };
 getLists();
+
+// 查询数据
+const handleSearch = (values) => {
+  Object.assign(searchModel.value, values);
+  getLists();
+};
+
+// 重置
+const handleReset = () => {
+  searchModel.value = { ...initSearchData };
+  getLists();
+};
 
 //-------------添加修改用户信息---------------
 // 用户表单modal
@@ -110,6 +122,7 @@ const handleClickShowAuthor = (row) => {
   transferValue.value.uid = row.id;
   authorVisible.value = true;
   transferValue.value.did = row.devices.map((item) => item.id);
+
 };
 
 // 授权
@@ -117,7 +130,14 @@ const handleClickAuthor = (values) => {
   userApi
     .updateUser({ ...transferValue.value, did: values.join(",") })
     .then((res) => {
-      console.log(res);
+      if (!res.code) {
+        success("授权成功");
+        // authorVisible.value = false;
+        // Object.assign(transferValue, { uid: "", did: [] });
+        getLists();
+      } else {
+        error(res.message);
+      }
     });
 };
 
@@ -155,7 +175,12 @@ const handleCloseDeleteModal = () => {
     <ListHead title="用户列表">
       <el-button type="primary" @click="handleEdit()">新建用户</el-button>
     </ListHead>
-    <SearchForm :formItems="formItems" :initialData="initialData" />
+    <SearchForm
+      :formItems="formItems"
+      :initialData="initialData"
+      @submit="handleSearch"
+      @reset="handleReset"
+    />
 
     <ElTable
       class="user-table"
@@ -224,8 +249,8 @@ const handleCloseDeleteModal = () => {
     cursor: pointer;
   }
 
-  .delete-btn{
-    color:var(--delete-text-color)
+  .delete-btn {
+    color: var(--delete-text-color);
   }
 }
 .message-box {

@@ -49,6 +49,9 @@ const userFormRules = reactive({
   // ],
   phone: [
     {
+      required: false,
+    },
+    {
       validator: formValidators.validatePhoneNumber,
       trigger: "blur",
     },
@@ -59,10 +62,10 @@ const userFormRules = reactive({
       message: "请输入密码",
       trigger: "blur",
     },
-    {
-      validator: formValidators.validatePassword,
-      trigger: "blur",
-    },
+    // {
+    //   validator: formValidators.validatePassword,
+    //   trigger: "blur",
+    // },
   ],
 
   did: [

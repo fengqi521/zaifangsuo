@@ -416,7 +416,8 @@ export const getCommonPie = function () {
       },
     ],
     tooltip: {
-      trigger: "item",
+      trigger: "none",
+      show:false
     },
     legend: {
       bottom: 6,

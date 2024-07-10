@@ -34,11 +34,7 @@ const onlyOneChild = computed(() => {
   return { ...props.route };
 });
 
-// 获取完整路径
-const getPath = (path) => {
-  console.log(path);
-  return `${props.basePath}/${path}`;
-};
+
 /** 解析路径 */
 const resolvePath = (routePath) => {
   return path.resolve(props.basePath, routePath);

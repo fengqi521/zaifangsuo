@@ -16,6 +16,11 @@
     --normal-border-color: #D3DCEE;
     --normal-icon-bg-color: rgb(78, 90, 113);
     --normal-icon-text-color:rgb(78, 90, 113);
+    --offline-bg-color: #d0d4d6;
+    --offline-border-color: #bdc2c5;
+    --online-color: #91CC75;
+    --online-border-color:#0caf60;
+
 
     /* 滚动条 */
     --scrollbar-thumb-color: #6b7a99;
@@ -75,7 +80,6 @@
     --panel-active-color:#46B4E6;
 
     /* 图形颜色 */
-    --chart-pie-online-color: #91CC75;
     --chart-pie-offline-color: #EE6666;
     --chart-pie-value-color: #484848;
     --chart-total-color: #FFB73C;

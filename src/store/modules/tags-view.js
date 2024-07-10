@@ -1,6 +1,6 @@
 import { ref, watchEffect } from "vue";
 import { defineStore } from "pinia";
-import { setTagViewsLocal ,getTagViewsLocal} from "@/utils/cache";
+import { setTagViewsLocal ,getTagViewsLocal} from "@/utils/cache/localStorage";
 
 export const useTagsViewStore = defineStore("tags-view", () => {
   const tags = ref(getTagViewsLocal());

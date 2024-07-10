@@ -1,7 +1,7 @@
 <script setup>
 import { getCurrentInstance, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { useTagsViewStore } from "@/stores/modules/tags-view";
+import { useTagsViewStore } from "@/store/modules/tags-view";
 // import { useRouteListener } from "@/hooks/useRouteListener"
 import path from "path-browserify";
 import ScrollPanel from "./ScrollPanel.vue";
@@ -11,7 +11,7 @@ const router = useRouter();
 const route = useRoute();
 
 const tagsViewStore = useTagsViewStore();
-// const permissionStore = usePermissionStore()
+// const permissionStore = usePermissionStoreHook()
 // const { listenerRouteChange } = useRouteListener()
 
 /** 标签页组件元素的引用数组 */
