@@ -9,6 +9,14 @@ const legendColor1 = getCssVariableValue("--legend-bg-color-1");
 const legendColor2 = getCssVariableValue("--legend-bg-color-2");
 const legendColor3 = getCssVariableValue("--legend-bg-color-3");
 
+// 用户信息
+const userRolesMap = [
+  { label: "超级管理员", value: 1 },
+  { label: "审计管理员", value: 2 },
+  { label: "安全管理员", value: 3 },
+  { label: "普通账户", value: 4 },
+  { label: "只读账户", value: 5 },
+];
 // 首页卡片数据
 const DEVICE_DATA = [
   { field: "total", title: "设备数量（个）", count: 0 },
@@ -400,7 +408,7 @@ const MESSAGE = [
   },
 ];
 
-//  ------------设备start--------------
+//  ------------首页start--------------
 
 // form表单初始值
 const initialFormData = { type: "13", station: "", rtu: "", dateTimeRange: [] };
@@ -425,24 +433,24 @@ const WATER_LEVEL_LEGEND = {
 //--------------rtu管理start--------------
 
 const projectFormData = { id: "", name: "", type: "" };
-const projectFormItems = [
+const deviceFormItems = [
   {
-    label: "项目ID",
+    label: "设备ID",
     prop: "id",
-    attrs: { placeholder: "请输入项目ID" },
+    attrs: { placeholder: "请输入设备ID" },
     type: "el-input",
   },
   {
-    label: "项目名称",
+    label: "设备名称",
     prop: "name",
-    attrs: { placeholder: "请输入项目名称" },
+    attrs: { placeholder: "请输入设备名称" },
     type: "el-input",
   },
   {
-    label: "项目类型",
+    label: "设备类型",
     prop: "type",
     type: "el-input",
-    attrs: { placeholder: "请输入项目类型" },
+    attrs: { placeholder: "请输入设备类型" },
   }
 ];
 
@@ -469,6 +477,7 @@ const userFormItems = [
 //---------------用户管理end-----------------
 
 export {
+  userRolesMap,
   DEVICE_DATA,
   MESSAGE,
   deviceMap,
@@ -477,7 +486,7 @@ export {
   WATER_LEVEL_LEGEND,
   initialFormData,
   projectFormData,
-  projectFormItems,
+  deviceFormItems,
   userFormData,
   userFormItems
 };

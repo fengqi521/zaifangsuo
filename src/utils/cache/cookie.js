@@ -8,7 +8,7 @@ export const setUserCookie = (info) => {
 };
 export const getUserCookie = () => {
   const jsonInfo = Cookies.get(CacheKey.USER_INFO);
-  return jsonInfo ? JSON.parse(jsonInfo) : {};
+  return jsonInfo ? JSON.parse(jsonInfo) : '';
 };
 
 export const removeUserCookie = () => {

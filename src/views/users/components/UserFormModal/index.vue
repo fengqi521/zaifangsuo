@@ -1,19 +1,13 @@
 <script setup>
 import { ref, reactive, watch } from "vue";
 import ElModal from "@/components/ElModal/index.vue";
-import userApi from "@/api/account";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import formValidators from "@/utils/formValidators";
+import userApi from "@/api/user";
+import { userRolesMap } from "@/constants";
 const { success, error } = useMessage();
 
-const roles = [
-  { label: "超级管理员", value: 1 },
-  { label: "审计管理员", value: 2 },
-  { label: "安全管理员", value: 3 },
-  { label: "普通账户", value: 4 },
-  { label: "只读账户", value: 5 },
-];
 const initialData = {
   user_name: "",
   email: "",
@@ -204,7 +198,7 @@ const handleSubmit = async () => {
         <el-form-item label="用户权限" prop="role">
           <el-select v-model="userForm.role" placeholder="请选择用户权限">
             <el-option
-              v-for="item in roles"
+              v-for="item in userRolesMap"
               :key="item.value"
               :label="item.label"
               :value="item.value"

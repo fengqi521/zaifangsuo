@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed } from "vue";
 import SidebarItemLink from "./SidebarItemLink.vue";
-import { getCssVariableValue } from "@/utils";
 import path from "path-browserify";
 // 定义变量
 
@@ -46,7 +45,7 @@ const resolvePath = (routePath) => {
     v-if="onlyOneChild && !onlyOneChild.children"
     :path="resolvePath(route.path)"
   >
-    <el-menu-item :index="route.path">
+    <el-menu-item :index="resolvePath(onlyOneChild.path)">
       <Icon
         :iconClass="onlyOneChild?.meta.icon"
         v-if="onlyOneChild?.meta?.icon"
@@ -58,7 +57,7 @@ const resolvePath = (routePath) => {
     </el-menu-item>
   </SidebarItemLink>
   <!-- 多层 -->
-  <el-sub-menu v-else :index="route.path">
+  <el-sub-menu v-else :index="resolvePath(route.path)">
     <template #title>
       <Icon
         :iconClass="props.route.meta.icon"
@@ -71,7 +70,7 @@ const resolvePath = (routePath) => {
         v-for="child in childRoutes"
         :key="child.path"
         :route="child"
-        :base-path="resolvePath('')"
+        :base-path="resolvePath(child.path)"
       />
     </template>
   </el-sub-menu>

@@ -3,11 +3,12 @@ import { onMounted, reactive, ref } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import rtuApi from "@/api/rtu";
 
 import ListHead from "@/components/ListHead/index.vue";
-import { projectFormData, projectFormItems, deviceMap } from "@/constants";
+import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
 
-const formItems = reactive(projectFormItems);
+const formItems = reactive(deviceFormItems);
 
 const searchInfo = reactive({ ...projectFormData });
 const loading = ref(false);
@@ -17,142 +18,24 @@ const total = ref(0);
 const rtuData = reactive([]);
 const columns = ref([
   { prop: "num", label: "序号" },
-  { prop: "id", label: "设备编号" },
-  { prop: "name", label: "设备名称" },
-  { prop: "type", label: "设备类型" },
-  { prop: "status", label: "在线状态" },
-  { prop: "note", label: "备注" },
+  { prop: "id", label: "设备ID" },
+  { prop: "device_name", label: "设备名称" },
+  { prop: "device_type", label: "设备类型" },
+  { prop: "online", label: "在线状态" },
+  { prop: "monitoring_station", label: "所属站" },
 ]);
 // 获取设备数据
-const getRtuData = () => {
+const getRtuData = async () => {
   loading.value = true;
   searchInfo.page = page.value;
   searchInfo.limit = limit.value;
-  const res = {
-    code: 0,
-    current_page: 1,
-    page_count: 1,
-    total_count: 10,
-    limit: 10,
-    data: [
-      {
-        create_time: "2024-06-21",
-        id: "JJJ001",
-        name: "测试项目1",
-        type: "采集",
-        status: 0,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "D001",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ002",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ001D001",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ00132",
-        name: "测试项目1",
-        type: "采集",
-        status: 0,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ0012",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ0012332",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "JJJ001132",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "D001",
-        name: "测试项目1",
-        type: "采集",
-        status: 1,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-      {
-        create_time: "2024-06-22",
-        id: "D009334",
-        name: "测试项目1",
-        type: "采集",
-        status: 0,
-        person: "小张",
-        director: "小王",
-        location: "北京市昌平区",
-        note: "测试数据",
-      },
-    ],
-  };
+  const res = await rtuApi.getDeviceList({ status: 2 });
   if (!res.code) {
-    page.value = res.current_page;
-    total.value = res.total_count;
+    page.value = res.data.current_page;
+    total.value = res.data.total_count;
     Object.assign(
       rtuData,
-      res.data.map((item, index) => ({ ...item, num: index + 1 }))
+      res.data.list.map((item, index) => ({ ...item, num: index + 1 }))
     );
   }
   loading.value = false;
@@ -175,13 +58,12 @@ const handleReset = () => {
 
 // 查询传感器类型
 const getType = (type) => {
-  const list = deviceMap.find(({ value }) => type === value);
+  const list = deviceMap.find(({ value }) => Number(type) === value);
   return list.label;
 };
 
 // 切换页数
 const handleChangePage = (page) => {
-  console.log(page, "page");
   page.value = page;
   getRtuData();
 };
@@ -213,14 +95,14 @@ const handleChangeSize = (size) => {
       :data="rtuData"
       :tableProps="{ showSelection: false, border: true }"
     >
-      <template #type="scope" class="status-row">
-        {{ getType(scope.row.type) }}
+      <template #device_type="scope" class="status-row">
+        {{ getType(scope.row.device_type) }}
       </template>
-      <template #status="scope" class="status-row">
-        <span :class="{ status: true, 'status-online': scope.row.status }">
+      <template #online="scope" class="status-row">
+        <span :class="{ status: true, 'status-online': scope.row.online }">
         </span>
-        <span :class="{ 'status-online-text': scope.row.status }">{{
-          scope.row.status ? "在线" : "离线"
+        <span :class="{ 'status-online-text': scope.row.online }">{{
+          scope.row.online ? "在线" : "离线"
         }}</span>
       </template>
       <template #action="{ row }">

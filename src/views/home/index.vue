@@ -1,12 +1,10 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { DEVICE_DATA, MESSAGE } from "@/constants";
-// import Card from "./components/Card/index.vue";
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
 import Echart from './components/Echart/index.vue'
 
-// const deviceLists = reactive([...DEVICE_DATA])
 const messages = ref([...MESSAGE])
 const cardLists = [
   { field: "total", count: 26 },

@@ -114,7 +114,7 @@ const toLastView = (visitedViews, view) => {
     router.push(fullPath);
   } else {
     // 如果 TagsView 全部被关闭了，则默认重定向到主页
-    if (view.name === "Dashboard") {
+    if (view.name === "首页") {
       // 重新加载主页
       router.push({ path: "/redirect" + view.path, query: view.query });
     } else {

@@ -7,12 +7,12 @@ import TagsView from "./TagsView/index.vue";
     <!-- <TagsView /> -->
     <div class="app-scrollbar app-container">
       <router-view v-slot="{ Component, route }">
-        <keep-alive>
+        <!-- <keep-alive> -->
           <component
             :is="Component"
             :key="route.path"
           />
-        </keep-alive>
+        <!-- </keep-alive> -->
       </router-view>
     </div>
   </section>

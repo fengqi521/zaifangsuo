@@ -11,8 +11,5 @@ export default {
     return getRequest("/v1/device/category");
   },
 
-  // 获取在线、离线数据
-  getDeviceList:function(params){
-    return getRequest('/v1/device/lists',params)
-  }
+
 };

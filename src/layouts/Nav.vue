@@ -1,11 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
 import { Logo, CurrentDate, Avatar } from "./components";
-const avatarUrl = ref("");
-onMounted(() => {
-  avatarUrl.value =
-    "http://5b0988e595225.cdn.sohucs.com/images/20190816/8afe3bfafdfa43a5ad75f0150af013df.jpeg";
-});
 </script>
 <template>
   <nav class="layout-header">
@@ -14,7 +8,7 @@ onMounted(() => {
     <!-- 顶部导航-用户信息 -->
     <div class="layout-user">
       <CurrentDate />
-      <Avatar :avatarUrl="avatarUrl" />
+      <Avatar />
     </div>
   </nav>
 </template>

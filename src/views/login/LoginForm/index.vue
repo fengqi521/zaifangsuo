@@ -12,7 +12,7 @@ const { success, error } = useMessage();
 const router = useRouter();
 
 // 定义变量
-const loading =ref(false)
+const loading = ref(false);
 const formRef = ref(null);
 const loginInfo = reactive({ username: "", password: "", captcha: "" });
 const codeImg = ref("");
@@ -62,34 +62,22 @@ const submitForm = async () => {
     if (valid) {
       userInfoStoreHook()
         .login(loginInfo)
-        .then(() => {
-          success("登录成功");
-          router.push({ path: "/" });
+        .then((res) => {
+          if (!res.code) {
+            success("登录成功");
+            router.push({ path: "/" });
+            return;
+          }
+          error(res.message);
+          handleClickGetCode();
         })
-        .catch((error) => {
-          error(error.message);
+        .catch((err) => {
+          error(err);
           handleClickGetCode();
         })
         .finally(() => {
-          loading.value =false;
+          loading.value = false;
         });
-      // const result = await loginApi.login(loginInfo);
-      // if (!result?.code) {
-      //   success("登录成功");
-      //   // 保存用户名
-      //   userInfoStore().setUserInfo({
-      //     name: result.data.user_name,
-      //     uid: result.data.id,
-      //     role: result.data.role,
-      //   });
-      //   // 设置用户路由权限
-      //   setPermissionRoutes(result?.data?.menus);
-      //   console.log(router,'========')
-      //   router.push({path:'/'});
-      // } else {
-      //   handleClickGetCode();
-      //   error(result.message);
-      // }
     }
   } catch (error) {}
 };

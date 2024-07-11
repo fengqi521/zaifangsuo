@@ -9,7 +9,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import Author from "./components/Author/index.vue";
 
 import { userFormData, userFormItems } from "@/constants";
-import userApi from "@/api/account";
+import userApi from "@/api/user";
 import { useMessage } from "@/plugins/message";
 
 const { success, error } = useMessage();

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
-import dashboardApi from "@/api/dashboard";
+import homeApi from "@/api/home";
 import { getCssVariableValue } from "@/utils";
 import { getCommonPie } from "@/utils/chartData";
 // 引入 ECharts 相关方法和函数
@@ -21,7 +21,7 @@ const percentColor = getCssVariableValue("--chart-percent-color");
 onMounted(async () => {
   // 更新饼图数据和样式配置
   try {
-    const result = await dashboardApi.getDevicePercent();
+    const result = await homeApi.getDevicePercent();
     if (!result?.code) {
       option.value.series[0].data = result?.data?.list.map(
         ({ name, count }) => ({ name, value: count })

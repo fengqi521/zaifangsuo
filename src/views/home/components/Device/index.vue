@@ -1,15 +1,15 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import dashboardApi from "@/api/dashboard";
+import rtuApi from "@/api/rtu";
+import  {deviceMap} from '@/constants'
 const columns = ref([
   { prop: "num", label: "序号" },
   { prop: "device_name", label: "设备名称" },
-  { prop: "device_number", label: "设备编号" },
   { prop: "device_type", label: "设备类型" },
   { prop: "location", label: "位置" },
-  { prop: "status", label: "在线状态" },
+  { prop: "online", label: "在线状态" },
   { prop: "online_last", label: "在线时间" },
   { prop: "create_time", label: "创建时间" },
 ]);
@@ -21,11 +21,11 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 
-// 模拟数据加载
+// 设备数据
 const loadData = async (status = 1) => {
   loading.value = true;
   try {
-    const result = await dashboardApi.getDeviceList({ status });
+    const result = await rtuApi.getDeviceList({ status });
     loading.value = false;
     deviceData.value = result?.data?.list.map((item, index) => ({
       num: index + 1,
@@ -35,11 +35,17 @@ const loadData = async (status = 1) => {
     total.value = result.data.total_count;
   } catch (error) {}
 };
-
+loadData();
 // 切换设备查询
 const handleSearchStatus = (status) => {
   active.value = status;
   loadData(status);
+};
+
+// 查询传感器类型
+const getType = (type) => {
+  const list = deviceMap.find(({ value }) => Number(type) === value);
+  return list.label;
 };
 
 // 切换分页
@@ -62,10 +68,6 @@ const handleSelectionChange = (selection) => {
   // 处理行选择
   console.log("Selection changed:", selection);
 };
-
-onMounted(() => {
-  loadData();
-});
 </script>
 <template>
   <div class="device-container">
@@ -92,6 +94,16 @@ onMounted(() => {
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
+        <template #device_type="scope" class="status-row">
+          {{ getType(scope.row.device_type) }}
+        </template>
+        <template #online="scope" class="status-row">
+          <span :class="{ status: true, 'status-online': scope.row.online }">
+          </span>
+          <span :class="{ 'status-online-text': scope.row.online }">{{
+            scope.row.online ? "在线" : "离线"
+          }}</span>
+        </template>
       </ElTable>
       <ElPagination
         :currentPage="currentPage"

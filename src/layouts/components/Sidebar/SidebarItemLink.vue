@@ -11,7 +11,13 @@ const props = defineProps({
   <a v-if="isExternal(props.path)" :href="props.path" target="__blank">
     <slot />
   </a>
-  <router-link v-else :to="props.path">
+  <router-link class="menu-item-link" v-else :to="props.path">
     <slot />
   </router-link>
 </template>
+<style lang="scss" scoped>
+.menu-item-link{
+  display: block;
+  margin-bottom: 14px;
+}
+</style>

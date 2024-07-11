@@ -1,34 +1,36 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useMessage } from "@/plugins/message";
+import { useMessage} from "@/plugins/message";
 import { userInfoStoreHook } from "@/store/modules/user";
-import { userRolesMap } from "@/constants";
-
-
 const open = ref(false);
 const router = useRouter();
-const { success, error } = useMessage();
-const { userInfo, getUserInfo, logout } = userInfoStoreHook();
+const {success,error} = useMessage()
 
-// 获取用户信息
-getUserInfo();
+const props = defineProps({
+  avatarUrl: {
+    type: String,
+    default: "",
+  },
+  role: {
+    type: String,
+    default: "超级管理员",
+  },
+  userName: {
+    type: String,
+    default: "zhangheng",
+  },
+});
 
-// 显示菜单栏
 const handleChange = (val) => {
   open.value = val;
 };
 
-const role = ref('')
-const getRoleName = ()=>{
-  const list = userRolesMap.find(({value})=>value===Number(userInfo.role))
-  role.value =  list?.label
-}
-getRoleName()
 // 退出登录
 const handleClickLogout = () => {
   try {
-    logout()
+    userInfoStoreHook()
+      .logout()
       .then(() => {
         success("退出成功,即将跳转登录页");
         setTimeout(() => {
@@ -45,11 +47,11 @@ const handleClickLogout = () => {
   <el-dropdown placement="bottom-end" @visible-change="handleChange">
     <div class="user-container">
       <!-- 头像 -->
-      <div class="user-avatar"><img src="@/assets/images/avatar.png" /></div>
+      <div class="user-avatar"><img :src="avatarUrl" /></div>
       <!-- 用户名 -->
       <div class="user-info">
         <p class="user-item">{{ role }}</p>
-        <p class="user-item">{{ userInfo.name }}</p>
+        <p class="user-item">{{ userName }}</p>
       </div>
       <Icon
         :class="{ 'user-icon': true, 'open-icon': open }"

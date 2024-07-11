@@ -1,7 +1,7 @@
 <!-- <script setup>
 import { ref, reactive, watch } from "vue";
 import ElModal from "@/components/ElModal/index.vue";
-import accountApi from "@/api/account";
+import userApi from "@/api/user";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import formValidators from "@/utils/formValidators";

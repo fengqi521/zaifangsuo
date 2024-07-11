@@ -1,19 +1,26 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import SidebarItem from "./SidebarItem.vue";
 
 const { routes } = usePermissionStoreHook();
 const backgroundColor = "var(--sidebar-bg-color)";
 
+const route = useRoute();
 const activeMenu = computed(() => {
-  return "var(--icon-color)";
+  const {
+    meta: { activeMenu },
+    path,
+  } = route;
+  return activeMenu ? activeMenu : path;
 });
 
 // 可显示的路由
-const showRoutes = computed(()=>{
-  return routes.filter(item=>!item?.meta?.hidden)
-})
+const showRoutes = computed(() => {
+  return routes.filter((item) => !item?.meta?.hidden);
+});
+
 </script>
 
 <template>
@@ -80,6 +87,18 @@ const showRoutes = computed(()=>{
     > .el-sub-menu__title {
       color: v-bind(activeTextColor) !important;
     }
+  }
+}
+:deep(.el-menu-item.is-active) {
+  &::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left:0;
+    bottom: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--nav-header-bg-color);
   }
 }
 </style>

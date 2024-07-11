@@ -16,9 +16,6 @@ const DeviceData = () => import("@/views/device/index.vue");
 const RtuData = () => import("@/views/rtu/index.vue");
 const RtuDetail = () => import("@/views/rtu/detail/index.vue");
 
-// 基础管理
-// const BaseProject = () => import("@/views/base/project/index.vue");
-// const BaseStation = () => import("@/views/base/station/index.vue");
 
 // 用户管理
 const UserList = () => import("@/views/users/index.vue");
@@ -31,7 +28,7 @@ export const constantRoutes = [
     },
   },
   {
-    path: "/404",
+    path: "/:pathMatch(.*)*",
     component: Err404,
     meta: {
       hidden: true,
@@ -87,7 +84,7 @@ export const dynamicRoutes = [
         path: "",
         component: RtuData,
         meta: {
-          title: "rtu管理",
+          title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
           affix: true,
           roles: [1],
@@ -98,6 +95,7 @@ export const dynamicRoutes = [
         component: RtuDetail,
         meta: {
           hidden: true,
+          activeMenu:'/rtu'
         },
       },
     ],
