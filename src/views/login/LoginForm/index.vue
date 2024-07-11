@@ -56,10 +56,10 @@ handleClickGetCode();
 
 // 提交表单
 const submitForm = async () => {
-  loading.value = true;
   try {
     const valid = await formRef.value.validate();
     if (valid) {
+      loading.value = true;
       userInfoStoreHook()
         .login(loginInfo)
         .then((res) => {
@@ -93,7 +93,7 @@ const submitForm = async () => {
       @keyup.enter="submitForm"
     >
       <el-form-item prop="username">
-        <el-input v-model="loginInfo.username" placeholder="请输入用户名">
+        <el-input v-model="loginInfo.username" placeholder="用户名">
           <template #prefix>
             <Icon
               iconClass="icon-yonghuming"
@@ -107,7 +107,7 @@ const submitForm = async () => {
         <el-input
           v-model="loginInfo.password"
           type="password"
-          placeholder="请输入密码"
+          placeholder="密码"
         >
           <template #prefix>
             <Icon
@@ -124,8 +124,9 @@ const submitForm = async () => {
         </el-input>
       </el-form-item>
       <el-form-item class="login-form-code" prop="captcha">
-        <el-input v-model="loginInfo.captcha" placeholder="请输入验证码" />
-        <img class="captcha-image" :src="codeImg" @click="handleClickGetCode" />
+        <el-input v-model="loginInfo.captcha" placeholder="验证码" />
+        <img class="captcha-image" :src="codeImg" />
+        <span class="change-span" @click="handleClickGetCode">换一张</span>
       </el-form-item>
       <el-button class="btn-primary" @click="submitForm">登录</el-button>
     </el-form>
@@ -133,11 +134,16 @@ const submitForm = async () => {
 </template>
 <style lang="scss" scoped>
 .login-form {
-  width: 32%;
-  min-width: 300px;
   padding: 80px 24px;
   background: var(--background-color);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 6px 8px rgba(0, 0, 0, 0.15);
+
+  :deep(.el-form) {
+    width: 330px;
+  }
+  .el-form-item {
+    margin-bottom: 32px;
+  }
 
   :deep(.el-input) {
     height: 40px;
@@ -151,8 +157,15 @@ const submitForm = async () => {
     .captcha-image {
       max-width: 70px;
       height: 40px;
-      margin-left: 6px;
+      margin-left: 24px;
+    }
+
+    .change-span {
+      margin-left: 20px;
+      white-space: nowrap;
       cursor: pointer;
+      user-select: none;
+      color: var(--btn-normal-color);
     }
     :deep(.el-form-item__content) {
       flex-wrap: nowrap;
@@ -162,7 +175,7 @@ const submitForm = async () => {
     margin-top: 30px;
     width: 100%;
     color: var(--text-color);
-    background: var(--btn-bg-color);
+    background: var(--btn-normal-color);
   }
 }
 </style>

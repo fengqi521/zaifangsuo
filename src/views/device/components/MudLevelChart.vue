@@ -485,11 +485,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <Chart
-    v-for="(option, index) in allDataOptions"
-    :key="index"
-    :option="option"
-  />
+  <Chart :options="allDataOptions"/>
 </template>
 <style lang="scss" scoped>
 .chart-container {

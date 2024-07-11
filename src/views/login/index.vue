@@ -26,7 +26,7 @@ import LoginForm from "./LoginForm/index.vue";
 
   .login-wrapper {
     position: relative;
-    width: 60%;
+    width: 70%;
     height: 75%;
     margin: auto;
     display: flex;
@@ -47,7 +47,7 @@ import LoginForm from "./LoginForm/index.vue";
   }
 
   .login-bg {
-    width: 63%;
+    width: 100%;
     height: 100%;
     background: url(@/assets/images/login-bg.png) right 50% / contain no-repeat;
   }

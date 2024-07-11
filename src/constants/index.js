@@ -432,12 +432,12 @@ const WATER_LEVEL_LEGEND = {
 
 //--------------rtu管理start--------------
 
-const projectFormData = { id: "", name: "", type: "" };
+const projectFormData = { number: "", name: "", type: "" };
 const deviceFormItems = [
   {
-    label: "设备ID",
-    prop: "id",
-    attrs: { placeholder: "请输入设备ID" },
+    label: "设备编号",
+    prop: "number",
+    attrs: { placeholder: "请输入设备编号" },
     type: "el-input",
   },
   {

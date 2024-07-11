@@ -5,7 +5,7 @@ import { getCommonLine, getCommonBar } from "@/utils/chartData";
 import { getCssVariableValue } from "@/utils";
 const barWidth = getCssVariableValue("--bar-width");
 const barGap = getCssVariableValue("--bar-gap");
-const baseColor = getCssVariableValue('--chart-base-color')
+const baseColor = getCssVariableValue("--chart-base-color");
 
 // 累计量
 const collectOption = reactive(getCommonLine());
@@ -2202,12 +2202,12 @@ onMounted(() => {
       type: "line",
       data: res.data.x,
       smooth: true,
-      lineStyle:{
-        color:baseColor
+      lineStyle: {
+        color: baseColor,
       },
-      itemStyle:{
-        color:baseColor
-      }
+      itemStyle: {
+        color: baseColor,
+      },
     },
   ];
 
@@ -2242,9 +2242,9 @@ onMounted(() => {
       barGap,
       data: res1.data.x,
       z: 50,
-      itemStyle:{
-        color:baseColor
-      }
+      itemStyle: {
+        color: baseColor,
+      },
     },
   ];
 
@@ -2454,8 +2454,8 @@ onMounted(() => {
       barMaxWidth: barWidth,
       barGap,
       data: res2.data.x,
-      itemStyle:{
-        color:baseColor
+      itemStyle: {
+        color: baseColor,
       },
       z: 50,
     },
@@ -2853,11 +2853,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <Chart
-    v-for="(option, index) in allDataOptions"
-    :key="index"
-    :option="option"
-  />
+  <Chart :options="allDataOptions" />
 </template>
 <style lang="scss" scoped>
 .chart-container {

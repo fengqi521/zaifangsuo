@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
@@ -18,7 +18,7 @@ const total = ref(0);
 const rtuData = reactive([]);
 const columns = ref([
   { prop: "num", label: "序号" },
-  { prop: "id", label: "设备ID" },
+  { prop: "device_number", label: "设备编号" },
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型" },
   { prop: "online", label: "在线状态" },
