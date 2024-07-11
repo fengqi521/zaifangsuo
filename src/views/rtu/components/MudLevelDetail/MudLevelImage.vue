@@ -1,8 +1,8 @@
 <script setup>
-import { inject } from "vue";
 
+import { inject } from "vue";
 const { timeList, valueList } = inject("mudLevelImages");
-console.log(timeList, valueList);
+
 </script>
 <template>
   <div class="timeline-container">
