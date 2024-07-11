@@ -35,18 +35,18 @@ console.log(timeList, valueList);
   width: 100%;
   max-height: 500px;
   overflow-y: auto;
-
   @extend %scrollbar;
-  :deep(.el-timeline-item__node--normal){
-    left:0;
+
+  :deep(.el-timeline-item__node--normal) {
+    left: 0;
   }
 
-  :deep(.el-timeline-item__tail){
-    left:5px;
+  :deep(.el-timeline-item__tail) {
+    left: 5px;
   }
 
-  :deep(.el-timeline-item__wrapper){
-    padding-left:16px;
+  :deep(.el-timeline-item__wrapper) {
+    padding-left: 16px;
   }
 }
 </style>
