@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { success, error } from "@/plugins/message";
+import { useMessage} from "@/plugins/message";
 import { userInfoStoreHook } from "@/store/modules/user";
 const open = ref(false);
 const router = useRouter();
+const {success,error} = useMessage()
 
 const props = defineProps({
   avatarUrl: {
@@ -37,7 +38,7 @@ const handleClickLogout = () => {
         }, 2000);
       })
       .catch((error) => {
-        error(error.message);
+        // error(error.message);
       });
   } catch (error) {}
 };

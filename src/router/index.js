@@ -96,6 +96,9 @@ export const dynamicRoutes = [
       {
         path: "detail/:id",
         component: RtuDetail,
+        meta: {
+          hidden: true,
+        },
       },
     ],
   },
@@ -117,7 +120,7 @@ export const dynamicRoutes = [
 ];
 const router = createRouter({
   history,
-  routes: constantRoutes.concat(dynamicRoutes),
+  routes: constantRoutes,
 });
 
 export default router;

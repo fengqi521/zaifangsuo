@@ -4,10 +4,11 @@ import CacheKey from "@/constants/cache-key";
 import Cookies from "js-cookie";
 
 export const setUserCookie = (info) => {
-  Cookies.set(CacheKey.USER_INFO, info);
+  Cookies.set(CacheKey.USER_INFO, JSON.stringify(info));
 };
 export const getUserCookie = () => {
-  return Cookies.get(CacheKey.USER_INFO);
+  const jsonInfo = Cookies.get(CacheKey.USER_INFO);
+  return jsonInfo ? JSON.parse(jsonInfo) : {};
 };
 
 export const removeUserCookie = () => {

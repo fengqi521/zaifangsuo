@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import SidebarItemLink from "./SidebarItemLink.vue";
 import { getCssVariableValue } from "@/utils";
-import path from 'path-browserify'
+import path from "path-browserify";
 // 定义变量
 
 const props = defineProps({
@@ -24,16 +24,15 @@ const childRoutes = computed(() => {
 // 判断当前是否是一级路由
 const onlyOneChild = computed(() => {
   const childLength = childRoutes.value?.length;
-  if (childLength > 0 && props.route.meta) {
-    return null;
+  switch (true) {
+    case childLength > 1:
+      return null;
+    case childLength === 1:
+      return childRoutes.value[0];
+    default:
+      return { ...props.route, path: "" };
   }
-  if (childLength === 1 && !props.route.meta) {
-    return { ...childRoutes.value[0], path: props.route.path };
-  }
-
-  return { ...props.route };
 });
-
 
 /** 解析路径 */
 const resolvePath = (routePath) => {
@@ -43,7 +42,10 @@ const resolvePath = (routePath) => {
 
 <template>
   <!-- 只有一层 -->
-  <SidebarItemLink v-if="onlyOneChild?.meta" :path="resolvePath(route.path)">
+  <SidebarItemLink
+    v-if="onlyOneChild && !onlyOneChild.children"
+    :path="resolvePath(route.path)"
+  >
     <el-menu-item :index="route.path">
       <Icon
         :iconClass="onlyOneChild?.meta.icon"

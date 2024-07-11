@@ -9,6 +9,11 @@ const backgroundColor = "var(--sidebar-bg-color)";
 const activeMenu = computed(() => {
   return "var(--icon-color)";
 });
+
+// 可显示的路由
+const showRoutes = computed(()=>{
+  return routes.filter(item=>!item?.meta?.hidden)
+})
 </script>
 
 <template>
@@ -20,7 +25,7 @@ const activeMenu = computed(() => {
       :collapse-transition="false"
     >
       <SidebarItem
-        v-for="route in routes"
+        v-for="route in showRoutes"
         :key="route.path"
         :route="route"
         :base-path="route.path"
