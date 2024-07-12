@@ -1,5 +1,5 @@
 <script setup>
-import { watch } from 'vue';
+import { watch } from "vue";
 
 const props = defineProps({
   currentPage: {
@@ -14,11 +14,12 @@ const props = defineProps({
     type: [String, Number],
     default: 0,
   },
+  pagerCount:{
+    type:Number,
+    default:5
+  }
 });
 
-watch(()=>props.total,(val)=>{
-  console.log(val,'=fffffffffff')
-})
 const emit = defineEmits(["pagination-change", "page-size-change"]);
 
 // 分页改变处理函数
@@ -37,10 +38,12 @@ const handleSizeChange = (size) => {
   <el-pagination
     v-if="props.total"
     class="pagination"
-    :current-page="props.currentPage"
-    :page-size="props.pageSize"
+    background
+    v-model:current-page="props.currentPage"
+    v-model:page-size="props.pageSize"
     :total="props.total"
-    layout="slot, prev, pager, next,sizes, jumper"
+    :pager-count="props.pagerCount"
+    layout="slot,prev, pager, next,sizes, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   >
@@ -54,8 +57,18 @@ const handleSizeChange = (size) => {
   margin-top: 16px;
   justify-content: flex-end;
 
-  .pagination-info {
+  &-info {
     color: var(--el-text-color-regular);
+  }
+  :deep(.el-select) {
+    width: 100px;
+    .el-select__wrapper {
+      min-height: 28px;
+    }
+  }
+
+  :deep(.el-input__wrapper) {
+    height: 28px;
   }
 }
 </style>

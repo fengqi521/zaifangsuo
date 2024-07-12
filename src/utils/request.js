@@ -1,12 +1,12 @@
 import axios from "axios";
-// import { useUserStoreHook } from "@/store/modules/user"
+import { userInfoStoreHook } from "@/store/modules/user";
 // import { ElMessage } from "element-plus"
 import { get, merge } from "lodash";
 // import { getToken } from "./cache/cookies"
 
 /** 退出登录并强制刷新页面（会重定向到登录页） */
 function logout() {
-  useUserStoreHook().logout();
+  userInfoStoreHook().logout();
   location.reload();
 }
 
@@ -28,8 +28,14 @@ function createService() {
   // 响应拦截（可根据具体业务作出相应的调整）
   service.interceptors.response.use(
     (response) => {
-      const apiData = response.data;
-      return apiData;
+      const data = response.data;
+      const code = data.code;
+      console.log(code)
+      switch (code) {
+        case 406:
+          return userInfoStoreHook().logout();
+      }
+      return data;
       console.log(response);
       // // 二进制数据则直接返回
       // const responseType = response.request?.responseType;
@@ -57,6 +63,7 @@ function createService() {
     },
     (error) => {
       // status 是 HTTP 状态码
+      console.log(error);
       const status = get(error, "response.status");
       switch (status) {
         case 400:

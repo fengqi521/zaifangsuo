@@ -13,3 +13,8 @@ html.normal {
 html.normal .el-button--primary{
     --el-button-bg-color: rgb(16, 137, 255);
 }
+
+html.normal .el-pagination{
+    --el-pagination-button-width:28px;
+    --el-pagination-button-height:28px;
+}

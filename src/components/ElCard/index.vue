@@ -9,7 +9,10 @@ const props = defineProps({
 <template>
   <div class="card">
     <!-- 标题 -->
-    <p class="card-title">{{ title }}</p>
+    <div class="card-head">
+      <p class="card-title">{{ title }}</p>
+      <slot name="actions"></slot>
+    </div>
     <!-- 内容 -->
     <div class="card-content">
       <slot></slot>
@@ -18,15 +21,19 @@ const props = defineProps({
 </template>
 <style lang="scss" scoped>
 .card {
-  padding: 0 24px 24px;
+  padding: 0 16px 16px;
   border: 1px solid var(--normal-border-color);
   background: var(--background-color);
-
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 48px;
+    border-bottom: 1px solid var(--normal-border-color);
+  }
   .card-title {
-    line-height: 48px;
     font-size: 14px;
     color: var(--normal-title-color);
-    border-bottom: 1px solid var(--normal-border-color);
   }
 
   .card-content {

@@ -11,7 +11,7 @@ export const userInfoStoreHook = defineStore("user", () => {
 
   // 登录
   const login = async ({ username = "", password = "", captcha = "" }) => {
-    try{
+    try {
       const result = await loginApi.login({ username, password, captcha });
       if (!result?.code) {
         const info = {
@@ -23,9 +23,7 @@ export const userInfoStoreHook = defineStore("user", () => {
         Object.assign(userInfo, info);
       }
       return result;
-    }catch(err){
-
-    }
+    } catch (err) {}
   };
 
   // 获取用户信息
@@ -40,8 +38,9 @@ export const userInfoStoreHook = defineStore("user", () => {
     if (!result.code) {
       removeUserCookie();
       Object.assign(userInfo, { name: "", role: "", uid: "" });
+      window.location.reload();
     }
   };
 
-  return { userInfo, login, logout ,getUserInfo};
+  return { userInfo, login, logout, getUserInfo };
 });

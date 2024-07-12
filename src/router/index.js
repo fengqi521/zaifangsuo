@@ -16,9 +16,12 @@ const DeviceData = () => import("@/views/device/index.vue");
 const RtuData = () => import("@/views/rtu/index.vue");
 const RtuDetail = () => import("@/views/rtu/detail/index.vue");
 
-
 // 用户管理
 const UserList = () => import("@/views/users/index.vue");
+
+// 报文解析
+const Parsing = () => import("@/views/parsing/index.vue");
+
 export const constantRoutes = [
   {
     path: "/login",
@@ -95,7 +98,7 @@ export const dynamicRoutes = [
         component: RtuDetail,
         meta: {
           hidden: true,
-          activeMenu:'/rtu'
+          activeMenu: "/rtu",
         },
       },
     ],
@@ -110,6 +113,21 @@ export const dynamicRoutes = [
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
+          roles: [1],
+        },
+      },
+    ],
+  },
+  {
+    path: "/parsing",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: Parsing,
+        meta: {
+          title: "报文解析",
+          icon: "icon-baowenjiexi",
           roles: [1],
         },
       },

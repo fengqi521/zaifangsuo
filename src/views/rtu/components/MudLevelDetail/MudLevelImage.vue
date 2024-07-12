@@ -1,8 +1,6 @@
 <script setup>
-
 import { inject } from "vue";
 const { timeList, valueList } = inject("mudLevelImages");
-
 </script>
 <template>
   <div class="timeline-container">
@@ -26,9 +24,7 @@ const { timeList, valueList } = inject("mudLevelImages");
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 .timeline-container {
-  display: inline-flex;
-  width: 50%;
-  padding: 24px 24px;
+  padding: 16px;
   border: 1px solid var(--normal-border-color);
 }
 .el-timeline {

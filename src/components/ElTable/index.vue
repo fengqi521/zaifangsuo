@@ -3,7 +3,6 @@
     <!-- 表格 -->
     <el-table
       v-bind="tableProps"
-      height="484"
       :data="props.data"
       v-loading="props.loading"
       @sort-change="handleSortChange"
@@ -90,8 +89,9 @@ const emit = defineEmits([
 <style lang="scss" scoped>
 @import '@/styles/tools.scss';
 .table-container {
-  padding: 20px;
+  padding: 16px;
   text-align: right;
+  // border: 1px solid var(--normal-border-color);
   background: var(--background-color);
   :deep(.el-table) {
     thead {
