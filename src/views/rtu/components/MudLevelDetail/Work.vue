@@ -1,18 +1,17 @@
 <script setup>
-import { reactive, ref, watch } from "vue";
-import MudLevelChart from "./MudLevelChart.vue";
+import { reactive, ref, watchEffect, onUnmounted, provide } from "vue";
+import Chart from "@/components/Chart/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import { getStartAndEndTime } from "@/utils/index";
+import { getCommonLine } from "@/utils/chartData";
+import eventBus from './eventBus'
 
+const collectOption = reactive(
+  getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
+);
 // 常量
-const tableColumns = [
-  { prop: "num", label: "序号" },
-  { prop: "monitortime", label: "监测时间" },
-  { prop: "nswval", label: "泥水位(m)" },
-];
-
 const workColumns = [
   { prop: "num", label: "序号" },
   { prop: "monitortime", label: "监测时间" },
@@ -20,168 +19,404 @@ const workColumns = [
   { prop: "temperature", label: "温度(℃)" },
 ];
 
+const chartData = reactive({ monitortime: [], powerVolt: [], temperature: [] })
 const loading = ref(false);
-const active = ref("day");
-const dateTimeRange = ref([]);
-const deviceData = reactive({
+const wordData = reactive({
   page: 1,
   limit: 10,
   total: 0,
   data: [],
 });
 
-const wordData = reactive({
-  page: 1,
-  limit: 10,
-  data: [],
-});
-
-// 获取泥水位历史数据
-const getMudLevelHistory = (page, size) => {
-  if (page) deviceData.page = page;
-  if (size) deviceData.limit = size;
-  const tableRes = {
-    code: 0,
-    status: true,
-    msg: "OK",
-    pageNo: 1,
-    pageSize: 10,
-    total: 106,
-    data: [
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:45:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:40:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:35:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:30:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:25:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:20:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:15:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:10:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:05:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 08:00:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:55:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:50:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:45:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:40:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:35:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:30:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:25:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:20:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:15:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:10:00",
-        nswval: 2.909,
-        variation: null,
-      },
-    ],
-    hasNext: false,
-    hasPrevious: false,
-  };
-  if (!tableRes.code) {
-    deviceData.total = tableRes.total;
-    Object.assign(
-      deviceData.data,
-      tableRes.data.map((item, index) => ({ ...item, num: index + 1 }))
-    );
+// 获取图表数据
+const getWorkChartData = () => {
+  const res = {
+    "code": 0,
+    "status": true,
+    "msg": "success",
+    "pageNo": null,
+    "pageSize": null,
+    "total": null,
+    "data": {
+      "monitortime": [
+        "2024/07/13 00:05:00",
+        "2024/07/13 00:10:00",
+        "2024/07/13 00:15:00",
+        "2024/07/13 00:20:00",
+        "2024/07/13 00:25:00",
+        "2024/07/13 00:30:00",
+        "2024/07/13 00:35:00",
+        "2024/07/13 00:40:00",
+        "2024/07/13 00:45:00",
+        "2024/07/13 00:50:00",
+        "2024/07/13 00:55:00",
+        "2024/07/13 01:00:00",
+        "2024/07/13 01:05:00",
+        "2024/07/13 01:10:00",
+        "2024/07/13 01:15:00",
+        "2024/07/13 01:20:00",
+        "2024/07/13 01:25:00",
+        "2024/07/13 01:30:00",
+        "2024/07/13 01:35:00",
+        "2024/07/13 01:40:00",
+        "2024/07/13 01:45:00",
+        "2024/07/13 01:50:00",
+        "2024/07/13 01:55:00",
+        "2024/07/13 02:00:00",
+        "2024/07/13 02:05:00",
+        "2024/07/13 02:10:00",
+        "2024/07/13 02:15:00",
+        "2024/07/13 02:20:00",
+        "2024/07/13 02:25:00",
+        "2024/07/13 02:30:00",
+        "2024/07/13 02:35:00",
+        "2024/07/13 02:40:00",
+        "2024/07/13 02:45:00",
+        "2024/07/13 02:50:00",
+        "2024/07/13 02:55:00",
+        "2024/07/13 03:00:00",
+        "2024/07/13 03:05:00",
+        "2024/07/13 03:10:00",
+        "2024/07/13 03:15:00",
+        "2024/07/13 03:20:00",
+        "2024/07/13 03:25:00",
+        "2024/07/13 03:30:00",
+        "2024/07/13 03:35:00",
+        "2024/07/13 03:40:00",
+        "2024/07/13 03:45:00",
+        "2024/07/13 03:50:00",
+        "2024/07/13 03:55:00",
+        "2024/07/13 04:00:00",
+        "2024/07/13 04:05:00",
+        "2024/07/13 04:10:00",
+        "2024/07/13 04:15:00",
+        "2024/07/13 04:20:00",
+        "2024/07/13 04:25:00",
+        "2024/07/13 04:30:00",
+        "2024/07/13 04:35:00",
+        "2024/07/13 04:40:00",
+        "2024/07/13 04:45:00",
+        "2024/07/13 04:50:00",
+        "2024/07/13 04:55:00",
+        "2024/07/13 05:00:00",
+        "2024/07/13 05:05:00",
+        "2024/07/13 05:10:00",
+        "2024/07/13 05:15:00",
+        "2024/07/13 05:20:00",
+        "2024/07/13 05:25:00",
+        "2024/07/13 05:30:00",
+        "2024/07/13 05:35:00",
+        "2024/07/13 05:40:00",
+        "2024/07/13 05:45:00",
+        "2024/07/13 05:50:00",
+        "2024/07/13 05:55:00",
+        "2024/07/13 06:00:00"
+      ],
+      "solarVolt": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "powerVolt": [
+        13.00,
+        13.03,
+        13.01,
+        13.00,
+        13.05,
+        13.03,
+        13.05,
+        13.03,
+        13.05,
+        13.00,
+        12.91,
+        12.91,
+        13.00,
+        13.02,
+        13.02,
+        13.03,
+        13.04,
+        13.02,
+        13.03,
+        13.03,
+        12.99,
+        13.03,
+        12.91,
+        12.88,
+        12.99,
+        13.01,
+        13.00,
+        13.01,
+        13.01,
+        13.01,
+        13.00,
+        13.01,
+        13.00,
+        12.99,
+        12.90,
+        12.89,
+        12.94,
+        12.99,
+        12.97,
+        12.99,
+        13.00,
+        12.96,
+        13.00,
+        12.99,
+        12.97,
+        12.99,
+        12.89,
+        12.84,
+        12.97,
+        12.95,
+        12.99,
+        12.99,
+        12.99,
+        12.99,
+        12.99,
+        12.96,
+        13.00,
+        12.98,
+        12.87,
+        12.86,
+        12.98,
+        12.97,
+        12.98,
+        12.99,
+        12.99,
+        13.00,
+        13.00,
+        12.99,
+        12.98,
+        12.98,
+        12.88,
+        12.86
+      ],
+      "temperature": [
+        22.40,
+        22.40,
+        22.40,
+        22.40,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.20,
+        22.30,
+        22.30,
+        22.20,
+        22.20,
+        22.20,
+        22.20,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.10,
+        22.20,
+        22.20,
+        22.20,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.30,
+        22.40,
+        22.40,
+        22.30,
+        22.30,
+        22.20,
+        22.10,
+        22.10,
+        22.10,
+        22.00,
+        22.00,
+        21.90
+      ],
+      "signal4g": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "hasNext": false,
+    "hasPrevious": false
+  }
+  if (!res.code) {
+    Object.assign(chartData, res.data)
   }
 };
-
-// 获取工况数据
+// 获取工况历史数据
 const getWorkHistory = (page, size) => {
   const res = {
     code: 0,
@@ -480,40 +715,40 @@ const getWorkHistory = (page, size) => {
     );
   }
 };
+// 图表数据重组
+const resetOptions = (data) => {
+  collectOption.legend.show = true;
+  collectOption.xAxis[0].data = data.monitortime;
+  collectOption.yAxis[0].name = "{title|泥水位(m)}";
+  collectOption.series[0] = {
+    name: "泥水位",
+    type: "line",
+    data: data.powerVolt,
+    Symbol: "circle",
+    // symbolSize: 6,
+    smooth: true,
+    unit: "m",
+  }
+}
 
-// 更新时间获取数据
-watch(
-  active,
-  (newVal) => {
-    dateTimeRange.value = getStartAndEndTime(newVal);
-    getMudLevelHistory();
-    getWorkHistory();
-  },
-  { immediate: true }
-);
+watchEffect(() => {
+  resetOptions(chartData)
+});
 
-console.log(deviceData);
+eventBus.on('getWorkChartData', getWorkChartData)
+eventBus.on('getWorkHistory', getWorkHistory)
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
-      <MudLevelChart />
+      <Chart :options="[collectOption]" />
       <div class="device-data__history">
-        <ElTable
-          class="device-data__table"
-          :loading="loading"
-          :columns="workColumns"
-          :data="wordData.data"
-          :tableProps="{ showSelection: false, border: true }"
-        />
-        <ElPagination
-          :currentPage="wordData.page"
-          :page-size="wordData.limit"
-          :total="wordData.total"
+        <ElTable class="device-data__table" :loading="loading" :columns="workColumns" :data="wordData.data"
+          :tableProps="{ showSelection: false, border: true }" />
+        <ElPagination :currentPage="wordData.page" :page-size="wordData.limit" :total="wordData.total"
           @pagination-change="(page) => getMudLevelHistory(page)"
-          @page-size-change="(size) => getMudLevelHistory(wordData.page, size)"
-        />
+          @page-size-change="(size) => getMudLevelHistory(wordData.page, size)" />
       </div>
     </ElCard>
   </div>
@@ -521,21 +756,6 @@ console.log(deviceData);
 
 <style lang="scss" scoped>
 .device-data {
-  &__title {
-    line-height: 52px;
-    font-size: 16px;
-    color: var(--normal-title-color);
-    font-weight: 700;
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-
-    .el-radio-group {
-      margin-right: 12px;
-    }
-  }
 
   &__table {
     :deep(.el-scrollbar) {

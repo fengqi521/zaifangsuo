@@ -11,25 +11,19 @@ const active = ref(0);
 const handleChangeActive = (index) => {
   active.value = index;
 };
-const componentContent = computed(() => {
-  return props.tabs[active.value]?.component || null;
-});
+
 </script>
 <template>
   <div class="tabs">
     <div class="tabs-head">
-      <p
-        :class="['tabs-head__item', { 'tabs-head__active': active === index }]"
-        v-for="(tab, index) in props.tabs"
-        :key="index"
-        @click="handleChangeActive(index)"
-      >
+      <p :class="['tabs-head__item', { 'tabs-head__active': active === index }]" v-for="(tab, index) in props.tabs"
+        :key="index" @click="handleChangeActive(index)">
         {{ tab.title }}
       </p>
       <slot name="actions"></slot>
     </div>
-    <div class="tabs-main">
-      <component :is="componentContent" />
+    <div class="tabs-main" v-for="({ pannel }, index ) in props.tabs " :key="index">
+      <component :is="pannel" v-show="active === index" />
     </div>
   </div>
 </template>

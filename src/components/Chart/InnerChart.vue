@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { inject, onMounted, ref, watch, computed } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
 const { initEchart, setEchartOption, updateEchartOption } = useEchartsHook();
 import { getCssVariableValue } from "@/utils";
@@ -29,7 +29,6 @@ const setChartItemZoom = () => {
   const _width = chartContainer.value.getBoundingClientRect().width - 32;
   const isShowCount = Math.floor(_width / (Number() + Number(barGap)));
   const total = props.option.series[0].data.length;
-  console.log(isShowCount, total);
   return isShowCount > total ? 100 : (isShowCount / total) * 100;
 };
 watch(

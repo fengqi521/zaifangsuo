@@ -1,29 +1,38 @@
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, nextTick } from "vue";
 import ElTabs from "@/components/ElTabs/index.vue";
 import History from "./History.vue";
 import Work from "./Work.vue";
 import { getStartAndEndTime } from "@/utils/index";
-
+import eventBus from './eventBus.js'
+import { useEchartsHook } from '@/hooks/useEcharts';
+useEchartsHook()
 const active = ref("day");
 const dateTimeRange = ref([]);
-const tabs = reactive([
+const tabs = [
   {
     title: "设备数据",
-    component: History,
+    pannel: History,
   },
-  { title: "设备工况", component: Work },
-]);
-
-
-
-// 更新时间获取数据
+  {
+    title: "设备工况",
+    pannel: Work,
+  },
+];
 watch(
   active,
   (newVal) => {
     dateTimeRange.value = getStartAndEndTime(newVal);
-    getMudLevelHistory();
-    getWorkHistory();
+    nextTick(() => {
+      // 监测数据
+      eventBus.emit('getMudChartData')
+      eventBus.emit('getMudLevelHistory')
+
+      // 工况数据
+      eventBus.emit('getWorkChartData')
+      eventBus.emit('getWorkHistory')
+    })
+
   },
   { immediate: true }
 );
@@ -40,12 +49,7 @@ watch(
             <el-radio-button label="本周" value="week" />
             <el-radio-button label="本月" value="month" />
           </el-radio-group>
-          <el-date-picker
-            v-model="dateTimeRange"
-            type="datetimerange"
-            range-separator="To"
-            style="width: 355px"
-          />
+          <el-date-picker v-model="dateTimeRange" type="datetimerange" range-separator="To" style="width: 355px" />
         </div>
       </template>
     </ElTabs>
