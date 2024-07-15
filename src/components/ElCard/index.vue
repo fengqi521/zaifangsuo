@@ -9,7 +9,7 @@ const props = defineProps({
 <template>
   <div class="card">
     <!-- 标题 -->
-    <div class="card-head">
+    <div class="card-head" v-if="title">
       <p class="card-title">{{ title }}</p>
       <slot name="actions"></slot>
     </div>

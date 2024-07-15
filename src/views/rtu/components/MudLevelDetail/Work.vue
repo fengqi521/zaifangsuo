@@ -4,10 +4,9 @@ import Chart from "@/components/Chart/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import { getStartAndEndTime } from "@/utils/index";
 import { getCommonLine } from "@/utils/chartData";
-import eventBus from './eventBus'
-
+import eventBus from "@/utils/eventBus";
+provide("name", "work");
 const collectOption = reactive(
   getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
 );
@@ -19,7 +18,7 @@ const workColumns = [
   { prop: "temperature", label: "温度(℃)" },
 ];
 
-const chartData = reactive({ monitortime: [], powerVolt: [], temperature: [] })
+const chartData = reactive({ monitortime: [], powerVolt: [], temperature: [] });
 const loading = ref(false);
 const wordData = reactive({
   page: 1,
@@ -31,14 +30,14 @@ const wordData = reactive({
 // 获取图表数据
 const getWorkChartData = () => {
   const res = {
-    "code": 0,
-    "status": true,
-    "msg": "success",
-    "pageNo": null,
-    "pageSize": null,
-    "total": null,
-    "data": {
-      "monitortime": [
+    code: 0,
+    status: true,
+    msg: "success",
+    pageNo: null,
+    pageSize: null,
+    total: null,
+    data: {
+      monitortime: [
         "2024/07/13 00:05:00",
         "2024/07/13 00:10:00",
         "2024/07/13 00:15:00",
@@ -110,9 +109,9 @@ const getWorkChartData = () => {
         "2024/07/13 05:45:00",
         "2024/07/13 05:50:00",
         "2024/07/13 05:55:00",
-        "2024/07/13 06:00:00"
+        "2024/07/13 06:00:00",
       ],
-      "solarVolt": [
+      solarVolt: [
         null,
         null,
         null,
@@ -184,157 +183,27 @@ const getWorkChartData = () => {
         null,
         null,
         null,
-        null
+        null,
       ],
-      "powerVolt": [
-        13.00,
-        13.03,
-        13.01,
-        13.00,
-        13.05,
-        13.03,
-        13.05,
-        13.03,
-        13.05,
-        13.00,
-        12.91,
-        12.91,
-        13.00,
-        13.02,
-        13.02,
-        13.03,
-        13.04,
-        13.02,
-        13.03,
-        13.03,
-        12.99,
-        13.03,
-        12.91,
-        12.88,
-        12.99,
-        13.01,
-        13.00,
-        13.01,
-        13.01,
-        13.01,
-        13.00,
-        13.01,
-        13.00,
-        12.99,
-        12.90,
-        12.89,
-        12.94,
-        12.99,
-        12.97,
-        12.99,
-        13.00,
-        12.96,
-        13.00,
-        12.99,
-        12.97,
-        12.99,
-        12.89,
-        12.84,
-        12.97,
-        12.95,
-        12.99,
-        12.99,
-        12.99,
-        12.99,
-        12.99,
-        12.96,
-        13.00,
-        12.98,
-        12.87,
+      powerVolt: [
+        13.0, 13.03, 13.01, 13.0, 13.05, 13.03, 13.05, 13.03, 13.05, 13.0,
+        12.91, 12.91, 13.0, 13.02, 13.02, 13.03, 13.04, 13.02, 13.03, 13.03,
+        12.99, 13.03, 12.91, 12.88, 12.99, 13.01, 13.0, 13.01, 13.01, 13.01,
+        13.0, 13.01, 13.0, 12.99, 12.9, 12.89, 12.94, 12.99, 12.97, 12.99, 13.0,
+        12.96, 13.0, 12.99, 12.97, 12.99, 12.89, 12.84, 12.97, 12.95, 12.99,
+        12.99, 12.99, 12.99, 12.99, 12.96, 13.0, 12.98, 12.87, 12.86, 12.98,
+        12.97, 12.98, 12.99, 12.99, 13.0, 13.0, 12.99, 12.98, 12.98, 12.88,
         12.86,
-        12.98,
-        12.97,
-        12.98,
-        12.99,
-        12.99,
-        13.00,
-        13.00,
-        12.99,
-        12.98,
-        12.98,
-        12.88,
-        12.86
       ],
-      "temperature": [
-        22.40,
-        22.40,
-        22.40,
-        22.40,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.20,
-        22.30,
-        22.30,
-        22.20,
-        22.20,
-        22.20,
-        22.20,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.10,
-        22.20,
-        22.20,
-        22.20,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.30,
-        22.40,
-        22.40,
-        22.30,
-        22.30,
-        22.20,
-        22.10,
-        22.10,
-        22.10,
-        22.00,
-        22.00,
-        21.90
+      temperature: [
+        22.4, 22.4, 22.4, 22.4, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3,
+        22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3,
+        22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.3, 22.2, 22.3, 22.3,
+        22.2, 22.2, 22.2, 22.2, 22.1, 22.1, 22.1, 22.1, 22.1, 22.1, 22.1, 22.1,
+        22.1, 22.1, 22.1, 22.1, 22.1, 22.2, 22.2, 22.2, 22.3, 22.3, 22.3, 22.3,
+        22.3, 22.4, 22.4, 22.3, 22.3, 22.2, 22.1, 22.1, 22.1, 22.0, 22.0, 21.9,
       ],
-      "signal4g": [
+      signal4g: [
         null,
         null,
         null,
@@ -406,14 +275,14 @@ const getWorkChartData = () => {
         null,
         null,
         null,
-        null
-      ]
+        null,
+      ],
     },
-    "hasNext": false,
-    "hasPrevious": false
-  }
+    hasNext: false,
+    hasPrevious: false,
+  };
   if (!res.code) {
-    Object.assign(chartData, res.data)
+    Object.assign(chartData, res.data);
   }
 };
 // 获取工况历史数据
@@ -728,27 +597,39 @@ const resetOptions = (data) => {
     // symbolSize: 6,
     smooth: true,
     unit: "m",
-  }
-}
+  };
+};
 
 watchEffect(() => {
-  resetOptions(chartData)
+  resetOptions(chartData);
 });
-
-eventBus.on('getWorkChartData', getWorkChartData)
-eventBus.on('getWorkHistory', getWorkHistory)
+eventBus.on("getWorkChartData", getWorkChartData);
+eventBus.on("getWorkHistory", getWorkHistory);
+onUnmounted(() => {
+  eventBus.off("getWorkChartData", getWorkChartData);
+  eventBus.off("getWorkHistory", getWorkHistory);
+});
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
-      <Chart :options="[collectOption]" />
+      <Chart :options="[collectOption]" :eleNames="['wordChart']" />
       <div class="device-data__history">
-        <ElTable class="device-data__table" :loading="loading" :columns="workColumns" :data="wordData.data"
-          :tableProps="{ showSelection: false, border: true }" />
-        <ElPagination :currentPage="wordData.page" :page-size="wordData.limit" :total="wordData.total"
+        <ElTable
+          class="device-data__table"
+          :loading="loading"
+          :columns="workColumns"
+          :data="wordData.data"
+          :tableProps="{ showSelection: false, border: true }"
+        />
+        <ElPagination
+          :currentPage="wordData.page"
+          :page-size="wordData.limit"
+          :total="wordData.total"
           @pagination-change="(page) => getMudLevelHistory(page)"
-          @page-size-change="(size) => getMudLevelHistory(wordData.page, size)" />
+          @page-size-change="(size) => getMudLevelHistory(wordData.page, size)"
+        />
       </div>
     </ElCard>
   </div>
@@ -756,8 +637,12 @@ eventBus.on('getWorkHistory', getWorkHistory)
 
 <style lang="scss" scoped>
 .device-data {
-
+  &__history{
+    margin-top:16px;
+  }
   &__table {
+    border: 1px solid var(--normal-border-color);
+
     :deep(.el-scrollbar) {
       height: 408px;
     }

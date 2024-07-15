@@ -6,3 +6,12 @@
 .el-table__border-left-patch{
     display: none;
 }
+
+.el-scrollbar__bar{
+  background:  var(--scrollbar-track-color);
+  border-radius: 0;
+}
+
+.el-scrollbar__thumb{
+    opacity: 1;
+}

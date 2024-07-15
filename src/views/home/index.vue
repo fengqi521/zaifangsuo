@@ -1,9 +1,10 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { DEVICE_DATA, MESSAGE } from "@/constants";
+import ListHead from '@/components/ListHead/index.vue'
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
 import Echart from './components/Echart/index.vue'
+import { DEVICE_DATA, MESSAGE } from "@/constants";
 
 const messages = ref([...MESSAGE])
 const cardLists = [
@@ -28,6 +29,7 @@ DEVICE_DATA.forEach((device, index) => {
 </script>
 <template>
   <div class="home-container">
+    <ListHead title="首页"> </ListHead>
     <!-- 左侧图表 -->
     <!-- <div class="home-left"> -->
     <Echart />

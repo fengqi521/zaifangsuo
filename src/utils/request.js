@@ -9,7 +9,7 @@ function logout() {
   userInfoStoreHook().logout();
   location.reload();
 }
-
+const status = false;
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例命名为 service
@@ -31,8 +31,10 @@ function createService() {
       const data = response.data;
       const code = data.code;
       console.log(code)
+      if(status) return data;
       switch (code) {
         case 406:
+          status = true;
           return userInfoStoreHook().logout();
       }
       return data;

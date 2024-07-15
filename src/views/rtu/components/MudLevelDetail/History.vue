@@ -6,105 +6,40 @@ import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import { getCommonLine } from "@/utils/chartData";
-import eventBus from './eventBus.js'
+import eventBus from "@/utils/eventBus";
 const collectOption = reactive(
   getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 图表
-const chartData = reactive({ timeList: [], valueList: [] })
-const mudLevelImages = reactive({ timeList: [], valueList: [] })
-provide('mudLevelImages', mudLevelImages)
+const chartData = reactive({ timeList: [], valueList: [] });
+const mudLevelImages = reactive({ timeList: [], valueList: [] });
+provide("mudLevelImages", mudLevelImages);
 // 获取泥水位图表数据
 const getMudChartData = () => {
   const res = {
-    "code": 0,
-    "status": true,
-    "msg": null,
-    "pageNo": null,
-    "pageSize": null,
-    "total": null,
-    "data": [
+    code: 0,
+    status: true,
+    msg: null,
+    pageNo: null,
+    pageSize: null,
+    total: null,
+    data: [
       {
-        "zh_name": "泥水位",
-        "en_name": "Mud level",
-        "units": "m",
-        "icon": "",
-        "valueList": [
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909,
-          2.909
+        zh_name: "泥水位",
+        en_name: "Mud level",
+        units: "m",
+        icon: "",
+        valueList: [
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
+          2.909, 2.909, 2.909,
         ],
-        "timeList": [
+        timeList: [
           "2024-07-13 00:00:00",
           "2024-07-13 00:05:00",
           "2024-07-13 00:10:00",
@@ -177,46 +112,46 @@ const getMudChartData = () => {
           "2024-07-13 05:45:00",
           "2024-07-13 05:50:00",
           "2024-07-13 05:55:00",
-          "2024-07-13 06:00:00"
+          "2024-07-13 06:00:00",
         ],
-        "tag": "6",
-        "column": "nswval",
-        "group": "泥水位"
+        tag: "6",
+        column: "nswval",
+        group: "泥水位",
       },
       {
-        "zh_name": "图像",
-        "en_name": "picture url",
-        "units": "",
-        "icon": "icon-tuxiang-01",
-        "valueList": [
+        zh_name: "图像",
+        en_name: "picture url",
+        units: "",
+        icon: "icon-tuxiang-01",
+        valueList: [
           "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382055040.jpg",
           "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382045038.jpg",
           "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382035033.jpg",
           "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382025035.jpg",
           "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382015035.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382005035.jpg"
+          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382005035.jpg",
         ],
-        "timeList": [
+        timeList: [
           "2024-07-13 05:50:40",
           "2024-07-13 04:50:38",
           "2024-07-13 03:50:33",
           "2024-07-13 02:50:35",
           "2024-07-13 01:50:35",
-          "2024-07-13 00:50:35"
+          "2024-07-13 00:50:35",
         ],
-        "tag": "13",
-        "column": "imageurl",
-        "group": null
-      }
+        tag: "13",
+        column: "imageurl",
+        group: null,
+      },
     ],
-    "hasNext": false,
-    "hasPrevious": false
-  }
+    hasNext: false,
+    hasPrevious: false,
+  };
   if (!res.code) {
-    Object.assign(chartData, res.data[0])
-    Object.assign(mudLevelImages, res.data[1])
+    Object.assign(chartData, res.data[0]);
+    Object.assign(mudLevelImages, res.data[1]);
   }
-}
+};
 
 // 历史table数据
 const loading = ref(false);
@@ -390,29 +325,42 @@ const resetOptions = (data) => {
     smooth: true,
     unit: "m",
   };
-}
+};
 watchEffect(() => {
-  resetOptions(chartData)
-})
-
-eventBus.on('getMudChartData', getMudChartData)
-eventBus.on('getMudLevelHistory', getMudLevelHistory)
-
+  resetOptions(chartData);
+});
+eventBus.on("getMudChartData", getMudChartData);
+eventBus.on("getMudLevelHistory", getMudLevelHistory);
+onUnmounted(() => {
+  eventBus.off("getMudChartData", getMudChartData);
+  eventBus.off("getMudLevelHistory", getMudLevelHistory);
+});
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
-      <Chart :options="[collectOption]" />
       <div class="device-data__history">
-        <div>
-          <ElTable class="device-data__table" :loading="loading" :columns="tableColumns" :data="deviceData.data"
-            :tableProps="{ showSelection: false, border: true }" />
-          <ElPagination :currentPage="deviceData.page" :page-size="deviceData.limit" :total="deviceData.total"
-            @pagination-change="(page) => getMudLevelHistory(page)" @page-size-change="(size) => getMudLevelHistory(deviceData.page, size)
-              " />
-        </div>
+        <Chart :options="[collectOption]" :eleNames="['historyChart']"/>
         <TimelineImage :imagesData="mudLevelImages" />
+      </div>
+      <div>
+        <ElTable
+          class="device-data__table"
+          :loading="loading"
+          :columns="tableColumns"
+          :data="deviceData.data"
+          :tableProps="{ showSelection: false, border: true }"
+        />
+        <ElPagination
+          :currentPage="deviceData.page"
+          :page-size="deviceData.limit"
+          :total="deviceData.total"
+          @pagination-change="(page) => getMudLevelHistory(page)"
+          @page-size-change="
+            (size) => getMudLevelHistory(deviceData.page, size)
+          "
+        />
       </div>
     </ElCard>
   </div>
@@ -431,6 +379,7 @@ eventBus.on('getMudLevelHistory', getMudLevelHistory)
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
+    margin-bottom: 16px;
   }
 
   &__table {

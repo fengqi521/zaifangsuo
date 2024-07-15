@@ -5,8 +5,6 @@ const props = defineProps({
     default:()=>({timeList:[], valueList:[]})
   }
 })
-
-console.log(props)
 </script>
 <template>
   <div class="timeline-container">
@@ -28,7 +26,7 @@ console.log(props)
 
 .el-timeline {
   width: 100%;
-  max-height: 500px;
+  max-height: 386px;
   overflow-y: auto;
   @extend %scrollbar;
 

@@ -78,7 +78,7 @@ const handleChangeSize = (size) => {
 
 <template>
   <div>
-    <ListHead title="RTU列表"> </ListHead>
+    <ListHead title="设备列表"> </ListHead>
     <!-- 查询 -->
     <SearchForm
       :initialData="searchInfo"

@@ -7,6 +7,7 @@
       v-loading="props.loading"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
+      scrollbar-always-on	
     >
       <el-table-column
         type="selection"
@@ -29,14 +30,14 @@
             :column="scope.column"
             :$index="scope.$index"
           >
-          <div v-if="Array.isArray(scope.row[column.prop])">
-            <p v-for="(item, index) in scope.row[column.prop]" :key="index">
-              {{ item.device_name }}
-            </p>
-          </div>
-          <div v-else>
-            {{ scope.row[column.prop] }}
-          </div>
+            <div v-if="Array.isArray(scope.row[column.prop])">
+              <p v-for="(item, index) in scope.row[column.prop]" :key="index">
+                {{ item.device_name }}
+              </p>
+            </div>
+            <div v-else>
+              {{ scope.row[column.prop] }}
+            </div>
           </slot>
         </template>
       </el-table-column>
@@ -87,7 +88,7 @@ const emit = defineEmits([
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/tools.scss';
+@import "@/styles/tools.scss";
 .table-container {
   padding: 16px;
   text-align: right;
@@ -100,6 +101,11 @@ const emit = defineEmits([
       font-weight: bold;
     }
 
+    .el-scrollbar {
+      min-height: 408px;
+      @extend %scrollbar;
+    }
+
     .el-table__body-wrapper {
       font-size: 12px;
       color: var(--table-tbody-text-color);
@@ -110,7 +116,7 @@ const emit = defineEmits([
       border-right: none;
       height: 44px;
       max-height: 76px;
-      overflow: hidden
+      overflow: hidden;
     }
 
     th {

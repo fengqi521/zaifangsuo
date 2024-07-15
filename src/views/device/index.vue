@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
+import ListHead from '@/components/ListHead/index.vue'
 import { getCssVariableValue } from "@/utils";
 import { SENSOR, initialFormData } from "@/constants";
 
@@ -96,6 +97,8 @@ const setShowComponent = (type) => {
 
 <template>
   <div class="device-container">
+    <ListHead title="设备数据"> </ListHead>
+
     <!-- 查询条件 -->
     <SearchForm
       :initialData="initialData"

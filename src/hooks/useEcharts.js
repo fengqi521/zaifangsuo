@@ -1,9 +1,4 @@
-import {
-  ref,
-  markRaw,
-  onUnmounted,
-  provide
-} from "vue";
+import { ref, markRaw, onUnmounted } from "vue";
 import * as echarts from "echarts";
 export function useEchartsHook() {
   const chart = ref(null);
@@ -42,7 +37,8 @@ export function useEchartsHook() {
   return {
     chart,
     initEchart,
+    resizeChart,
     setEchartOption,
-    updateEchartOption
+    updateEchartOption,
   };
 }

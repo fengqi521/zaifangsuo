@@ -1,28 +1,54 @@
 <script setup>
-import { ref, computed } from "vue";
-
+import { ref, watch, nextTick } from "vue";
+import eventBus from "@/utils/eventBus";
 const props = defineProps({
   tabs: {
     type: Array,
     default: () => [],
   },
+  modelValue: {
+    type: [String, Number],
+    default: 0,
+  },
 });
-const active = ref(0);
+const emit = defineEmits(["update:modelValue", "change"]);
+
+const active = ref(props.modelValue);
+
 const handleChangeActive = (index) => {
   active.value = index;
+  nextTick(() => {
+    emit("update:modelValue", index);
+    emit("change", index);
+  });
 };
 
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    active.value = newValue;
+  }
+);
 </script>
 <template>
   <div class="tabs">
     <div class="tabs-head">
-      <p :class="['tabs-head__item', { 'tabs-head__active': active === index }]" v-for="(tab, index) in props.tabs"
-        :key="index" @click="handleChangeActive(index)">
+      <p
+        :class="['tabs-head__item', { 'tabs-head__active': active === index }]"
+        v-for="(tab, index) in props.tabs"
+        :key="index"
+        @click="handleChangeActive(index)"
+      >
         {{ tab.title }}
       </p>
       <slot name="actions"></slot>
     </div>
-    <div class="tabs-main" v-for="({ pannel }, index ) in props.tabs " :key="index">
+    <div
+      class="tabs-main"
+      style="width: 100%"
+      v-for="({ pannel }, index) in props.tabs"
+      :key="index"
+    >
       <component :is="pannel" v-show="active === index" />
     </div>
   </div>
@@ -35,7 +61,6 @@ const handleChangeActive = (index) => {
     line-height: 40px;
     font-size: 14px;
     color: var(--panel-text-color);
-    opacity: 0.7;
     cursor: pointer;
     user-select: none;
 
@@ -47,8 +72,8 @@ const handleChangeActive = (index) => {
 
     &__active {
       font-weight: bold;
-      background: var(--background-color);
-      color: var(--panel-active-color);
+      color: var(--text-color);
+      background: var(--btn-bg-color);
     }
   }
 }

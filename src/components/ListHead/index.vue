@@ -19,7 +19,7 @@ const props = defineProps({
   align-items: center;
   justify-content: space-between;
   // padding-inline: 16px;
-  height: 48px;
+  height: 64px;
   font-size: 14px;
   color: var(--normal-title-color);
   font-weight: 700;

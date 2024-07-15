@@ -7,6 +7,9 @@ html.normal {
     --el-border-radius-base: 0;
     --el-text-color-placeholder: rgb(78, 90, 113);
     --el-text-color-regular:rgb(78, 90, 113);
+
+   /* 状态 */
+   --el-color-success:var(--online-color);
 }
 
 /* button */
@@ -14,7 +17,16 @@ html.normal .el-button--primary{
     --el-button-bg-color: rgb(16, 137, 255);
 }
 
+/* radio */
+html.normal .el-radio-button{
+    --el-radio-button-checked-bg-color:#1089FF;
+}
+
 html.normal .el-pagination{
     --el-pagination-button-width:28px;
     --el-pagination-button-height:28px;
+}
+
+html.normal .el-scrollbar{
+    --el-scrollbar-bg-color:var(--scrollbar-thumb-color)
 }
