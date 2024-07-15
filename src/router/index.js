@@ -57,6 +57,7 @@ export const dynamicRoutes = [
         meta: {
           title: "首页",
           icon: "icon-ai-home",
+          size:'20px',
           affix: true,
           roles: [1, 2, 3, 4, 5],
         },
@@ -89,6 +90,7 @@ export const dynamicRoutes = [
         meta: {
           title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
+          size:'22px',
           affix: true,
           roles: [1],
         },
@@ -113,6 +115,7 @@ export const dynamicRoutes = [
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
+          size:'19px',
           roles: [1],
         },
       },

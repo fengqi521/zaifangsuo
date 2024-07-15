@@ -341,12 +341,11 @@ onUnmounted(() => {
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
       <div class="device-data__history">
-        <Chart :options="[collectOption]" :eleNames="['historyChart']"/>
+        <Chart :options="[collectOption]" :eleNames="['historyChart']" />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
-      <div>
+      <div class="device-data__table">
         <ElTable
-          class="device-data__table"
           :loading="loading"
           :columns="tableColumns"
           :data="deviceData.data"
@@ -379,10 +378,10 @@ onUnmounted(() => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    margin-bottom: 16px;
   }
 
   &__table {
+    margin-top: 24px;
     border: 1px solid var(--normal-border-color);
 
     :deep(.el-scrollbar) {

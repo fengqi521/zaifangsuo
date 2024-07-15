@@ -1,13 +1,14 @@
 <script setup>
 import { reactive, ref } from "vue";
+import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import rtuApi from "@/api/rtu";
 
-import ListHead from "@/components/ListHead/index.vue";
 import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
 
+const breadList = ref([{ title: "设备管理" }]);
 const formItems = reactive(deviceFormItems);
 
 const searchInfo = reactive({ ...projectFormData });
@@ -78,7 +79,7 @@ const handleChangeSize = (size) => {
 
 <template>
   <div>
-    <ListHead title="设备列表"> </ListHead>
+    <Bread :breadList="breadList" />
     <!-- 查询 -->
     <SearchForm
       :initialData="searchInfo"
@@ -87,7 +88,7 @@ const handleChangeSize = (size) => {
       @reset="handleReset"
       ref="searchFormRef"
     />
-
+    <!-- 表格 -->
     <ElTable
       class="rtu-table"
       :loading="loading"
@@ -95,24 +96,43 @@ const handleChangeSize = (size) => {
       :data="rtuData"
       :tableProps="{ showSelection: false, border: true }"
     >
-      <template #device_type="scope" class="status-row">
-        {{ getType(scope.row.device_type) }}
-      </template>
-      <template #online="scope" class="status-row">
-        <span :class="{ status: true, 'status-online': scope.row.online }">
-        </span>
-        <span :class="{ 'status-online-text': scope.row.online }">{{
-          scope.row.online ? "在线" : "离线"
+      <template #device_type="scope">
+        <span class="rtu-table__device-type">{{
+          getType(scope.row.device_type)
         }}</span>
       </template>
-      <template #action="{ row }">
-        <router-link class="btn author-btn" :to="`/rtu/detail/${row.id}`"
-          >查看详情</router-link
+      <template #online="scope">
+        <span
+          :class="{
+            'rtu-table__status': true,
+            'rtu-table__status--online': scope.row.online,
+          }"
+        ></span>
+        <span
+          :class="{
+            'rtu-table__status-text': true,
+            'rtu-table__status-text--online': scope.row.online,
+          }"
         >
-        <span class="btn update-btn" @click="">下发指令</span>
+          {{ scope.row.online ? "在线" : "离线" }}
+        </span>
+      </template>
+      <template #action="{ row }">
+        <router-link
+          class="rtu-table__action-btn rtu-table__action-btn--details"
+          :to="`/rtu/detail/${row.id}`"
+        >
+          查看详情
+        </router-link>
+        <span
+          class="rtu-table__action-btn rtu-table__action-btn--command"
+          @click=""
+          >下发指令</span
+        >
       </template>
     </ElTable>
 
+    <!-- 分页 -->
     <ElPagination
       :currentPage="page"
       :page-size="limit"
@@ -124,7 +144,7 @@ const handleChangeSize = (size) => {
 </template>
 <style lang="scss" scoped>
 .rtu-table {
-  .status {
+  .rtu-table__status {
     display: inline-flex;
     margin-right: 8px;
     width: 8px;
@@ -133,14 +153,24 @@ const handleChangeSize = (size) => {
     color: var(--offline-color);
     background: var(--offline-bg-color);
     border: 1px solid var(--offline-border-color);
-  }
-  .status-online {
-    background: var(--online-color);
-    border-color: var(--online-border-color);
+
+    &--online {
+      background: var(--online-color);
+      border-color: var(--online-border-color);
+    }
   }
 
-  .status-online-text {
+  .rtu-table__status-text {
     color: var(--online-color);
+    &--online {
+      color: var(--online-color);
+    }
+  }
+
+  .rtu-table__action-btn {
+    margin-inline: 4px;
+    color: var(--normal-active-color);
+    cursor: pointer;
   }
 }
 </style>

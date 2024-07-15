@@ -2,6 +2,7 @@
 import { ref, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import ElTabs from "@/components/ElTabs/index.vue";
+import Bread from "@/components/Bread/index.vue";
 
 import BaseInfo from "./BaseInfo.vue";
 import History from "./History.vue";
@@ -30,6 +31,11 @@ const tabs = [
     eleNames: ["wordChart"],
   },
 ];
+// 导航
+const breadList = ref([
+  { to: "/rtu", title: "设备管理" },
+  { title: "设备详情" },
+]);
 
 // 切换tabs
 const handleChangeTabs = (val) => {
@@ -165,6 +171,7 @@ watch(
 
 <template>
   <div class="device-data">
+    <Bread :breadList="breadList"/>
     <BaseInfo :detail="detail" />
     <ElTabs
       class="device-data__tabs"

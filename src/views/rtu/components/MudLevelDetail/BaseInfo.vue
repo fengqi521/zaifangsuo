@@ -58,6 +58,7 @@ const props = defineProps({
   .device-detail__item {
     margin-right: 24px;
     color: var(--sidebar-active-bg-color);
+    opacity: .8;
   }
 
   .device-detail__label {

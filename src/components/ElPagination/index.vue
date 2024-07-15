@@ -54,7 +54,7 @@ const handleSizeChange = (size) => {
 </template>
 <style lang="scss" scoped>
 .pagination {
-  margin-top: 16px;
+  padding:16px;
   justify-content: flex-end;
 
   &-info {

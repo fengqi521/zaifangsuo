@@ -26,7 +26,7 @@ watch(
   { immediate: true, deep: true }
 );
 
-const emit = defineEmits(["handle-close", "handle-submit"]);
+const emit = defineEmits(["update-transfer", "handle-close", "handle-submit"]);
 
 // 搜索
 const filterMethod = (query, item) => {
@@ -37,9 +37,9 @@ const handleClose = () => {
   emit("handle-close", false);
 };
 
-const handleChangRight = (values,s)=>{
-   console.log(values,s)
-}
+const handleChangRight = (values, s) => {
+  emit("update-transfer", values);
+};
 
 // 提交
 const handleChange = (values) => {
@@ -63,7 +63,7 @@ const handleChange = (values) => {
         :filter-method="filterMethod"
         filterable
         filter-placeholder="查询数据"
-        @right-check-change	="handleChangRight"
+        @right-check-change="handleChangRight"
       />
     </template>
     <template v-slot:footer>

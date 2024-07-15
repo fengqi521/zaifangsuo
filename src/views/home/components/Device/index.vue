@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import rtuApi from "@/api/rtu";
-import  {deviceMap} from '@/constants'
+import { deviceMap } from "@/constants";
 const columns = ref([
   { prop: "num", label: "序号" },
   { prop: "device_name", label: "设备名称" },
@@ -117,7 +117,7 @@ const handleSelectionChange = (selection) => {
 </template>
 <style lang="scss" scoped>
 .device-container {
-  margin-top: 16px;
+  margin-top: 24px;
 
   // border-radius: 2px;
 
@@ -126,7 +126,6 @@ const handleSelectionChange = (selection) => {
     line-height: 40px;
     font-size: 14px;
     color: var(--panel-text-color);
-    opacity: 0.7;
     cursor: pointer;
     user-select: none;
 
@@ -138,8 +137,8 @@ const handleSelectionChange = (selection) => {
 
     .active {
       font-weight: bold;
-      background: var(--background-color);
-      color: var(--panel-active-color);
+      color: var(--text-color);
+      background: var(--btn-bg-color);
     }
   }
 }

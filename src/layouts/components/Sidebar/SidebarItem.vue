@@ -48,6 +48,7 @@ const resolvePath = (routePath) => {
     <el-menu-item :index="resolvePath(onlyOneChild.path)">
       <Icon
         :iconClass="onlyOneChild?.meta.icon"
+        :size="onlyOneChild?.meta.size"
         v-if="onlyOneChild?.meta?.icon"
       />
       <div v-else class="title-left"></div>

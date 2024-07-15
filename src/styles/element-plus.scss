@@ -1,17 +1,43 @@
 // 表格
-.el-table--border .el-table__inner-wrapper::after, .el-table--border::after, .el-table--border::before, .el-table__inner-wrapper::before{
+.el-table--border .el-table__inner-wrapper::after,
+.el-table--border::after,
+.el-table--border::before,
+.el-table__inner-wrapper::before {
     display: none;
 }
 
-.el-table__border-left-patch{
+// button
+.el-button--primary {
+    border: none;
+}
+
+.el-table__border-left-patch {
     display: none;
 }
 
-.el-scrollbar__bar{
-  background:  var(--scrollbar-track-color);
-  border-radius: 0;
+.el-scrollbar__bar {
+    //   background:  var(--scrollbar-track-color);
+    border-radius: 0;
 }
 
-.el-scrollbar__thumb{
+.el-scrollbar__thumb {
     opacity: 1;
+}
+
+// placeholder
+.el-input__inner::placeholder,
+.el-select__placeholder.is-transparent {
+    color: var(--placeholder-color);
+    opacity: .5;
+}
+
+.el-input__wrapper.is-focus,
+.el-input__wrapper:hover,
+.el-select__wrapper,
+.el-select__wrapper.is-focused,
+.el-select__wrapper:hover,
+.el-select__wrapper.is-hovering:not(.is-focus),
+.el-range-editor.is-active:hover,
+.el-range-editor.is-active {
+  box-shadow: none;
 }

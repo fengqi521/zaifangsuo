@@ -1,9 +1,11 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, watchEffect } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import ListHead from "@/components/ListHead/index.vue";
+import Bread from "@/components/Bread/index.vue";
+
 import UserFormModal from "./components/UserFormModal/index.vue";
 import ElModal from "@/components/ElModal/index.vue";
 import Author from "./components/Author/index.vue";
@@ -13,6 +15,8 @@ import userApi from "@/api/user";
 import { useMessage } from "@/plugins/message";
 
 const { success, error } = useMessage();
+
+const breadList = ref([{ title: "用户管理" }]);
 
 // 查询数据
 const initialData = ref(userFormData);
@@ -113,22 +117,42 @@ const handleClose = (val) => {
 //---------------设备授权----------
 const transferValue = ref({ uid: "", did: [] });
 const authorVisible = ref(false);
-const updateTransferValue = (newVal) => {
-  transferValue.value.did = newVal;
-};
 // 显示授权
 const handleClickShowAuthor = (row) => {
   transferValue.value.did = [];
   transferValue.value.uid = row.id;
   authorVisible.value = true;
-  transferValue.value.did = row.devices.map((item) => item.id);
+  const devices = row.devices;
+  transferValue.value.did = devices.map((item) => item.id);
+};
 
+// 更新右侧授权列表
+const uploadOptions = (values) => {
+  const lists = deviceOptions.filter(({ value }) => !values.includes(value));
+  if (lists.length < 2) {
+    const updatedDeviceOptions = deviceOptions.map((option) => {
+      if (!values.includes(option.value)) {
+        return {
+          ...option,
+          disabled: true,
+        };
+      }
+      return option;
+    });
+    Object.assign(deviceOptions, updatedDeviceOptions);
+    return;
+  }
+
+  Object.assign(
+    deviceOptions,
+    deviceOptions.map((item) => ({ ...item, disabled: false }))
+  );
 };
 
 // 授权
 const handleClickAuthor = (values) => {
   userApi
-    .updateUser({ ...transferValue.value, did: values.join(",") })
+    .updateUser({ uid: transferValue.value.uid, did: values.join(",") })
     .then((res) => {
       if (!res.code) {
         success("授权成功");
@@ -171,39 +195,51 @@ const handleCloseDeleteModal = () => {
 };
 </script>
 <template>
-  <div>
-    <ListHead title="用户列表">
+  <div class="user-container">
+    <Bread :breadList="breadList">
       <el-button type="primary" @click="handleEdit()">新建用户</el-button>
-    </ListHead>
+    </Bread>
     <SearchForm
       :formItems="formItems"
       :initialData="initialData"
       @submit="handleSearch"
       @reset="handleReset"
     />
+    <div class="user-list">
+      <ElTable
+        class="user-list__table"
+        :loading="loading"
+        :columns="columns"
+        :data="userData"
+        :tableProps="{ showSelection: false, border: true }"
+      >
+        <template #action="{ row }">
+          <span
+            class="user-list__action-btn author-btn"
+            @click="handleClickShowAuthor(row)"
+            >设备授权</span
+          >
+          <span
+            class="user-list__action-btn update-btn"
+            @click="handleEdit(row)"
+            >修改</span
+          >
+          <span
+            class="user-list__action-btn delete-btn"
+            @click="handleDelete(row)"
+            >删除</span
+          >
+        </template>
+      </ElTable>
+      <ElPagination
+        :currentPage="searchModel.page"
+        :page-size="searchModel.limit"
+        :total="total"
+        @pagination-change="(page, size) => getLists(page, size)"
+        @page-size-change="(size) => getLists(searchModel.page, size)"
+      />
+    </div>
 
-    <ElTable
-      class="user-table"
-      :loading="loading"
-      :columns="columns"
-      :data="userData"
-      :tableProps="{ showSelection: false, border: true }"
-    >
-      <template #action="{ row }">
-        <span class="btn author-btn" @click="handleClickShowAuthor(row)"
-          >设备授权</span
-        >
-        <span class="btn update-btn" @click="handleEdit(row)">修改</span>
-        <span class="btn delete-btn" @click="handleDelete(row)">删除</span>
-      </template>
-    </ElTable>
-    <ElPagination
-      :currentPage="searchModel.page"
-      :page-size="searchModel.limit"
-      :total="total"
-      @pagination-change="(page, size) => getLists(page, size)"
-      @page-size-change="(size) => getLists(searchModel.page, size)"
-    />
     <UserFormModal
       :dialogVisible="dialogVisible"
       :title="title"
@@ -212,12 +248,11 @@ const handleCloseDeleteModal = () => {
       @handle-close="handleClose"
       @get-list="getLists(1)"
     />
-
     <Author
       :dialogVisible="authorVisible"
       :deviceOptions="deviceOptions"
       :data="transferValue.did"
-      @update:transfer-value="updateTransferValue"
+      @update-transfer="uploadOptions"
       @handle-close="handleClose"
       @handle-submit="handleClickAuthor"
     />
@@ -242,10 +277,13 @@ const handleCloseDeleteModal = () => {
   </div>
 </template>
 <style lang="scss" scoped>
-.user-table {
-  .btn {
+.user-list{
+  
+}
+.user-list__table {
+  .user-list__action-btn {
     margin-inline: 4px;
-    color: var(--normal-icon-text-color);
+    color: var(--normal-active-color);
     cursor: pointer;
   }
 

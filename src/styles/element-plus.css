@@ -10,16 +10,19 @@ html.normal {
 
    /* 状态 */
    --el-color-success:var(--online-color);
+
+   --el-color-info:var(--normal-title-color)
 }
 
 /* button */
 html.normal .el-button--primary{
-    --el-button-bg-color: rgb(16, 137, 255);
+    --el-button-bg-color: var(--btn-bg-color);
+    --el-button-hover-bg-color:rgb(11, 95, 178);
 }
 
 /* radio */
 html.normal .el-radio-button{
-    --el-radio-button-checked-bg-color:#1089FF;
+    --el-radio-button-checked-bg-color:var(--btn-bg-color);
 }
 
 html.normal .el-pagination{

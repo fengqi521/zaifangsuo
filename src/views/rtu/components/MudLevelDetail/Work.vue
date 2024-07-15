@@ -615,9 +615,8 @@ onUnmounted(() => {
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
       <Chart :options="[collectOption]" :eleNames="['wordChart']" />
-      <div class="device-data__history">
+      <div class="device-data__table">
         <ElTable
-          class="device-data__table"
           :loading="loading"
           :columns="workColumns"
           :data="wordData.data"
@@ -637,10 +636,8 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .device-data {
-  &__history{
-    margin-top:16px;
-  }
   &__table {
+    margin-top: 24px;
     border: 1px solid var(--normal-border-color);
 
     :deep(.el-scrollbar) {

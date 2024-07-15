@@ -7,7 +7,7 @@
       v-loading="props.loading"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
-      scrollbar-always-on	
+      scrollbar-always-on
     >
       <el-table-column
         type="selection"
@@ -101,6 +101,7 @@ const emit = defineEmits([
       font-weight: bold;
     }
 
+    
     .el-scrollbar {
       min-height: 408px;
       @extend %scrollbar;

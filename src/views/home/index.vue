@@ -1,11 +1,12 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import ListHead from '@/components/ListHead/index.vue'
+import Bread from '@/components/Bread/index.vue'
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
 import Echart from './components/Echart/index.vue'
 import { DEVICE_DATA, MESSAGE } from "@/constants";
 
+const breadList = ref([{title:'首页'}])
 const messages = ref([...MESSAGE])
 const cardLists = [
   { field: "total", count: 26 },
@@ -29,7 +30,7 @@ DEVICE_DATA.forEach((device, index) => {
 </script>
 <template>
   <div class="home-container">
-    <ListHead title="首页"> </ListHead>
+    <Bread :breadList="breadList"/>
     <!-- 左侧图表 -->
     <!-- <div class="home-left"> -->
     <Echart />

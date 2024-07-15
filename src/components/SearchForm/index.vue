@@ -71,12 +71,14 @@ const onReset = () => {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  padding:24px 0 0 24px;
+  border-radius: 4px;
+  margin-bottom: 24px;
   background: var(--background-color);
   user-select: none;
-  padding:12px 0 0 12px;
 
   .el-form-item {
-    margin:0 12px 12px 0;
+    margin:0 24px 24px 0;
   }
 
   .el-select {
@@ -93,5 +95,7 @@ const onReset = () => {
   :deep(.el-range-editor.is-active) {
     box-shadow: none;
   }
+
+
 }
 </style>

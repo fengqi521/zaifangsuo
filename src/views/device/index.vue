@@ -1,11 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
 import SearchForm from "@/components/SearchForm/index.vue";
-import ListHead from '@/components/ListHead/index.vue'
+import Bread from '@/components/Bread/index.vue'
 import { getCssVariableValue } from "@/utils";
 import { SENSOR, initialFormData } from "@/constants";
 
 // 定义变量
+const breadList = ref([{title:'设备数据'}])
 const currentType = ref("");
 const searchFormRef = ref(null);
 const calcChartHeight = ref(0);
@@ -21,18 +22,8 @@ const formItems = reactive([
     attrs: { placeholder: "请选择传感器类型" },
     type: "el-select",
     options: [
-      { label: "土压力", value: "1" },
-      { label: "孔隙水压力", value: "2" },
-      { label: "地面沉降位移计", value: "3" },
-      { label: "水位计", value: "4" },
-      { label: "土壤含水率", value: "5" },
       { label: "雨量计", value: "6" }, //显示
       { label: "断线传感器", value: "7" }, // 显示
-      { label: "静力水准仪", value: "8" },
-      { label: "落石传感器", value: "9" },
-      { label: "GNSS", value: "10" },
-      { label: "次声", value: "11" },
-      { label: "流速仪", value: "12" },
       { label: "泥位计", value: "13" }, //显示
     ],
   },
@@ -97,7 +88,7 @@ const setShowComponent = (type) => {
 
 <template>
   <div class="device-container">
-    <ListHead title="设备数据"> </ListHead>
+    <Bread :breadList="breadList"/>
 
     <!-- 查询条件 -->
     <SearchForm
