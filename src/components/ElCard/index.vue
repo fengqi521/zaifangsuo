@@ -32,7 +32,7 @@ const props = defineProps({
     border-bottom: 1px solid var(--normal-border-color);
   }
   .card-title {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--normal-title-color);
   }
 

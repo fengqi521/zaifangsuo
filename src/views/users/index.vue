@@ -114,6 +114,7 @@ const handleClose = (val) => {
   dialogVisible.value = val;
   authorVisible.value = val;
 };
+
 //---------------设备授权----------
 const transferValue = ref({ uid: "", did: [] });
 const authorVisible = ref(false);
@@ -278,7 +279,7 @@ const handleCloseDeleteModal = () => {
 </template>
 <style lang="scss" scoped>
 .user-list{
-  
+
 }
 .user-list__table {
   .user-list__action-btn {

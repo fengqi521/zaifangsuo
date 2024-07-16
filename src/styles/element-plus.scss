@@ -31,13 +31,22 @@
     opacity: .5;
 }
 
+.el-input__wrapper,
 .el-input__wrapper.is-focus,
 .el-input__wrapper:hover,
+.el-form-item.is-error .el-input__wrapper,
+.el-form-item.is-error .el-input__wrapper.is-focus,
+.el-form-item.is-error .el-input__wrapper:hover,
 .el-select__wrapper,
 .el-select__wrapper.is-focused,
 .el-select__wrapper:hover,
 .el-select__wrapper.is-hovering:not(.is-focus),
 .el-range-editor.is-active:hover,
 .el-range-editor.is-active {
-  box-shadow: none;
+    box-shadow: none;
+}
+
+.el-input__wrapper,
+.el-select__wrapper {
+    border: 1px solid var(--select-border-color);
 }

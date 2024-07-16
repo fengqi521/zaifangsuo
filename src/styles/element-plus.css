@@ -11,7 +11,7 @@ html.normal {
    /* 状态 */
    --el-color-success:var(--online-color);
 
-   --el-color-info:var(--normal-title-color)
+   --el-color-info:var(--normal-title-color);
 }
 
 /* button */

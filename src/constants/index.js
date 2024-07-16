@@ -476,6 +476,19 @@ const userFormItems = [
 ];
 //---------------用户管理end-----------------
 
+
+//---------------报文解析start--------------------
+
+const parseFormData = {  text: ""};
+const parseFormItems = [
+  {
+    label: "报文信息",
+    attrs: { placeholder: "请输入报文信息" },
+    type: "el-input",
+  }
+];
+//---------------报文解析end-----------------
+
 export {
   userRolesMap,
   DEVICE_DATA,
@@ -488,5 +501,7 @@ export {
   projectFormData,
   deviceFormItems,
   userFormData,
-  userFormItems
+  userFormItems,
+  parseFormData,
+  parseFormItems
 };

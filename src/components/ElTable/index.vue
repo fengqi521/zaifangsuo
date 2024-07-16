@@ -127,7 +127,7 @@ const emit = defineEmits([
     .cell {
       line-height: 18px;
       max-height: 76px;
-      @extend %ellipsis;
+      // @extend %ellipsis;
     }
   }
 }

@@ -161,7 +161,7 @@ const handleChangeSize = (size) => {
   }
 
   .rtu-table__status-text {
-    color: var(--online-color);
+    color: var(--offline-color);
     &--online {
       color: var(--online-color);
     }

@@ -48,7 +48,7 @@ watch(
   },
   { deep: true }
 );
-const emit = defineEmits(["submit",'reset']);
+const emit = defineEmits(["submit", "reset"]);
 // 提交表单
 const onSubmit = async () => {
   const valid = await formRef.value.validate();
@@ -61,7 +61,7 @@ const onSubmit = async () => {
 
 // 重置表单
 const onReset = () => {
-  emit('reset')
+  emit("reset");
   formRef.value.resetFields();
 };
 </script>
@@ -71,31 +71,22 @@ const onReset = () => {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  padding:24px 0 0 24px;
+  padding: 24px 0 0 24px;
   border-radius: 4px;
   margin-bottom: 24px;
   background: var(--background-color);
   user-select: none;
 
   .el-form-item {
-    margin:0 24px 24px 0;
+    margin: 0 24px 24px 0;
   }
 
   .el-select {
     min-width: 160px;
   }
 
-  :deep(.el-select__wrapper),
-  :deep(.el-input__wrapper) {
-    border: 1px solid var(--select-border-color);
+  :deep(.el-form-item__label) {
+    font-size: 12px;
   }
-
-  :deep(.el-select__wrapper.is-focused),
-  :deep(.el-range-editor.is-active:hover),
-  :deep(.el-range-editor.is-active) {
-    box-shadow: none;
-  }
-
-
 }
 </style>
