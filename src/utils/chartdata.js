@@ -5,11 +5,10 @@ import viewIconUrl from "@/assets/images/view.png";
 
 // 折线图公共配置
 export const getCommonLine = function ({
-  seriesUnit = "mm",
+  seriesUnit = ["mm"],
   yAxisTitlePadding = [0, 0, 0, 50],
-} = {}) {
+}={}) {
   return {
-    color: [],
     legend: {
       show: false,
       itemWidth: 18,
@@ -40,12 +39,13 @@ export const getCommonLine = function ({
         let res = "";
         let formatterName = "";
         params.forEach((current) => {
-          const { name, color, value, seriesName } = current;
+          let { name, color, value, seriesName,seriesIndex } = current;
+          if(seriesUnit&&seriesUnit.length===1) seriesIndex = 0;
           formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
           res +=
             `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
             `width:6px;height:6px;background-color:${color};"></span>${seriesName}</div><span>${value}${
-              seriesUnit ? seriesUnit : "mm"
+              seriesUnit ? seriesUnit[seriesIndex] : "mm"
             }</span></div>`;
         });
         return formatterName + res;
@@ -56,33 +56,7 @@ export const getCommonLine = function ({
         color: getCssVariableValue("--text-color"),
       },
     },
-    // toolbox: {
-    //   itemSize:18,
-    //   feature: {
-    //     saveAsImage: {
-    //       show: true,
-    //       title: "",
-    //       icon: `image://${downloadIconUrl}`,
-    //     },
-    //     dataView: {
-    //       show: true,
-    //       title: "",
-    //       lang:['数据视图', '关闭'],
-    //       icon: `image://${viewIconUrl}`
-    //     },
-    //   },
-    //   tooltip: {
-    //     show: true,
-    //     formatter: function (param) {
-    //       return "<div>" + param.title + "</div>"; // 自定义的 DOM 结构
-    //     },
-    //     backgroundColor: "#222",
-    //     textStyle: {
-    //       fontSize: 12,
-    //     },
-    //     extraCssText: "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);", // 自定义的 CSS 样式
-    //   },
-    // },
+    
     xAxis: [
       {
         type: "category",
@@ -117,6 +91,7 @@ export const getCommonLine = function ({
       {
         name: "{title|累计降雨量(mm)}",
         type: "value",
+        alignTicks:true,
         nameTextStyle: {
           fontSize: 12,
           color: getCssVariableValue("--normal-title-color"),
@@ -132,6 +107,7 @@ export const getCommonLine = function ({
       {
         type: "value",
         // 坐标轴刻度相关设置。
+        alignTicks:true,
         axisTick: {
           show: false,
         },
@@ -148,6 +124,17 @@ export const getCommonLine = function ({
           lineStyle: {
             color: "#ECECEC",
             width: 1,
+          },
+        },
+        nameTextStyle: {
+          fontSize: 12,
+          color: getCssVariableValue("--normal-title-color"),
+          fontWeight: "normal",
+          rich: {
+            title: {
+              padding: yAxisTitlePadding ? yAxisTitlePadding : [0, 0, 0, 50], // 通过负的右边距将标题向左移动
+              align: "left", // 左对齐
+            },
           },
         },
       },
@@ -417,7 +404,7 @@ export const getCommonPie = function () {
     ],
     tooltip: {
       trigger: "none",
-      show:false
+      show: false,
     },
     legend: {
       bottom: 6,

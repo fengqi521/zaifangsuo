@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, watchEffect, onUnmounted, provide } from "vue";
-import TimelineImage from "./TimelineImage.vue";
+import TimelineImage from "../components/TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
@@ -8,7 +8,7 @@ import Chart from "@/components/Chart/index.vue";
 import { getCommonLine } from "@/utils/chartData";
 import eventBus from "@/utils/eventBus";
 const collectOption = reactive(
-  getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
+  getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 图表
 const chartData = reactive({ timeList: [], valueList: [] });
@@ -329,12 +329,8 @@ const resetOptions = (data) => {
 watchEffect(() => {
   resetOptions(chartData);
 });
-eventBus.on("getMudChartData", getMudChartData);
-eventBus.on("getMudLevelHistory", getMudLevelHistory);
-onUnmounted(() => {
-  eventBus.off("getMudChartData", getMudChartData);
-  eventBus.off("getMudLevelHistory", getMudLevelHistory);
-});
+getMudChartData();
+getMudLevelHistory();
 </script>
 
 <template>

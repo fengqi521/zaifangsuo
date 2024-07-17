@@ -10,7 +10,12 @@ const props = defineProps({
     type: [String, Number],
     default: 0,
   },
+  componentRef: {
+    type: Object,
+    default: ()=>({}),
+  },
 });
+
 const emit = defineEmits(["update:modelValue", "change"]);
 
 const active = ref(props.modelValue);
@@ -46,10 +51,15 @@ watch(
     <div
       class="tabs-main"
       style="width: 100%"
-      v-for="({ pannel }, index) in props.tabs"
+      v-for="({ component }, index) in props.tabs"
       :key="index"
     >
-      <component :is="pannel" v-show="active === index" />
+      <component
+        :is="component"
+        v-show="active === index"
+        :ref="tabs[active].props.componentRef"
+        v-bind="tabs[active].props"
+      />
     </div>
   </div>
 </template>

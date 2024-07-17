@@ -13,7 +13,7 @@ const dataContainer = ref(null);
 const option = ref(getCommonPie());
 
 // 定义 CSS 变量名
-const onlineColor = getCssVariableValue("--online-color");
+const onlineColor = getCssVariableValue("--online-bg-color");
 const offlineColor = getCssVariableValue("--chart-pie-offline-color");
 
 onMounted(async () => {

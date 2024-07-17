@@ -120,14 +120,15 @@ const handleChangeSize = (size) => {
       <template #action="{ row }">
         <router-link
           class="rtu-table__action-btn rtu-table__action-btn--details"
-          :to="`/rtu/detail/${row.id}`"
+          :to="`/rtu/detail/${row.device_type}/${row.id}`"
         >
           查看详情
         </router-link>
-        <span
+        <router-link
           class="rtu-table__action-btn rtu-table__action-btn--command"
-          @click=""
-          >下发指令</span
+          :to="`/rtu/command/${row.device_type}/${row.id}`"
+        >
+          下发指令</router-link
         >
       </template>
     </ElTable>
@@ -150,20 +151,20 @@ const handleChangeSize = (size) => {
     width: 8px;
     height: 8px;
     border-radius: 4px;
-    color: var(--offline-color);
+    color: var(--offline-text-color);
     background: var(--offline-bg-color);
     border: 1px solid var(--offline-border-color);
 
     &--online {
-      background: var(--online-color);
+      background: var(--online-bg-color);
       border-color: var(--online-border-color);
     }
   }
 
   .rtu-table__status-text {
-    color: var(--offline-color);
+    color: var(--offline-text-color);
     &--online {
-      color: var(--online-color);
+      color: var(--online-bg-color);
     }
   }
 

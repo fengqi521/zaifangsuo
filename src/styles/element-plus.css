@@ -9,9 +9,10 @@ html.normal {
     --el-text-color-regular:rgb(78, 90, 113);
 
    /* 状态 */
-   --el-color-success:var(--online-color);
+   --el-color-success:var(--online-bg-color);
 
    --el-color-info:var(--normal-title-color);
+   --el-font-size-base:12px;
 }
 
 /* button */

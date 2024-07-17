@@ -7,16 +7,20 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import { getCommonLine } from "@/utils/chartData";
 import eventBus from "@/utils/eventBus";
 provide("name", "work");
+
+const props = {};
 const collectOption = reactive(
-  getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
+  getCommonLine({ seriesUnit: ["V", "°C"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 常量
 const workColumns = [
   { prop: "num", label: "序号" },
   { prop: "monitortime", label: "监测时间" },
   { prop: "powerVolt", label: "电压(V)" },
-  { prop: "temperature", label: "温度(℃)" },
+  { prop: "temperature", label: "温度(°C)" },
 ];
+
+const colors = ["#ffd285", "#ff733f"];
 
 const chartData = reactive({ monitortime: [], powerVolt: [], temperature: [] });
 const loading = ref(false);
@@ -587,28 +591,37 @@ const getWorkHistory = (page, size) => {
 // 图表数据重组
 const resetOptions = (data) => {
   collectOption.legend.show = true;
+  collectOption.legend.x = "center";
+  collectOption.legend.data = ["电压", "温度"];
+  // collectOption.grid.top = 60
+  collectOption.color = colors;
   collectOption.xAxis[0].data = data.monitortime;
-  collectOption.yAxis[0].name = "{title|泥水位(m)}";
+  collectOption.yAxis[0].name = "{title|电压(V)}";
+  collectOption.yAxis[1].name = "{title|温度(°C)}";
+
   collectOption.series[0] = {
-    name: "泥水位",
+    name: "电压",
     type: "line",
     data: data.powerVolt,
     Symbol: "circle",
-    // symbolSize: 6,
     smooth: true,
-    unit: "m",
+    yAxisIndex: 0,
+  };
+  collectOption.series[1] = {
+    name: "温度",
+    type: "line",
+    data: data.temperature,
+    Symbol: "circle",
+    smooth: true,
+    yAxisIndex: 1,
   };
 };
 
 watchEffect(() => {
   resetOptions(chartData);
 });
-eventBus.on("getWorkChartData", getWorkChartData);
-eventBus.on("getWorkHistory", getWorkHistory);
-onUnmounted(() => {
-  eventBus.off("getWorkChartData", getWorkChartData);
-  eventBus.off("getWorkHistory", getWorkHistory);
-});
+getWorkChartData();
+getWorkHistory();
 </script>
 
 <template>

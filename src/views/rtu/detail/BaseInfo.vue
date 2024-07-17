@@ -1,15 +1,15 @@
 <script setup>
 import ElCard from "@/components/ElCard/index.vue";
+import ElTag from "@/components/ElTag/index.vue";
 const props = defineProps({
   detail: {
     type: Object,
     default: () => ({}),
   },
 });
-
 </script>
 <template>
-  <ElCard>
+  <ElCard class="device-detail">
     <h3 class="device-detail__name">{{ detail.name }}</h3>
     <p class="device-detail__moditime">最新数据时间:{{ detail.moditime }}</p>
     <div class="device-detail__info">
@@ -19,7 +19,10 @@ const props = defineProps({
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">在线状态:</span>
-        <el-tag :type="detail.status?'success':'warning'">{{ detail.status?'在线':'离线' }}</el-tag>
+        <ElTag
+          :title="detail.status ? '在线' : '离线'"
+          :type="detail.status ? 'online' : 'offline'"
+        />
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">设备类型:</span>
@@ -33,13 +36,15 @@ const props = defineProps({
   </ElCard>
 </template>
 <style lang="scss" scoped>
+.device-detail {
+  margin-bottom: 24px;
+}
 .device-detail__name {
   font-weight: bold;
   font-size: 18px;
   color: var(--normal-title-color);
   line-height: 24px;
   text-align: left;
-  font-style: normal;
 }
 
 .device-detail__moditime {

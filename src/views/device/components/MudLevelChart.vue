@@ -5,11 +5,11 @@ import { getCommonLine } from "@/utils/chartData";
 import { WATER_LEVEL, WATER_LEVEL_LEGEND } from "@/constants";
 // 采集值
 const collectOption = reactive(
-  getCommonLine({ seriesUnit: "m", yAxisTitlePadding: [0, 0, 0, 10] })
+  getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 变化率
 const rateChangeOption = reactive(
-  getCommonLine({ seriesUnit: "%", yAxisTitlePadding: [0, 0, 0, 10] })
+  getCommonLine({ seriesUnit: ["%"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 const allDataOptions = reactive([]);
 
@@ -239,7 +239,9 @@ onMounted(() => {
   keys.forEach((field) => {
     const list = res.data[field];
     if (list) {
-      collectOption.color.push(WATER_LEVEL_LEGEND[field].color);
+      console.log(WATER_LEVEL_LEGEND[field].color, "======");
+      // collectOption.color =
+      // collectOption.color.push(WATER_LEVEL_LEGEND[field].color);
       collectOption.legend.data.push(WATER_LEVEL[field]);
       collectOption.series.push({
         name: WATER_LEVEL[field],
@@ -485,17 +487,5 @@ onMounted(() => {
 });
 </script>
 <template>
-  <Chart :options="allDataOptions"/>
+  <Chart :options="allDataOptions" />
 </template>
-<style lang="scss" scoped>
-.chart-container {
-  padding: 16px;
-  margin-bottom: 16px;
-  width: 100%;
-  height: 360px;
-  border: 1px solid var(--normal-border-color);
-  &:last-child {
-    margin: 0;
-  }
-}
-</style>

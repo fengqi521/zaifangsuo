@@ -15,6 +15,7 @@ const DeviceData = () => import("@/views/device/index.vue");
 // rtu管理
 const RtuData = () => import("@/views/rtu/index.vue");
 const RtuDetail = () => import("@/views/rtu/detail/index.vue");
+const RtuCommand = () => import("@/views/rtu/command/index.vue");
 
 // 用户管理
 const UserList = () => import("@/views/users/index.vue");
@@ -96,8 +97,16 @@ export const dynamicRoutes = [
         },
       },
       {
-        path: "detail/:id",
+        path: "detail/:type/:id",
         component: RtuDetail,
+        meta: {
+          hidden: true,
+          activeMenu: "/rtu",
+        },
+      },
+      {
+        path: "command/:type/:id",
+        component: RtuCommand,
         meta: {
           hidden: true,
           activeMenu: "/rtu",

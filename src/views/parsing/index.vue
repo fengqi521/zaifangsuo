@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
@@ -9,12 +9,13 @@ const breadList = ref([{ title: "报文解析" }]);
 const page = ref(1);
 const limit = ref(10);
 const total = ref(0);
+const loading = ref(false);
 const searchModel = ref({ ...parseFormData });
-const parseData = reactive({ detail: {} });
+const parseData = reactive({ detail: {}, lists: [] });
 
 // 解析报文
-const handleSearchSubmit = () => {
-  // 提交数据
+const handleSearchSubmit = (data) => {
+  Object.assign(searchModel, data);
   getParsing();
 };
 
@@ -35,15 +36,24 @@ const getParsing = () => {
       content: "0002",
       end: "05",
       crc: "4975",
+      records: [],
     },
   };
   if (!res.code) {
     parseData.detail = { ...res.data };
+    parseData.lists = res?.data?.records ?? [];
   }
 };
 
+const isDetailEmpty = computed(() => {
+  return Object.keys(parseData.detail).length === 0;
+});
+
 // 重置
-const handleReset = () => {};
+const handleReset = () => {
+  Object.assign(searchModel, parseFormData);
+  getParsing();
+};
 </script>
 
 <template>
@@ -55,61 +65,74 @@ const handleReset = () => {};
       :formItems="parseFormItems"
       @submit="handleSearchSubmit"
       @reset="handleReset"
-    />
+    >
+      <template #submit-button>解析报文</template>
+      <template #reset-button>重置报文</template>
+    </SearchForm>
 
     <!-- 基本信息 -->
-    <ElCard title="基本信息" class="parse-detail">
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">遥测站地址:</span>
-        {{ parseData.detail.address }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label"> 帧起始符:</span>
-        {{ parseData.detail.frame_start }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">预留位:</span>
-        {{ parseData.detail.reserve }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">密码:</span>
-        {{ parseData.detail.password }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">功能码:</span>
-        {{ `${parseData.detail.operate}(${parseData.detail.operates})` }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">协议版本号及长度:</span>
-        {{ `${parseData.detail.version},${parseData.detail.length}`}}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">报文起始符:</span>
-        {{ parseData.detail.start }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">报文结束符:</span>
-        {{ parseData.detail.end }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">正文:</span>
-        {{ parseData.detail.content }}
-      </p>
-      <p class="parse-detail__item">
-        <span class="parse-detail__label">校验码:</span>
-        {{ parseData.detail.crc }}
-      </p>
+    <ElCard title="基本信息" v-loading="loading">
+      <el-empty v-if="isDetailEmpty" :image-size="80" />
+      <div v-else class="parse-detail">
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">遥测站地址:</span>
+          {{ parseData.detail.address }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label"> 帧起始符:</span>
+          {{ parseData.detail.frame_start }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">预留位:</span>
+          {{ parseData.detail.reserve }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">密码:</span>
+          {{ parseData.detail.password }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">功能码:</span>
+          {{ `${parseData.detail.operate}(${parseData.detail.operates})` }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">协议版本号及长度:</span>
+          {{ `${parseData.detail.version},${parseData.detail.length}` }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">报文起始符:</span>
+          {{ parseData.detail.start }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">报文结束符:</span>
+          {{ parseData.detail.end }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">正文:</span>
+          {{ parseData.detail.content }}
+        </p>
+        <p class="parse-detail__item">
+          <span class="parse-detail__label">校验码:</span>
+          {{ parseData.detail.crc }}
+        </p>
+      </div>
+    </ElCard>
+
+    <!-- 列表数据 -->
+    <ElCard class="parse-list" title="数据列表" v-loading="loading">
+      <el-empty v-if="!parseData.lists.length" :image-size="80" />
     </ElCard>
   </div>
 </template>
 <style lang="scss" scoped>
+.parse-list {
+  margin-top: 24px;
+}
 .parse-detail {
-  :deep(.card-content) {
-    display: flex;
-    flex-wrap: wrap;
-    padding:16px;
-    background:var(--body-bg-color);
-  }
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: var(--body-bg-color);
+
   &__item {
     line-height: 36px;
     width: 25%;
@@ -117,7 +140,7 @@ const handleReset = () => {};
     font-weight: 700;
   }
 
-  &__label{
+  &__label {
     font-weight: normal;
     color: var(--normal-subtitle-color);
   }

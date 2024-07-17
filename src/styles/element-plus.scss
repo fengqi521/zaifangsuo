@@ -28,7 +28,6 @@
 .el-input__inner::placeholder,
 .el-select__placeholder.is-transparent {
     color: var(--placeholder-color);
-    opacity: .5;
 }
 
 .el-input__wrapper,
@@ -42,11 +41,55 @@
 .el-select__wrapper:hover,
 .el-select__wrapper.is-hovering:not(.is-focus),
 .el-range-editor.is-active:hover,
-.el-range-editor.is-active {
+.el-range-editor.is-active,
+.el-date-editor.el-input__wrapper {
     box-shadow: none;
 }
 
 .el-input__wrapper,
 .el-select__wrapper {
     border: 1px solid var(--select-border-color);
+}
+
+.el-tabs--border-card {
+    border: none;
+    background: none;
+}
+
+.el-tabs--border-card>.el-tabs__header {
+    line-height: 40px;
+    font-size: 14px;
+
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    border-bottom: none;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item {
+    width: 145px;
+    margin: 0;
+    font-size: 14px;
+    color: var(--panel-text-color);
+    background: var(--panel-bg-color);
+    border: none;
+    text-align: center;
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+    font-weight: bold;
+    color: var(--text-color);
+    background: var(--btn-bg-color);
+}
+
+.el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
+    color: inherit;
+}
+
+.el-tabs--border-card>.el-tabs__content {
+    padding: 0;
+}
+
+.el-radio-button__inner {
+    padding: 9px 15px;
 }

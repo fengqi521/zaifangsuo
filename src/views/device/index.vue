@@ -58,6 +58,8 @@ const formItems = reactive([
 // 表单元素高度和初始化
 onMounted(() => {
   nextTick(() => {
+    setShowComponent(initialData.type);
+    return;
     const searchFormRefHeight =
       searchFormRef.value?.$el.getBoundingClientRect().height || 0;
     calcChartHeight.value = `calc(100% - ${searchFormRefHeight}px - ${tagHeight}px - 18px)`;
@@ -103,7 +105,7 @@ const setShowComponent = (type) => {
       <span>{{ currentType }}</span>
     </div>
     <!-- 图表 -->
-    <div class="device-chart" :style="{ height: calcChartHeight }">
+    <div class="device-chart" >
       <component :is="componentContainer" />
     </div>
   </div>
@@ -128,6 +130,12 @@ const setShowComponent = (type) => {
   padding: 20px;
   background: var(--background-color);
   overflow-y: auto;
-  @extend %scrollbar;
+  // @extend %scrollbar;
+
+   :deep(.chart-container){
+    margin-bottom:24px;
+
+    &:last-child{margin:0}
+  }
 }
 </style>

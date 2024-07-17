@@ -18,8 +18,12 @@
       </el-form-item>
     </slot>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">查询</el-button>
-      <el-button @click="onReset">重置</el-button>
+      <el-button type="primary" @click="onSubmit">
+        <slot name="submit-button">查询</slot>
+      </el-button>
+      <el-button @click="onReset">
+        <slot name="reset-button">重置</slot>
+      </el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -83,10 +87,6 @@ const onReset = () => {
 
   .el-select {
     min-width: 160px;
-  }
-
-  :deep(.el-form-item__label) {
-    font-size: 12px;
   }
 }
 </style>

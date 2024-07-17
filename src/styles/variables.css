@@ -18,9 +18,11 @@
     --normal-border-color: #D3DCEE;
     --normal-icon-bg-color: rgb(78, 90, 113);
     --normal-icon-text-color:rgb(78, 90, 113);
-    --offline-bg-color: #d0d4d6;
+    --offline-bg-color: rgb(208,212,214,.6)    ;
+    --offline-text-color:#666;
     --offline-border-color: #bdc2c5;
-    --online-color: #91CC75;
+    --online-bg-color: #dcf5de;
+    --online-text-color:#46be00;
     --online-border-color:#0caf60;
 
 
@@ -106,5 +108,8 @@
     /* 删除色 */
     --delete-text-color:#ff5859;
 
+    /* placeholder */
+
+    --placeholder-color:rgb(78, 90, 113);
 
 }

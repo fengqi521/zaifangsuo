@@ -483,6 +483,7 @@ const parseFormData = {  text: ""};
 const parseFormItems = [
   {
     label: "报文信息",
+    prop: "text",
     attrs: { placeholder: "请输入报文信息" },
     type: "el-input",
   }

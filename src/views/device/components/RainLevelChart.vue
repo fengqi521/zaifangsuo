@@ -2855,15 +2855,4 @@ onMounted(() => {
 <template>
   <Chart :options="allDataOptions" />
 </template>
-<style lang="scss" scoped>
-.chart-container {
-  padding: 16px;
-  margin-bottom: 16px;
-  width: 100%;
-  height: 360px;
-  border: 1px solid var(--normal-border-color);
-  &:last-child {
-    margin: 0;
-  }
-}
-</style>
+
