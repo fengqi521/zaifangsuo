@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import ElCard from "@/components/ElCard/index.vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
 import homeApi from "@/api/home";
 import { getCssVariableValue } from "@/utils";
@@ -112,12 +113,26 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="percentContainer" class="percent-container"></div>
+  <div class="device-percent">
+    <p class="device-percent__title">设备占比分析</p>
+    <div ref="percentContainer" class="device-percent__container"></div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.percent-container {
-  width: 100%;
-  height: 100%;
+.device-percent {
+  padding-left: 16px;
+  &__title {
+    line-height: 16px;
+    padding-bottom: 16px;
+    font-size: 14px;
+    color:var(--normal-title-color);
+    border-bottom:1px solid var(--card-border-color)
+  }
+
+  &__container {
+    width: 100%;
+    height: calc(100% - 34px);
+  }
 }
 </style>

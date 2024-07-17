@@ -427,9 +427,6 @@ const WATER_LEVEL_LEGEND = {
   y: { icon: legend2, color: legendColor2 },
   z: { icon: legend3, color: legendColor3 },
 };
-
-//--------------设备end---------------
-
 //--------------rtu管理start--------------
 
 const projectFormData = { number: "", name: "", type: "" };
@@ -461,7 +458,6 @@ const deviceMap = [
 
 ]
 
-//---------------基础管理end-----------
 
 //---------------用户管理start--------------------
 
@@ -474,7 +470,6 @@ const userFormItems = [
     type: "el-input",
   }
 ];
-//---------------用户管理end-----------------
 
 
 //---------------报文解析start--------------------
@@ -488,7 +483,63 @@ const parseFormItems = [
     type: "el-input",
   }
 ];
-//---------------报文解析end-----------------
+
+//---------------功能码对应关系 start--------------------
+
+const operateLists = [
+  {
+    label: "链路维持报",
+    type: "2F",
+  },
+  {
+    label: "遥测站定时报",
+    type: "32",
+  },
+  {
+    label: "遥测站加报报",
+    type: "33",
+  },
+  {
+    label: "中心站查询遥测站实时数据",
+    type: "37",
+  },
+  {
+    label: "中心站查询遥测站时段数据",
+    type: "38",
+  },
+  {
+    label: "中心站修改遥测站配置表",
+    type: "40",
+  },
+  {
+    label: "中心站读取遥测站配置表",
+    type: "41",
+  },
+  {
+    label: "中心站设置遥测站时钟",
+    type: "4A",
+  },
+  {
+    label: "中心站读取遥测站时钟",
+    type: "51",
+  },
+  {
+    label: "中心站查询遥测站实时位置",
+    type: "52",
+  },
+  {
+    label: "遥测站软件复位",
+    type: "E0",
+  },
+  {
+    label: "遥测站上报自检数据",
+    type: "E1",
+  },
+  {
+    label: "中心站查询遥测站实时自检数据",
+    type: "E2",
+  }
+];
 
 export {
   userRolesMap,
@@ -504,5 +555,6 @@ export {
   userFormData,
   userFormItems,
   parseFormData,
-  parseFormItems
+  parseFormItems,
+  operateLists
 };

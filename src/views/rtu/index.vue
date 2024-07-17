@@ -1,6 +1,8 @@
 <script setup>
 import { reactive, ref } from "vue";
 import Bread from "@/components/Bread/index.vue";
+import ElCard from "@/components/ElCard/index.vue";
+
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
@@ -88,8 +90,10 @@ const handleChangeSize = (size) => {
       @reset="handleReset"
       ref="searchFormRef"
     />
-    <!-- 表格 -->
-    <ElTable
+
+    <ElCard title="设备列表">
+   <!-- 表格 -->
+   <ElTable
       class="rtu-table"
       :loading="loading"
       :columns="columns"
@@ -141,6 +145,8 @@ const handleChangeSize = (size) => {
       @pagination-change="handleChangePage"
       @page-size-change="handleChangeSize"
     />
+    </ElCard>
+ 
   </div>
 </template>
 <style lang="scss" scoped>

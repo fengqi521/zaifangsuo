@@ -83,6 +83,10 @@ const onReset = () => {
 
   .el-form-item {
     margin: 0 24px 24px 0;
+
+    // .el-form-item__label {
+    //   color: rgba(0, 0, 0, 0.54);
+    // }
   }
 
   .el-select {

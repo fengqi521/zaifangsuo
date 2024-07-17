@@ -8,6 +8,7 @@
     --drawer-bg-color: #001428;
 
     /* 主要颜色 */
+    --label-color:rgba(0, 0, 0, 0.54);
     --background-color: #FFF;
     --text-color: #FFF;
     --br-color: #F0F0F0;
@@ -16,6 +17,7 @@
     --normal-active-color:#1089FF;
     --normal-subtitle-color:rgb(78,90,113,.85);
     --normal-border-color: #D3DCEE;
+    --card-border-color:#f0f0f0;
     --normal-icon-bg-color: rgb(78, 90, 113);
     --normal-icon-text-color:rgb(78, 90, 113);
     --offline-bg-color: rgb(208,212,214,.6)    ;

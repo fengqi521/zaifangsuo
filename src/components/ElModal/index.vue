@@ -47,6 +47,7 @@ const handleClickClose = () => {
 :deep(.el-dialog) {
   .el-dialog__title {
     font-size: 16px;
+    font-weight: 700;
     color: var(--panel-text-color);
   }
 }

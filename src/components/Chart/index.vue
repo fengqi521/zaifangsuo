@@ -26,7 +26,7 @@ provide('names',props.eleNames)
   padding: 16px;
   width: 100%;
   height: 420px;
-  border: 1px solid var(--normal-border-color);
+  border: 1px solid var(--card-border-color);
   &:last-child {
     margin: 0;
   }

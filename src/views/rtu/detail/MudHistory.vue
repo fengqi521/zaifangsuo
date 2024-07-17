@@ -239,66 +239,6 @@ const getMudLevelHistory = (page, size) => {
         nswval: 2.909,
         variation: null,
       },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:55:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:50:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:45:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:40:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:35:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:30:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:25:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:20:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:15:00",
-        nswval: 2.909,
-        variation: null,
-      },
-      {
-        protocol: 3,
-        monitortime: "2024-07-12 07:10:00",
-        nswval: 2.909,
-        variation: null,
-      },
     ],
     hasNext: false,
     hasPrevious: false,
@@ -340,7 +280,7 @@ getMudLevelHistory();
         <Chart :options="[collectOption]" :eleNames="['historyChart']" />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
-      <div class="device-data__table">
+      <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"
           :columns="tableColumns"
@@ -356,33 +296,21 @@ getMudLevelHistory();
             (size) => getMudLevelHistory(deviceData.page, size)
           "
         />
-      </div>
+      </ElCard>
     </ElCard>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .device-data {
-  &__title {
-    line-height: 52px;
-    font-size: 16px;
-    color: var(--normal-title-color);
-    font-weight: 700;
-  }
-
   &__history {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
 
-  &__table {
+  .history-data-card{
     margin-top: 24px;
-    border: 1px solid var(--normal-border-color);
-
-    :deep(.el-scrollbar) {
-      height: 408px;
-    }
   }
 }
 </style>

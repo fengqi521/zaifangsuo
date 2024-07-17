@@ -1,9 +1,10 @@
 <script setup>
-import { ref, reactive, watch, watchEffect } from "vue";
+import { ref, reactive } from "vue";
+import ElCard from "@/components/ElCard/index.vue";
+
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import ListHead from "@/components/ListHead/index.vue";
 import Bread from "@/components/Bread/index.vue";
 
 import UserFormModal from "./components/UserFormModal/index.vue";
@@ -206,7 +207,7 @@ const handleCloseDeleteModal = () => {
       @submit="handleSearch"
       @reset="handleReset"
     />
-    <div class="user-list">
+    <ElCard title="用户列表">
       <ElTable
         class="user-list__table"
         :loading="loading"
@@ -239,7 +240,7 @@ const handleCloseDeleteModal = () => {
         @pagination-change="(page, size) => getLists(page, size)"
         @page-size-change="(size) => getLists(searchModel.page, size)"
       />
-    </div>
+    </ElCard>
 
     <UserFormModal
       :dialogVisible="dialogVisible"
@@ -278,9 +279,6 @@ const handleCloseDeleteModal = () => {
   </div>
 </template>
 <style lang="scss" scoped>
-.user-list{
-
-}
 .user-list__table {
   .user-list__action-btn {
     margin-inline: 4px;

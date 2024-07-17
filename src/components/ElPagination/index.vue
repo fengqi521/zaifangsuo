@@ -54,8 +54,10 @@ const handleSizeChange = (size) => {
 </template>
 <style lang="scss" scoped>
 .pagination {
-  padding:16px;
+  // padding:8px 0;
+  margin-top:14px;
   justify-content: flex-end;
+  // background:var(--body-bg-color);
 
   &-info {
     color: var(--el-text-color-regular);

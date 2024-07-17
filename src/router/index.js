@@ -65,22 +65,22 @@ export const dynamicRoutes = [
       },
     ],
   },
-  {
-    path: "/device",
-    component: Layout,
-    children: [
-      {
-        path: "",
-        component: DeviceData,
-        meta: {
-          title: "设备数据",
-          icon: "icon-shebeishuju",
-          affix: true,
-          roles: [1],
-        },
-      },
-    ],
-  },
+  // {
+  //   path: "/device",
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: "",
+  //       component: DeviceData,
+  //       meta: {
+  //         title: "设备数据",
+  //         icon: "icon-shebeishuju",
+  //         affix: true,
+  //         roles: [1],
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: "/rtu",
     component: Layout,
@@ -91,7 +91,7 @@ export const dynamicRoutes = [
         meta: {
           title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
-          size:'22px',
+          size:'18px',
           affix: true,
           roles: [1],
         },
@@ -124,7 +124,7 @@ export const dynamicRoutes = [
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
-          size:'19px',
+          size:'20px',
           roles: [1],
         },
       },
@@ -140,6 +140,7 @@ export const dynamicRoutes = [
         meta: {
           title: "报文解析",
           icon: "icon-baowenjiexi",
+           size:'18px',
           roles: [1],
         },
       },

@@ -21,7 +21,7 @@ const props = defineProps({
 
 .timeline-container {
   padding: 16px;
-  border: 1px solid var(--normal-border-color);
+  border: 1px solid var(--card-border-color);
 }
 
 .el-timeline {

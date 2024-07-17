@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
+
 import Bread from '@/components/Bread/index.vue'
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";

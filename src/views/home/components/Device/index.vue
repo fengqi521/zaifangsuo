@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import ElCard from '@/components/ElCard/index.vue'
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import rtuApi from "@/api/rtu";
@@ -85,7 +86,7 @@ const handleSelectionChange = (selection) => {
         离线设备
       </p>
     </div>
-    <div class="device-main">
+    <ElCard>
       <ElTable
         :loading="loading"
         :columns="columns"
@@ -112,7 +113,7 @@ const handleSelectionChange = (selection) => {
         @pagination-change="handleChangeCurrent"
         @page-size-change="handlePageSizeChange"
       />
-    </div>
+    </ElCard>
   </div>
 </template>
 <style lang="scss" scoped>

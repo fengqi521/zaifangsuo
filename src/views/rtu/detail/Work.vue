@@ -628,7 +628,7 @@ getWorkHistory();
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
       <Chart :options="[collectOption]" :eleNames="['wordChart']" />
-      <div class="device-data__table">
+      <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"
           :columns="workColumns"
@@ -642,20 +642,15 @@ getWorkHistory();
           @pagination-change="(page) => getMudLevelHistory(page)"
           @page-size-change="(size) => getMudLevelHistory(wordData.page, size)"
         />
-      </div>
+      </ElCard>
     </ElCard>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .device-data {
-  &__table {
+  .history-data-card {
     margin-top: 24px;
-    border: 1px solid var(--normal-border-color);
-
-    :deep(.el-scrollbar) {
-      height: 408px;
-    }
   }
 }
 </style>

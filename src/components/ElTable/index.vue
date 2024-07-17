@@ -51,12 +51,14 @@
           ></slot>
         </template>
       </el-table-column>
+      <template #empty>
+        <el-empty v-if="!props.data.length" :image-size="80" />
+      </template>
     </el-table>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, toRefs } from "vue";
 // 组件 props
 const props = defineProps({
   columns: Array,
@@ -90,9 +92,7 @@ const emit = defineEmits([
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 .table-container {
-  padding: 16px;
   text-align: right;
-  // border: 1px solid var(--normal-border-color);
   background: var(--background-color);
   :deep(.el-table) {
     thead {
@@ -101,9 +101,9 @@ const emit = defineEmits([
       font-weight: bold;
     }
 
-    
-    .el-scrollbar {
-      min-height: 408px;
+    .el-scrollbar__wrap {
+      min-height: 250px;
+      max-height: 480px;
       @extend %scrollbar;
     }
 
@@ -127,7 +127,6 @@ const emit = defineEmits([
     .cell {
       line-height: 18px;
       max-height: 76px;
-      // @extend %ellipsis;
     }
   }
 }

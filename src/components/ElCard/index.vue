@@ -22,17 +22,17 @@ const props = defineProps({
 <style lang="scss" scoped>
 .card {
   padding: 0 16px 16px;
-  border: 1px solid var(--normal-border-color);
+  border: 1px solid var(--card-border-color);
   background: var(--background-color);
   .card-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 48px;
-    border-bottom: 1px solid var(--normal-border-color);
+    border-bottom: 1px solid var(--card-border-color);
   }
   .card-title {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--normal-title-color);
   }
 

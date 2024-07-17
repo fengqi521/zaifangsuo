@@ -4,6 +4,7 @@ import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import { parseFormData, parseFormItems } from "@/constants";
+import {encodeMessage} from '@/utils'
 
 const breadList = ref([{ title: "报文解析" }]);
 const page = ref(1);
@@ -96,7 +97,7 @@ const handleReset = () => {
         </p>
         <p class="parse-detail__item">
           <span class="parse-detail__label">协议版本号及长度:</span>
-          {{ `${parseData.detail.version},${parseData.detail.length}` }}
+          {{ encodeMessage(parseData.detail.version,parseData.detail.length) }}
         </p>
         <p class="parse-detail__item">
           <span class="parse-detail__label">报文起始符:</span>

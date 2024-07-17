@@ -2198,14 +2198,13 @@ getRainHistory()
 <template>
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
-      <!-- <Chart :options="[rainOption]" :eleNames="['historyChart']" /> -->
       <div class="device-data__history">
         <Chart
           :options="[rainOption, tempOption, windOption, speedOption]"
           :eleNames="['historyChart']"
         />
       </div>
-      <div class="device-data__table">
+      <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"
           :columns="tableColumns"
@@ -2219,19 +2218,13 @@ getRainHistory()
           @pagination-change="(page) => getRainHistory(page)"
           @page-size-change="(size) => getRainHistory(deviceData.page, size)"
         />
-      </div>
+      </ElCard>
     </ElCard>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .device-data {
-  &__title {
-    line-height: 52px;
-    font-size: 16px;
-    color: var(--normal-title-color);
-    font-weight: 700;
-  }
 
   &__history {
     display: grid;
@@ -2239,13 +2232,8 @@ getRainHistory()
     gap: 16px;
   }
 
-  &__table {
+  .history-data-card {
     margin-top: 24px;
-    border: 1px solid var(--normal-border-color);
-
-    :deep(.el-scrollbar) {
-      height: 408px;
-    }
   }
 }
 </style>

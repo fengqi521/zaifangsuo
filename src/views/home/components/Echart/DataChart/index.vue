@@ -48,14 +48,27 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="dataContainer" class="data-container"></div>
+  <div class="device-status">
+    <p class="device-status__title">设备状态分析</p>
+    <div ref="dataContainer" class="device-status__container"></div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.data-container {
-  width: 100%;
-  height: 100%;
+.device-status {
   padding-right: 16px;
-  border-right: 2px dashed #f0f0f0;
+  border-right: 2px solid var(--card-border-color);
+  &__title {
+    line-height: 16px;
+    padding-bottom: 16px;
+    font-size: 14px;
+    color:var(--normal-title-color);
+    border-bottom:1px solid var(--card-border-color)
+  }
+
+  &__container {
+    width: 100%;
+    height: calc(100% - 34px);
+  }
 }
 </style>

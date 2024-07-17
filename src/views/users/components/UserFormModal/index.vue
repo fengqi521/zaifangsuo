@@ -157,7 +157,7 @@ const handleSubmit = async () => {
   <ElModal
     :title="props.title"
     :dialogVisible="props.dialogVisible"
-    width="540px"
+    width="480px"
     @handle-close="handleClose"
   >
     <template v-slot>
@@ -167,6 +167,7 @@ const handleSubmit = async () => {
         ref="userFormRef"
         :rules="userFormRules"
         :validate-on-rule-change="false"
+        require-asterisk-position="right"
       >
         <el-form-item label="用户名" prop="user_name">
           <el-input
@@ -227,15 +228,19 @@ const handleSubmit = async () => {
 <style lang="scss" scoped>
 .el-form {
   .el-form-item {
-    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    width:100%;
+    margin-bottom: 16px;
     font-size: 12px;
 
     &:last-child {
       margin: 0;
     }
   }
-  :deep(.el-form-item__label) {
-    min-width: 78px;
+
+  :deep(.el-form-item__content){
+    width:100%;
   }
 
   .el-select-v2 {
