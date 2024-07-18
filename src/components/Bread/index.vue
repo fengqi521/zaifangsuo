@@ -39,5 +39,8 @@ const props = defineProps({
   :deep(.el-breadcrumb__inner a) {
     color: var(--normal-active-color);
   }
+  :deep(.el-breadcrumb__item:last-child .el-breadcrumb__inner:hover ){
+    font-weight: bold;
+  }
 }
 </style>

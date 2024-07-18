@@ -1,25 +1,19 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import {  ref } from "vue";
 
-import Bread from '@/components/Bread/index.vue'
+import Bread from "@/components/Bread/index.vue";
 import Message from "./components/Message/index.vue";
 import Device from "./components/Device/index.vue";
-import Echart from './components/Echart/index.vue'
-import { DEVICE_DATA, MESSAGE } from "@/constants";
+import Echart from "./components/Echart/index.vue";
+import { DEVICE_DATA } from "@/constants";
 
-const breadList = ref([{title:'首页'}])
-const messages = ref([...MESSAGE])
+const breadList = ref([{ title: "首页" }]);
+
 const cardLists = [
   { field: "total", count: 26 },
   { field: "online", count: 10 },
   { field: "offline", count: 16 },
 ];
-
-onMounted(() => {
-  setInterval(() => {
-    messages.value.push(messages.value[0])
-  }, 1000)
-})
 
 DEVICE_DATA.forEach((device, index) => {
   const card = cardLists.find((item) => item.field === device.field);
@@ -31,7 +25,7 @@ DEVICE_DATA.forEach((device, index) => {
 </script>
 <template>
   <div class="home-container">
-    <Bread :breadList="breadList"/>
+    <Bread :breadList="breadList" />
     <!-- 左侧图表 -->
     <!-- <div class="home-left"> -->
     <Echart />
@@ -39,7 +33,7 @@ DEVICE_DATA.forEach((device, index) => {
     <Device />
     <!-- </div> -->
     <!-- 报文数据 -->
-    <Message :messages="messages" />
+    <Message />
   </div>
 </template>
 <style lang="scss" scoped>

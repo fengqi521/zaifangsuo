@@ -5,7 +5,7 @@ import moment from "moment";
  * @returns
  */
 export const getCurrentTime = () => {
-  return moment().format("YYYY-MM-DD hh:mm:ss");
+  return moment().format("YYYY-MM-DD HH:mm:ss");
 };
 
 /**

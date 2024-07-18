@@ -60,7 +60,7 @@ const handleClickLogout = () => {
     </div>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>修改密码</el-dropdown-item>
+        <!-- <el-dropdown-item>修改密码</el-dropdown-item> -->
         <el-dropdown-item @click="handleClickLogout">安全退出</el-dropdown-item>
       </el-dropdown-menu>
     </template>

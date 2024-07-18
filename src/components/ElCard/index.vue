@@ -21,7 +21,7 @@ const props = defineProps({
 </template>
 <style lang="scss" scoped>
 .card {
-  padding: 0 16px 16px;
+  padding: 0 24px 24px;
   border: 1px solid var(--card-border-color);
   background: var(--background-color);
   .card-head {

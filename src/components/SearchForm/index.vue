@@ -43,12 +43,13 @@ const props = defineProps({
   },
 });
 
-let formData = reactive({ ...props.initialData });
+let formData = ref({ ...props.initialData });
 const formRef = ref(null);
 watch(
   () => props.initialData,
   (newData) => {
-    formData = { ...newData };
+    console.log(newData)
+    Object.assign(formData.value, newData);
   },
   { deep: true }
 );
@@ -57,7 +58,7 @@ const emit = defineEmits(["submit", "reset"]);
 const onSubmit = async () => {
   const valid = await formRef.value.validate();
   if (valid) {
-    emit("submit", { ...formData });
+    emit("submit", { ...formData.value });
     return;
   }
   return false;

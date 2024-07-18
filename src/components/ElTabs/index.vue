@@ -56,9 +56,8 @@ watch(
     >
       <component
         :is="component"
-        v-show="active === index"
+        v-if="active === index"
         :ref="tabs[active].props.componentRef"
-        v-bind="tabs[active].props"
       />
     </div>
   </div>

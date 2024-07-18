@@ -6,7 +6,7 @@
     --body-text-size: 12px;
     --body-bg-color: #F6F4FC;
     --drawer-bg-color: #001428;
-
+    --card-detail-bg-color:#F3F3F3;
     /* 主要颜色 */
     --label-color:rgba(0, 0, 0, 0.54);
     --background-color: #FFF;
@@ -23,7 +23,7 @@
     --offline-bg-color: rgb(208,212,214,.6)    ;
     --offline-text-color:#666;
     --offline-border-color: #bdc2c5;
-    --online-bg-color: #dcf5de;
+    --online-bg-color: #77ad57;
     --online-text-color:#46be00;
     --online-border-color:#0caf60;
 
@@ -112,6 +112,6 @@
 
     /* placeholder */
 
-    --placeholder-color:rgb(78, 90, 113);
+    --placeholder-color:rgb(78, 90, 113,.8);
 
 }

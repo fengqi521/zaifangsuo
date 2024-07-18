@@ -1,8 +1,6 @@
 <script setup>
-import { ref, watch, nextTick, computed } from "vue";
+import { ref,computed, watchEffect, provide } from "vue";
 import { useRoute } from "vue-router";
-// import ElTabs from "@/components/ElTabs/index.vue";
-
 import Bread from "@/components/Bread/index.vue";
 
 import BaseInfo from "./BaseInfo.vue";
@@ -13,7 +11,6 @@ import BreakHistory from "./BreakHistory.vue";
 
 import { useEchartsHook } from "@/hooks/useEcharts";
 import { getStartAndEndTime } from "@/utils/index";
-import eventBus from "@/utils/eventBus";
 
 const route = useRoute();
 useEchartsHook();
@@ -56,17 +53,6 @@ const breadList = ref([
   { title: "设备详情" },
 ]);
 
-// 切换tabs
-const handleChangeTabs = (val) => {
-  return;
-  nextTick(() => {
-    const eleNames = tabs[val].props?.eleNames;
-    eleNames.forEach((item) => {
-      eventBus.emit(item);
-    });
-  });
-};
-
 // 通过id获取详情
 const detail = ref({});
 const getDetailById = () => {
@@ -81,7 +67,7 @@ const getDetailById = () => {
           total: null,
           data: {
             id: "bb1e7688-8472-44cf-82cc-bf26d2510609",
-            name: "雨量气象站",
+            name: "lcjdevice003",
             createtime: "2024-06-26 10:16:49",
             lastupdate: null,
             no: null,
@@ -175,9 +161,9 @@ const getDetailById = () => {
           total: null,
           data: {
             id: "6a725606-0c89-4e0e-bbb6-1f977ce6c785",
-            name: "泥位图像站",
+            name: "lcjdevice001",
             createtime: "2024-06-26 10:16:38",
-            status: 1,
+            status: 0,
             lastupdate: null,
             no: null,
             useby: null,
@@ -267,13 +253,12 @@ const getDetailById = () => {
   }
 };
 getDetailById();
-watch(
-  active,
-  (newVal) => {
-    dateTimeRange.value = getStartAndEndTime(newVal);
-  },
-  { immediate: true }
-);
+
+watchEffect(() => {
+  dateTimeRange.value = getStartAndEndTime(active.value);
+});
+
+provide("dateTimeRange", dateTimeRange);
 </script>
 
 <template>
@@ -294,7 +279,7 @@ watch(
           style="width: 355px"
         />
       </div>
-      <el-tabs type="border-card" @tab-change="handleChangeTabs">
+      <el-tabs type="border-card">
         <el-tab-pane lazy label="设备数据">
           <component :is="currentComponent" :ref="currentComponentRef" />
         </el-tab-pane>

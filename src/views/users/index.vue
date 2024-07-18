@@ -15,7 +15,7 @@ import { userFormData, userFormItems } from "@/constants";
 import userApi from "@/api/user";
 import { useMessage } from "@/plugins/message";
 
-const { success, error } = useMessage();
+const { success, warning,error } = useMessage();
 
 const breadList = ref([{ title: "用户管理" }]);
 
@@ -128,31 +128,13 @@ const handleClickShowAuthor = (row) => {
   transferValue.value.did = devices.map((item) => item.id);
 };
 
-// 更新右侧授权列表
-const uploadOptions = (values) => {
-  const lists = deviceOptions.filter(({ value }) => !values.includes(value));
-  if (lists.length < 2) {
-    const updatedDeviceOptions = deviceOptions.map((option) => {
-      if (!values.includes(option.value)) {
-        return {
-          ...option,
-          disabled: true,
-        };
-      }
-      return option;
-    });
-    Object.assign(deviceOptions, updatedDeviceOptions);
-    return;
-  }
-
-  Object.assign(
-    deviceOptions,
-    deviceOptions.map((item) => ({ ...item, disabled: false }))
-  );
-};
-
 // 授权
 const handleClickAuthor = (values) => {
+  if(!values.length) {
+    error('设备授权失败，至少授权一个设备')
+    return;
+  }
+  console.log(values,'-=============')
   userApi
     .updateUser({ uid: transferValue.value.uid, did: values.join(",") })
     .then((res) => {
@@ -254,7 +236,6 @@ const handleCloseDeleteModal = () => {
       :dialogVisible="authorVisible"
       :deviceOptions="deviceOptions"
       :data="transferValue.did"
-      @update-transfer="uploadOptions"
       @handle-close="handleClose"
       @handle-submit="handleClickAuthor"
     />

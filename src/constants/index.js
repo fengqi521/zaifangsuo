@@ -429,7 +429,7 @@ const WATER_LEVEL_LEGEND = {
 };
 //--------------rtu管理start--------------
 
-const projectFormData = { number: "", name: "", type: "" };
+const projectFormData = { number: "", name: "", type: "", status: "2" };
 const deviceFormItems = [
   {
     label: "设备编号",
@@ -448,40 +448,48 @@ const deviceFormItems = [
     prop: "type",
     type: "el-input",
     attrs: { placeholder: "请输入设备类型" },
-  }
+  },
+  {
+    label: "设备状态",
+    prop: "status",
+    type: "el-select",
+    attrs: { placeholder: "请选择设备状态" },
+    options: [
+      { label: "全部", value: "2" },
+      { label: "在线", value: "1" }, 
+      { label: "离线", value: "0" }, 
+    ],
+  },
 ];
 
 const deviceMap = [
-  {label:'泥位计',value:1},
-  {label:'雨量计',value:2},
-  {label:'断线传感器',value:3},
-
-]
-
+  { label: "泥位计", value: 1 },
+  { label: "雨量计", value: 2 },
+  { label: "断线传感器", value: 3 },
+];
 
 //---------------用户管理start--------------------
 
-const userFormData = {  user_name: ""};
+const userFormData = { user_name: "" };
 const userFormItems = [
   {
     label: "用户名",
     prop: "user_name",
     attrs: { placeholder: "请输入用户名" },
     type: "el-input",
-  }
+  },
 ];
-
 
 //---------------报文解析start--------------------
 
-const parseFormData = {  text: ""};
+const parseFormData = { text: "" };
 const parseFormItems = [
   {
     label: "报文信息",
     prop: "text",
     attrs: { placeholder: "请输入报文信息" },
     type: "el-input",
-  }
+  },
 ];
 
 //---------------功能码对应关系 start--------------------
@@ -538,7 +546,7 @@ const operateLists = [
   {
     label: "中心站查询遥测站实时自检数据",
     type: "E2",
-  }
+  },
 ];
 
 export {
@@ -556,5 +564,5 @@ export {
   userFormItems,
   parseFormData,
   parseFormItems,
-  operateLists
+  operateLists,
 };

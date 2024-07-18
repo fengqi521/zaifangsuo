@@ -1,12 +1,19 @@
 <script setup>
-import { reactive, ref, watchEffect, onUnmounted, provide } from "vue";
+import {
+  reactive,
+  ref,
+  watchEffect,
+  onUnmounted,
+  provide,
+  inject,
+  computed,
+} from "vue";
 import TimelineImage from "../components/TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import { getCommonLine } from "@/utils/chartData";
-import eventBus from "@/utils/eventBus";
 const collectOption = reactive(
   getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
@@ -14,6 +21,8 @@ const collectOption = reactive(
 const chartData = reactive({ timeList: [], valueList: [] });
 const mudLevelImages = reactive({ timeList: [], valueList: [] });
 provide("mudLevelImages", mudLevelImages);
+const dateTimeRange = inject("dateTimeRange");
+const dateRange = computed(() => dateTimeRange.value);
 // 获取泥水位图表数据
 const getMudChartData = () => {
   const res = {
@@ -177,7 +186,7 @@ const getMudLevelHistory = (page, size) => {
     msg: "OK",
     pageNo: 1,
     pageSize: 10,
-    total: 106,
+    total: 10,
     data: [
       {
         protocol: 3,
@@ -309,7 +318,7 @@ getMudLevelHistory();
     gap: 16px;
   }
 
-  .history-data-card{
+  .history-data-card {
     margin-top: 24px;
   }
 }

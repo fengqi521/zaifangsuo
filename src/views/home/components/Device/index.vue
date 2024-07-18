@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import ElCard from '@/components/ElCard/index.vue'
+import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import rtuApi from "@/api/rtu";
@@ -18,29 +18,34 @@ const columns = ref([
 const active = ref(1);
 const deviceData = ref([]);
 const loading = ref(false);
-const currentPage = ref(1);
-const pageSize = ref(10);
+const searchInfo = ref({ status: 1 });
+const page = ref(1);
+const limit = ref(10);
 const total = ref(0);
 
 // 设备数据
-const loadData = async (status = 1) => {
+const getDeviceData = async () => {
   loading.value = true;
+  searchInfo.value.page = page.value;
+  searchInfo.value.limit = limit.value;
   try {
-    const result = await rtuApi.getDeviceList({ status });
+    const result = await rtuApi.getDeviceList(searchInfo.value);
     loading.value = false;
     deviceData.value = result?.data?.list.map((item, index) => ({
       num: index + 1,
       ...item,
     }));
-    currentPage.value = result.data.current_page;
+    page.value = result.data.current_page;
     total.value = result.data.total_count;
   } catch (error) {}
 };
-loadData();
+getDeviceData();
 // 切换设备查询
 const handleSearchStatus = (status) => {
   active.value = status;
-  loadData(status);
+  page.value = 1;
+  searchInfo.value.status = status;
+  getDeviceData();
 };
 
 // 查询传感器类型
@@ -50,24 +55,15 @@ const getType = (type) => {
 };
 
 // 切换分页
-const handleChangeCurrent = (page, size) => {
-  console.log(page, size);
-  console.log("Pagination changed:", page, size);
+const handleChangeCurrent = (page) => {
+    page.value = page;
+    getDeviceData()
 };
 
 // 改变条数
 const handlePageSizeChange = (size) => {
-  console.log("Page size changed:", size);
-};
-
-const handleSortChange = (sortInfo) => {
-  // 处理排序请求
-  console.log("Sort changed:", sortInfo);
-};
-
-const handleSelectionChange = (selection) => {
-  // 处理行选择
-  console.log("Selection changed:", selection);
+  limit.value = size;
+  getDeviceData()
 };
 </script>
 <template>
@@ -92,8 +88,6 @@ const handleSelectionChange = (selection) => {
         :columns="columns"
         :data="deviceData"
         :tableProps="{ showSelection: false, border: true }"
-        @sort-change="handleSortChange"
-        @selection-change="handleSelectionChange"
       >
         <template #device_type="scope" class="status-row">
           {{ getType(scope.row.device_type) }}
@@ -107,8 +101,8 @@ const handleSelectionChange = (selection) => {
         </template>
       </ElTable>
       <ElPagination
-        :currentPage="currentPage"
-        :page-size="pageSize"
+        :page="page"
+        :page-size="limit"
         :total="total"
         @pagination-change="handleChangeCurrent"
         @page-size-change="handlePageSizeChange"

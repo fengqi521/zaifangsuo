@@ -1,11 +1,15 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import MessageSearch from "../MessageSearch/index.vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
+import { MESSAGE } from "@/constants";
+import {getCurrentTime} from '@/utils'
 
+let timer = ref(null);
+const messages = ref([...MESSAGE]);
 const drawStatus = ref(false);
 const dynamicScrollerRef = ref(null);
-
+let isScrollingEnabled = false;
 const props = defineProps({
   messages: {
     type: Array,
@@ -13,37 +17,50 @@ const props = defineProps({
   },
 });
 
-const items = computed(() => {
-  return props.messages.map((item, index) =>
-    Object.assign({}, { id: `data-id-${index}` }, item)
-  );
-});
-
+// 显示隐藏
 const handleChangeDrawer = () => {
   drawStatus.value = true;
 };
 
-const scrollToBottom = () => {
-  // 通过 ref 获取 DynamicScroller 实例并调用 scrollToBottom 方法
+// 鼠标移入
+const handleMouseOver = () => {
+  isScrollingEnabled = true;
+};
 
+// 鼠标移入
+const handleMouseOut = () => {
+  isScrollingEnabled = false;
+};
+
+// 通过 ref 获取 DynamicScroller 实例并调用 scrollToBottom 方法
+const scrollToBottom = () => {
   dynamicScrollerRef?.value?.scrollToBottom();
 };
 
-watch(
-  () => props.messages.length,
-  (newVal, oldVal) => {
-    dynamicScrollerRef?.value?.scrollToBottom();
-  }
-);
+onMounted(() => {
+  timer.value = setInterval(() => {
+    const lists = [...messages.value];
+    const list = {
+      title: "Topic rtu/upload/heartbeat/1523453 QoS:0",
+      info: "{1242363635435436436437568723322364366,2434,435,332,23,43,43,:1:2:3:4}",
+      date: getCurrentTime(),
+    };
+    lists.push(list);
+    messages.value = lists.map((item, index) => ({
+      ...item,
+      id: `data-id-${index}`,
+    }));
+    nextTick(() => {
+      if (isScrollingEnabled) return;
+      scrollToBottom();
+    });
+  }, 1000);
+});
 </script>
 
 <template>
   <div class="kongzhi-icon" @click="handleChangeDrawer">
-    <Icon
-      iconClass="icon-shujukongzhitai"
-      color="var(--text-color)"
-      size="24px"
-    />
+    <Icon iconClass="icon-zuocejiantou" color="var(--text-color)" size="16px" />
   </div>
 
   <el-drawer
@@ -56,9 +73,11 @@ watch(
     <DynamicScroller
       class="message-scrollbar"
       ref="dynamicScrollerRef"
-      :items="items"
+      :items="messages"
       :min-item-size="24"
       @resize="scrollToBottom"
+      @mouseover="handleMouseOver"
+      @mouseout="handleMouseOut"
     >
       <template #default="{ item, index, active }">
         <DynamicScrollerItem
@@ -86,7 +105,7 @@ watch(
   right: 0;
   top: 50%;
   bottom: 50%;
-  width: 30px;
+  width: 22px;
   height: 50px;
   line-height: 50px;
   text-align: center;

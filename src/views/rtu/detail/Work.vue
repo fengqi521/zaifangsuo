@@ -295,7 +295,7 @@ const getWorkHistory = (page, size) => {
     code: 0,
     status: true,
     msg: "",
-    total: 136,
+    total: 10,
     size: 10,
     data: {
       records: [

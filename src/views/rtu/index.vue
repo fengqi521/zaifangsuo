@@ -13,7 +13,7 @@ import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
 const breadList = ref([{ title: "设备管理" }]);
 const formItems = reactive(deviceFormItems);
 
-const searchInfo = reactive({ ...projectFormData });
+const searchInfo = ref({ ...projectFormData });
 const loading = ref(false);
 const page = ref(1);
 const limit = ref(10);
@@ -30,9 +30,9 @@ const columns = ref([
 // 获取设备数据
 const getRtuData = async () => {
   loading.value = true;
-  searchInfo.page = page.value;
-  searchInfo.limit = limit.value;
-  const res = await rtuApi.getDeviceList({ status: 2 });
+  searchInfo.value.page = page.value;
+  searchInfo.value.limit = limit.value;
+  const res = await rtuApi.getDeviceList(searchInfo.value);
   if (!res.code) {
     page.value = res.data.current_page;
     total.value = res.data.total_count;
@@ -48,14 +48,14 @@ getRtuData();
 
 // 查询数据
 const handleSearchSubmit = (data) => {
-  Object.assign(searchInfo, data);
+  searchInfo.value = { ...searchInfo.value, ...data };
   getRtuData();
 };
 
 // 重置数据
 const handleReset = () => {
   page.value = 1;
-  Object.assign(searchInfo, projectFormData);
+  searchInfo.value = { ...searchInfo.value, ...projectFormData };
   getRtuData();
 };
 
@@ -92,61 +92,60 @@ const handleChangeSize = (size) => {
     />
 
     <ElCard title="设备列表">
-   <!-- 表格 -->
-   <ElTable
-      class="rtu-table"
-      :loading="loading"
-      :columns="columns"
-      :data="rtuData"
-      :tableProps="{ showSelection: false, border: true }"
-    >
-      <template #device_type="scope">
-        <span class="rtu-table__device-type">{{
-          getType(scope.row.device_type)
-        }}</span>
-      </template>
-      <template #online="scope">
-        <span
-          :class="{
-            'rtu-table__status': true,
-            'rtu-table__status--online': scope.row.online,
-          }"
-        ></span>
-        <span
-          :class="{
-            'rtu-table__status-text': true,
-            'rtu-table__status-text--online': scope.row.online,
-          }"
-        >
-          {{ scope.row.online ? "在线" : "离线" }}
-        </span>
-      </template>
-      <template #action="{ row }">
-        <router-link
-          class="rtu-table__action-btn rtu-table__action-btn--details"
-          :to="`/rtu/detail/${row.device_type}/${row.id}`"
-        >
-          查看详情
-        </router-link>
-        <router-link
-          class="rtu-table__action-btn rtu-table__action-btn--command"
-          :to="`/rtu/command/${row.device_type}/${row.id}`"
-        >
-          下发指令</router-link
-        >
-      </template>
-    </ElTable>
+      <!-- 表格 -->
+      <ElTable
+        class="rtu-table"
+        :loading="loading"
+        :columns="columns"
+        :data="rtuData"
+        :tableProps="{ showSelection: false, border: true }"
+      >
+        <template #device_type="scope">
+          <span class="rtu-table__device-type">{{
+            getType(scope.row.device_type)
+          }}</span>
+        </template>
+        <template #online="scope">
+          <span
+            :class="{
+              'rtu-table__status': true,
+              'rtu-table__status--online': scope.row.online,
+            }"
+          ></span>
+          <span
+            :class="{
+              'rtu-table__status-text': true,
+              'rtu-table__status-text--online': scope.row.online,
+            }"
+          >
+            {{ scope.row.online ? "在线" : "离线" }}
+          </span>
+        </template>
+        <template #action="{ row }">
+          <router-link
+            class="rtu-table__action-btn rtu-table__action-btn--details"
+            :to="`/rtu/detail/${row.device_type}/${row.id}`"
+          >
+            查看详情
+          </router-link>
+          <router-link
+            class="rtu-table__action-btn rtu-table__action-btn--command"
+            :to="`/rtu/command/${row.device_type}/${row.id}`"
+          >
+            下发指令</router-link
+          >
+        </template>
+      </ElTable>
 
-    <!-- 分页 -->
-    <ElPagination
-      :currentPage="page"
-      :page-size="limit"
-      :total="total"
-      @pagination-change="handleChangePage"
-      @page-size-change="handleChangeSize"
-    />
+      <!-- 分页 -->
+      <ElPagination
+        :currentPage="page"
+        :page-size="limit"
+        :total="total"
+        @pagination-change="handleChangePage"
+        @page-size-change="handleChangeSize"
+      />
     </ElCard>
- 
   </div>
 </template>
 <style lang="scss" scoped>

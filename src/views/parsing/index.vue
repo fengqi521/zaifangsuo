@@ -132,7 +132,7 @@ const handleReset = () => {
   display: flex;
   flex-wrap: wrap;
   padding: 16px;
-  background: var(--body-bg-color);
+  background: var(--card-detail-bg-color);
 
   &__item {
     line-height: 36px;

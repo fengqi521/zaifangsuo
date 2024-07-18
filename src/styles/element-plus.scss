@@ -40,6 +40,8 @@
 .el-select__wrapper.is-focused,
 .el-select__wrapper:hover,
 .el-select__wrapper.is-hovering:not(.is-focus),
+.el-date-editor.el-input__wrapper,
+.el-date-editor.el-input__wrapper:hover ,
 .el-range-editor.is-active:hover,
 .el-range-editor.is-active,
 .el-date-editor.el-input__wrapper.el-form-item.is-error .el-input__wrapper,
@@ -88,15 +90,16 @@
     text-align: center;
 }
 
-.el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
+.el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active ,.el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active:hover{
     font-weight: bold;
-    color: var(--text-color);
+    color: var(--text-color) !important;
     background: var(--btn-bg-color);
 }
 
 .el-tabs--border-card>.el-tabs__header .el-tabs__item:not(.is-disabled):hover {
-    color: inherit;
+    color: var(--panel-text-color);
 }
+
 
 .el-tabs--border-card>.el-tabs__content {
     padding: 0;
