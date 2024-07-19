@@ -24,15 +24,15 @@ export const useTimeoutHook = (timeoutDuration = 15, debounceDelay = 100) => {
   const startTimeout = () => {
     resetTimer();
     timer.value = setTimeout(() => {
-        const {warning} = useMessage()
-      warning(`您已超过${timeoutDuration}分钟未进行操作，即将自动退出系统`);
+      const { warning } = useMessage();
       const userInfoStore = userInfoStoreHook();
+      warning(`您已超过${timeoutDuration}分钟未进行操作，即将自动退出系统`);
       userInfoStore.logout().then(() => {
         setTimeout(() => {
           window.location.href = "/";
         }, 2000);
       });
-    }, timeoutDuration  * 1000);
+    }, timeoutDuration * 1000);
   };
 
   // 在组件挂载时设置定时器
