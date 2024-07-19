@@ -1,19 +1,17 @@
 <script setup>
-import { reactive, ref, watchEffect, onUnmounted, provide } from "vue";
+import { reactive, ref, watchEffect } from "vue";
 import TimelineImage from "../components/TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import { getCommonLine } from "@/utils/chartData";
-import eventBus from "@/utils/eventBus";
 const collectOption = reactive(
   getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 图表
 const chartData = reactive({ timeList: [], valueList: [] });
 const mudLevelImages = reactive({ timeList: [], valueList: [] });
-provide("mudLevelImages", mudLevelImages);
 // 获取泥水位图表数据
 const getBreakChartData = () => {
   const res = {

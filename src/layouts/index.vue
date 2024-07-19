@@ -7,9 +7,14 @@
   </div>
 </template>
 <script setup>
-import { computed, watchEffect } from "vue";
 import Nav from "./Nav.vue";
 import Main from "./Main.vue";
+import { useTimeoutHook } from "@/hooks/useTimeout";
+import { onMounted } from "vue";
+onMounted(()=>{
+
+  useTimeoutHook();
+})
 </script>
 <style lang="scss" scoped>
 .showGreyMode {

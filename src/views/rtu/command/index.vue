@@ -1,3 +1,4 @@
+div
 <script setup>
 import { computed, ref, reactive } from "vue";
 import { useRoute } from "vue-router";
@@ -14,21 +15,19 @@ const breadList = ref([
   { to: "/rtu", title: "设备管理" },
   { title: "指令下发" },
 ]);
-
-const commandFormRef = ref(null)
-const loading = ref(false);
-
-const deviceName = ref('')
-const unfold = ref(true);
-const dateTimeRange = ref([]);
-const showTimer = ref(false);
-const showOther = ref(false);
-
-const content = reactive({
-  command: '',
-  back: {},
-});
-const commonForm = {
+const speForm = {
+  type1: {
+    high: 0,
+    init: 0,
+    report: 0.001,
+  },
+  type2: {
+    cycle: 1,
+    alarm: 1,
+    duration: 1,
+  },
+};
+const baseForm = {
   id,
   frame_start: "",
   address: "",
@@ -38,31 +37,88 @@ const commonForm = {
   version_length: "",
   start: "",
   end: "",
-  content: "",
   crc: "",
-
 };
 
+// 表单配置
+const formConfig = {
+  common: {
+    frame_start: {
+      label: "帧起始符:",
+      width: "120px",
+      labelWidth: "56",
+      disabled: true,
+    },
+    address: {
+      label: "遥测站地址:",
+      width: "180px",
+      labelWidth: "68",
+      disabled: true,
+    },
+    reserve: {
+      label: "预留位:",
+      width: "120px",
+      labelWidth: "44",
+      disabled: true,
+    },
+    password: {
+      label: "密码:",
+      width: "200px",
+      labelWidth: "32",
+      disabled: true,
+    },
+    version_length: {
+      label: "版本号及长度:",
+      width: "120px",
+      labelWidth: "80",
+      disabled: true,
+    },
+    start: {
+      label: "报文起始符:",
+      width: "120px",
+      labelWidth: "68",
+      disabled: true,
+    },
+    end: {
+      label: "报文结束符:",
+      width: "120px",
+      labelWidth: "68",
+      disabled: true,
+    },
+    crc: { label: "校验码:", width: "200px", labelWidth: "44", disabled: true },
+  },
+  type1: {
+    high: { label: "安装高度:", labelWidth: "56",min: 0, max: 65.535, unit: "m" },
+    init: { label: "初始值:",labelWidth: "44", min: 0, max: 65.535, unit: "m" },
+    report: { label: "加报阈值:",labelWidth: "56", min: 0.001, max: 65.535, unit: "m" },
+  },
+  type2: {
+    cycle: { label: "加报周期:",labelWidth: "56", min: 1, max: 255, unit: "min" },
+    alarm: { label: "报警阈值:",labelWidth: "56", min: 1, max: 6553.5, unit: "mm" },
+    duration: { label: "报警阈值时长:",labelWidth: "80", min: 1, max: 255, unit: "min" },
+  },
+};
+
+const currentConfig = computed(() => {
+  return {
+    common: { ...formConfig.common },
+    [`type${type}`]: { ...formConfig[`type${type}`] },
+  };
+});
+const timerFields = ["version_length", "start", "end", "crc"];
+const commandFormRef = ref(null);
+const loading = ref(false);
+
+const deviceName = ref("");
+const unfold = ref(true);
+const dateTimeRange = ref([]);
+
+const content = reactive({
+  command: "",
+  back: {},
+});
 // 表单
-const commandForm = ref({ ...commonForm });
-
-// 判断类型
-const getTypeForm = () => {
-  if (type === "1") {
-    // 泥位
-    commandForm.value = { ...commandForm.value, high:'',init: 0, report: 0 };
-  }
-
-  if (type === "2") {
-    commandForm.value = {
-      ...commandForm.value,
-      cycle: 1,
-      alarm: 0,
-      duration: 1,
-    };
-  }
-};
-getTypeForm();
+const commonForm = ref({ ...baseForm, ...speForm[`type${type}`] });
 
 // 获取设备详情
 const getDetail = () => {
@@ -84,35 +140,31 @@ const getDetail = () => {
   };
 
   if (!res.code) {
-    const {name,...others} = res.data;
+    const { name, ...others } = res.data;
     deviceName.value = name;
-    commandForm.value = {...commandForm.value ,...others};
+    commonForm.value = { ...commonForm.value, ...others };
   }
 };
 getDetail();
 
-// 切换功能码
-const handleChangeOperate = (val) => {
-  switch (val) {
-    case "38":
-      return (showTimer.value = true);
-    case "32":
-    case "33":
-      getTypeForm();
-      return (showOther.value = true);
-    default:
-      showTimer.value = false;
-      showOther.value = false;
-      return;
-  }
-};
+// 功能码
+const dynamicFields = computed(() => {
+  const operate = commonForm.value.operate;
+  const showDateTimeRange = operate === "38";
+  const showTypeData = ["32", "33"].includes(operate);
+
+  return {
+    showDateTimeRange,
+    showTypeData,
+  };
+});
 
 // 下发指令
 const handleClickSubmit = async () => {
   loading.value = true;
-  const valid = await commandFormRef.value.validate()
-  if(valid){
-    content.command  = JSON.stringify(commandForm.value)
+  const valid = await commandFormRef.value.validate();
+  if (valid) {
+    content.command = JSON.stringify(commonForm.value);
   }
   setTimeout(() => {
     loading.value = false;
@@ -129,12 +181,16 @@ const handleClickSubmit = async () => {
 
     <!-- 报文下发表单 -->
     <ElCard title="下发指令" class="form-card">
-      <el-form :model="commandForm" label-width="auto" label-position="left" ref="commandFormRef">
+      <el-form
+        :model="commonForm"
+        label-width="auto"
+        label-position="left"
+        ref="commandFormRef"
+      >
         <div class="command-form__operate">
           <el-form-item label="功能码:" label-width="44">
             <el-select
-              v-model="commandForm.operate"
-              @change="handleChangeOperate"
+              v-model="commonForm.operate"
               placeholder="功能码"
               style="width: 250px"
             >
@@ -155,65 +211,29 @@ const handleClickSubmit = async () => {
         </div>
 
         <div v-if="unfold" class="command-form__details">
-          <el-form-item label="帧起始符:" label-width="56">
+          <el-form-item
+            v-for="(
+              { label, width, labelWidth, disabled }, key, index
+            ) in currentConfig.common"
+            :key="index"
+            :label="label"
+            :label-width="labelWidth"
+            v-show="
+              !(timerFields.includes(key) && dynamicFields.showDateTimeRange)
+            "
+          >
             <el-input
-              v-model="commandForm.frame_start"
-              style="width: 120px"
-              disabled
-            />
-          </el-form-item>
-
-          <el-form-item label="遥测站地址:" label-width="68">
-            <el-input
-              v-model="commandForm.address"
-              style="width: 180px"
-              disabled
-            />
-          </el-form-item>
-
-          <el-form-item label="预留位:" label-width="44">
-            <el-input
-              v-model="commandForm.reserve"
-              style="width: 120px"
-              disabled
-            />
-          </el-form-item>
-          <el-form-item label="密码:" label-width="32">
-            <el-input
-              v-model="commandForm.password"
-              style="width: 200px"
-              disabled
+              v-model="commonForm[key]"
+              :style="{ width }"
+              :disabled="disabled"
             />
           </el-form-item>
 
           <el-form-item
-            label="版本号及长度:"
-            label-width="80"
-            v-if="!showTimer"
+            label="时间段:"
+            label-width="44"
+            v-if="dynamicFields.showDateTimeRange"
           >
-            <el-input
-              v-model="commandForm.version_length"
-              style="width: 120px"
-              disabled
-            />
-          </el-form-item>
-
-          <el-form-item label="报文起始符:" label-width="68" v-if="!showTimer">
-            <el-input
-              v-model="commandForm.start"
-              style="width: 120px"
-              disabled
-            />
-          </el-form-item>
-
-          <el-form-item label="报文结束符:" label-width="68" v-if="!showTimer">
-            <el-input v-model="commandForm.end" style="width: 120px" disabled />
-          </el-form-item>
-          <el-form-item label="校验码:" label-width="44" v-if="!showTimer">
-            <el-input v-model="commandForm.crc" style="width: 200px" disabled />
-          </el-form-item>
-
-          <el-form-item label="时间段:" label-width="44" v-if="showTimer">
             <el-date-picker
               v-model="dateTimeRange"
               type="datetimerange"
@@ -224,88 +244,31 @@ const handleClickSubmit = async () => {
             />
           </el-form-item>
 
-          <!-- 雨量计 -->
           <el-form-item
-            label="加报周期:"
-            label-width="56"
-            v-if="type === '2' && showOther"
+            class="input-number__item"
+            v-for="({ label, labelWidth,min, max, unit }, key, index) in currentConfig[
+              `type${type}`
+            ]"
+            :key="index"
+            :label="label"
+            :label-width="labelWidth"
+            v-if="
+              !dynamicFields.showDateTimeRange && dynamicFields.showTypeData
+            "
           >
-            <el-input-number
-              v-model="commandForm.cycle"
-              :min="1"
-              :max="255"
-              controls-position="right"
+            <el-input
+              oninput="value=value.replace(/[^\d.]/g, '').replace(/\.{4,}/g, '.').replace('.', '$#$').replace(/\./g, '').replace('$#$', '.').replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/, '$1$2.$3').replace(/^\./g, '');if(parseFloat(value)>=5){value=5}"
+              v-model="commonForm[key]"
             />
-          </el-form-item>
-
-          <el-form-item
-            label="报警阈值:"
-            label-width="56"
-            v-if="type === '2' && showOther"
-          >
-            <el-input-number
-              v-model="commandForm.alarm"
-              :min="1"
-              :max="6553.5"
-              controls-position="right"
-            />
-          </el-form-item>
-          <el-form-item
-            label="报警阈值时长:"
-            label-width="80"
-            v-if="type === '2' && showOther"
-          >
-            <el-input-number
-              v-model="commandForm.duration"
-              :min="1"
-              :max="255"
-              controls-position="right"
-            />
-          </el-form-item>
-
-          <!-- 泥位计 -->
-          <el-form-item
-            label="安装高度:"
-            label-width="56"
-            v-if="type === '1' && showOther"
-          >
-            <el-input-number
-              v-model="commandForm.high"
-              :min="0"
-              :max="65.535"
-              controls-position="right"
-            />
-          </el-form-item>
-
-          <el-form-item
-            label="初始值:"
-            label-width="44"
-            v-if="type === '1' && showOther"
-          >
-            <el-input-number
-              v-model="commandForm.init"
-              :min="0"
-              :max="65.535"
-              controls-position="right"
-            />
-          </el-form-item>
-
-          <el-form-item
-            label="加报阈值:"
-            label-width="56"
-            v-if="type === '1' && showOther"
-          >
-            <el-input-number
-              v-model="commandForm.report"
-              :min="0.001"
-              :max="65.535"
-              controls-position="right"
-            />
+            <div class="input-item__unit">{{ unit }}</div>
           </el-form-item>
         </div>
 
         <el-form-item label="" class="command-form__btn">
-          <el-button type="primary" :disabled="!commandForm.operate" @click="handleClickSubmit"
+          <el-button
+            type="primary"
+            :disabled="!commonForm.operate"
+            @click="handleClickSubmit"
             >下发指令</el-button
           >
           <el-button>重置</el-button>
@@ -314,14 +277,14 @@ const handleClickSubmit = async () => {
     </ElCard>
 
     <!-- 下发内容和反馈内容 -->
-    <ElCard title="下发内容" class="feedback-card" >
+    <ElCard title="下发内容" class="feedback-card">
       <el-empty v-if="!content.command.length" :image-size="80" />
-       <p v-else class="feedback-card__command">{{ content.command }}</p>
+      <p v-else class="feedback-card__command">{{ content.command }}</p>
     </ElCard>
 
-     <!-- 反馈内容 -->
-     <ElCard title="反馈内容" class="feedback-card" v-loading="loading">
-      <el-empty v-if="!Object.keys(content.back).length":image-size="80" />
+    <!-- 反馈内容 -->
+    <ElCard title="反馈内容" class="feedback-card" v-loading="loading">
+      <el-empty v-if="!Object.keys(content.back).length" :image-size="80" />
     </ElCard>
   </div>
 </template>
@@ -371,17 +334,36 @@ const handleClickSubmit = async () => {
   :deep(.el-form-item__label) {
     padding-right: 4px;
   }
+
+  .input-number__item {
+    .el-input {
+      width: 100px;
+    }
+    
+    .input-item__unit {
+      padding-inline:8px;
+      height: 32px;
+      line-height: 32px;
+      font-size: 12px;
+      color: #333;
+      text-align: center;
+      background: #fff;
+      border-radius: 0 3px 3px 0;
+      border: 1px solid var(--select-border-color);
+      border-left: none;
+    }
+  }
 }
 
 .feedback-card {
   margin-top: 24px;
 
-  &__command{
-  padding: 16px;
-  line-height:24px;
-  color: var(--normal-title-color);
-  background: var(--card-detail-bg-color);
-  word-break:break-all;
+  &__command {
+    padding: 16px;
+    line-height: 24px;
+    color: var(--normal-title-color);
+    background: var(--card-detail-bg-color);
+    word-break: break-all;
   }
 }
 </style>

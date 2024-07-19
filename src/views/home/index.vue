@@ -1,5 +1,5 @@
 <script setup>
-import {  ref } from "vue";
+import { ref } from "vue";
 
 import Bread from "@/components/Bread/index.vue";
 import Message from "./components/Message/index.vue";
@@ -26,11 +26,12 @@ DEVICE_DATA.forEach((device, index) => {
 <template>
   <div class="home-container">
     <Bread :breadList="breadList" />
-    <!-- 左侧图表 -->
-    <!-- <div class="home-left"> -->
+    <!-- 图表 -->
     <Echart />
-    <!-- <Card :deviceCardLists="DEVICE_DATA" /> -->
+
+    <!-- 设备数据 -->
     <Device />
+
     <!-- </div> -->
     <!-- 报文数据 -->
     <Message />

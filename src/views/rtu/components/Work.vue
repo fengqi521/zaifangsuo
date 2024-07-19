@@ -1,17 +1,22 @@
 <script setup>
-import { reactive, ref, watchEffect, onUnmounted, provide } from "vue";
+import { reactive, ref, watchEffect } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
-import eventBus from "@/utils/eventBus";
-provide("name", "work");
 
-const props = {};
+const useRtuStore = useRtuStoreHook();
 const collectOption = reactive(
   getCommonLine({ seriesUnit: ["V", "°C"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
+
+const searchInfo = reactive({
+  range: [...useRtuStore.dateTimeRange],
+  page: 1,
+  limit: 10,
+});
 // 常量
 const workColumns = [
   { prop: "num", label: "序号" },
@@ -21,16 +26,7 @@ const workColumns = [
 ];
 
 const colors = ["#ffd285", "#ff733f"];
-
 const chartData = reactive({ monitortime: [], powerVolt: [], temperature: [] });
-const loading = ref(false);
-const wordData = reactive({
-  page: 1,
-  limit: 10,
-  total: 0,
-  data: [],
-});
-
 // 获取图表数据
 const getWorkChartData = () => {
   const res = {
@@ -289,8 +285,48 @@ const getWorkChartData = () => {
     Object.assign(chartData, res.data);
   }
 };
+
+// 图表数据重组
+const resetOptions = (data) => {
+  collectOption.legend.show = true;
+  collectOption.legend.x = "center";
+  collectOption.legend.data = ["电压", "温度"];
+  // collectOption.grid.top = 60
+  collectOption.color = colors;
+  collectOption.xAxis[0].data = data.monitortime;
+  collectOption.yAxis[0].name = "{title|电压(V)}";
+  collectOption.yAxis[1].name = "{title|温度(°C)}";
+
+  collectOption.series[0] = {
+    name: "电压",
+    type: "line",
+    data: data.powerVolt,
+    Symbol: "circle",
+    smooth: true,
+    yAxisIndex: 0,
+  };
+  collectOption.series[1] = {
+    name: "温度",
+    type: "line",
+    data: data.temperature,
+    Symbol: "circle",
+    smooth: true,
+    yAxisIndex: 1,
+  };
+};
+
+watchEffect(() => {
+  resetOptions(chartData);
+});
+
+const loading = ref(false);
+const workData = reactive({
+  total: 0,
+  data: [],
+});
+
 // 获取工况历史数据
-const getWorkHistory = (page, size) => {
+const getWorkHistory = () => {
   const res = {
     code: 0,
     status: true,
@@ -581,47 +617,29 @@ const getWorkHistory = (page, size) => {
     hasPrevious: false,
   };
   if (!res.code) {
-    wordData.total = res.total;
+    workData.total = res.total;
     Object.assign(
-      wordData.data,
+      workData.data,
       res.data.records.map((item, index) => ({ ...item, num: index + 1 }))
     );
   }
 };
-// 图表数据重组
-const resetOptions = (data) => {
-  collectOption.legend.show = true;
-  collectOption.legend.x = "center";
-  collectOption.legend.data = ["电压", "温度"];
-  // collectOption.grid.top = 60
-  collectOption.color = colors;
-  collectOption.xAxis[0].data = data.monitortime;
-  collectOption.yAxis[0].name = "{title|电压(V)}";
-  collectOption.yAxis[1].name = "{title|温度(°C)}";
 
-  collectOption.series[0] = {
-    name: "电压",
-    type: "line",
-    data: data.powerVolt,
-    Symbol: "circle",
-    smooth: true,
-    yAxisIndex: 0,
-  };
-  collectOption.series[1] = {
-    name: "温度",
-    type: "line",
-    data: data.temperature,
-    Symbol: "circle",
-    smooth: true,
-    yAxisIndex: 1,
-  };
+// 处理分页
+const handleChangeLimit = (size) => {
+  searchInfo.limit = size;
+  getWorkHistory();
 };
 
-watchEffect(() => {
-  resetOptions(chartData);
+const handleChangePage = (page) => {
+  searchInfo.page = page;
+  getWorkHistory();
+};
+useRtuStore.handleMethod((val) => {
+  searchInfo.range = val;
+  getWorkChartData();
+  getWorkHistory();
 });
-getWorkChartData();
-getWorkHistory();
 </script>
 
 <template>
@@ -632,15 +650,15 @@ getWorkHistory();
         <ElTable
           :loading="loading"
           :columns="workColumns"
-          :data="wordData.data"
+          :data="workData.data"
           :tableProps="{ showSelection: false, border: true }"
         />
         <ElPagination
-          :currentPage="wordData.page"
-          :page-size="wordData.limit"
-          :total="wordData.total"
-          @pagination-change="(page) => getMudLevelHistory(page)"
-          @page-size-change="(size) => getMudLevelHistory(wordData.page, size)"
+          :currentPage="searchInfo.page"
+          :page-size="searchInfo.limit"
+          :total="workData.total"
+          @pagination-change="handleChangePage"
+          @page-size-change="handleChangeLimit"
         />
       </ElCard>
     </ElCard>

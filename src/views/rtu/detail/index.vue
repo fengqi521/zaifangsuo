@@ -1,23 +1,21 @@
 <script setup>
-import { ref,computed, watchEffect, provide } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
+import { useRtuStoreHook } from "@/store/modules/rtu";
+import {
+  BaseInfo,
+  MudHistory,
+  RainHistory,
+  BreakHistory,
+  Work,
+} from "../components";
 
-import BaseInfo from "./BaseInfo.vue";
-import MudHistory from "./MudHistory.vue";
-import Work from "./Work.vue";
-import RainHistory from "./RainHistory.vue";
-import BreakHistory from "./BreakHistory.vue";
-
-import { useEchartsHook } from "@/hooks/useEcharts";
-import { getStartAndEndTime } from "@/utils/index";
-
+const useRtuStore = useRtuStoreHook();
 const route = useRoute();
-useEchartsHook();
 
 const { id, type } = route.params;
 const active = ref("day");
-const dateTimeRange = ref([]);
 
 const mudRef = ref(null);
 const rainRef = ref(null);
@@ -255,10 +253,15 @@ const getDetailById = () => {
 getDetailById();
 
 watchEffect(() => {
-  dateTimeRange.value = getStartAndEndTime(active.value);
+  useRtuStore.setDateRange(active.value);
 });
 
-provide("dateTimeRange", dateTimeRange);
+const dateRange = computed({
+  get: () => useRtuStore.dateTimeRange,
+  set: (newValue) => {
+    useRtuStore.setDateRange(newValue, true);
+  },
+});
 </script>
 
 <template>
@@ -273,7 +276,7 @@ provide("dateTimeRange", dateTimeRange);
           <el-radio-button label="本月" value="month" />
         </el-radio-group>
         <el-date-picker
-          v-model="dateTimeRange"
+          v-model="dateRange"
           type="datetimerange"
           range-separator="To"
           style="width: 355px"

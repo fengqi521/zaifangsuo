@@ -1,11 +1,18 @@
 <script setup>
-import { reactive, ref, watchEffect,defineExpose } from "vue";
+import { reactive, ref, watchEffect } from "vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
+import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
 
+const useRtuStore = useRtuStoreHook()
+const searchInfo = reactive({
+  range: [...useRtuStore.dateTimeRange],
+  page: 1,
+  limit: 10,
+});
 // 图表
 const rainOption = reactive(
   getCommonLine({
@@ -1906,7 +1913,6 @@ const deviceData = reactive({
 
 // 获取雨量历史数据
 const getRainHistory = () => {
-  //   if (page) deviceData.page = page;
   //   if (size) deviceData.limit = size;
   const res = {
     code: 0,
@@ -1916,8 +1922,6 @@ const getRainHistory = () => {
     pageSize: null,
     total: 10,
     data: [
-     
-      
       {
         rainfall: 0.0,
         protocol: 3,
@@ -2063,8 +2067,13 @@ const getRainHistory = () => {
 watchEffect(() => {
   resetOptions(rainData);
 });
-getRainChartData()
-getRainHistory()
+
+
+useRtuStore.handleMethod((val)=>{
+  searchInfo.range = val;
+  getRainChartData();
+  getRainHistory();
+})
 </script>
 
 <template>
@@ -2097,7 +2106,6 @@ getRainHistory()
 
 <style lang="scss" scoped>
 .device-data {
-
   &__history {
     display: grid;
     grid-template-columns: 1fr 1fr;

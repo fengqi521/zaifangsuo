@@ -1,28 +1,28 @@
 <script setup>
-import {
-  reactive,
-  ref,
-  watchEffect,
-  onUnmounted,
-  provide,
-  inject,
-  computed,
-} from "vue";
-import TimelineImage from "../components/TimelineImage.vue";
+import { reactive, ref, watchEffect } from "vue";
+import TimelineImage from "./TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
+import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
+
+const useRtuStore = useRtuStoreHook();
+const mudLevelImages = reactive({ timeList: [], valueList: [] });
+
+const searchInfo = reactive({
+  range: [...useRtuStore.dateTimeRange],
+  page: 1,
+  limit: 10,
+});
+
 const collectOption = reactive(
   getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 // 图表
 const chartData = reactive({ timeList: [], valueList: [] });
-const mudLevelImages = reactive({ timeList: [], valueList: [] });
-provide("mudLevelImages", mudLevelImages);
-const dateTimeRange = inject("dateTimeRange");
-const dateRange = computed(() => dateTimeRange.value);
+
 // 获取泥水位图表数据
 const getMudChartData = () => {
   const res = {
@@ -162,25 +162,36 @@ const getMudChartData = () => {
   }
 };
 
+// 图表数据重组
+const resetOptions = (data) => {
+  collectOption.legend.show = true;
+  collectOption.xAxis[0].data = data.timeList;
+  collectOption.yAxis[0].name = "{title|泥水位(m)}";
+  collectOption.series[0] = {
+    name: "泥水位",
+    type: "line",
+    data: data.valueList,
+    Symbol: "circle",
+    // symbolSize: 6,
+    smooth: true,
+    unit: "m",
+  };
+};
+watchEffect(() => {
+  resetOptions(chartData);
+});
+
 // 历史table数据
 const loading = ref(false);
+const deviceData = reactive({ total: 0, data: [] });
 const tableColumns = [
   { prop: "num", label: "序号" },
   { prop: "monitortime", label: "监测时间" },
   { prop: "nswval", label: "泥水位(m)" },
 ];
-const deviceData = reactive({
-  page: 1,
-  limit: 10,
-  total: 0,
-  data: [],
-});
-
 // 获取泥水位历史数据
-const getMudLevelHistory = (page, size) => {
-  if (page) deviceData.page = page;
-  if (size) deviceData.limit = size;
-  const tableRes = {
+const getMudLevelHistory = () => {
+  const res = {
     code: 0,
     status: true,
     msg: "OK",
@@ -252,34 +263,33 @@ const getMudLevelHistory = (page, size) => {
     hasNext: false,
     hasPrevious: false,
   };
-  if (!tableRes.code) {
-    deviceData.total = tableRes.total;
+  if (!res.code) {
+    deviceData.total = res.total;
     Object.assign(
       deviceData.data,
-      tableRes.data.map((item, index) => ({ ...item, num: index + 1 }))
+      res.data.map((item, index) => ({ ...item, num: index + 1 }))
     );
   }
 };
-// 图表数据重组
-const resetOptions = (data) => {
-  collectOption.legend.show = true;
-  collectOption.xAxis[0].data = data.timeList;
-  collectOption.yAxis[0].name = "{title|泥水位(m)}";
-  collectOption.series[0] = {
-    name: "泥水位",
-    type: "line",
-    data: data.valueList,
-    Symbol: "circle",
-    // symbolSize: 6,
-    smooth: true,
-    unit: "m",
-  };
+
+// 切换分页、条数
+const handleChangePage = (page) => {
+  searchInfo.page = page;
+  getMudLevelHistory();
 };
-watchEffect(() => {
-  resetOptions(chartData);
-});
-getMudChartData();
-getMudLevelHistory();
+
+const handleChangeSize = (size) => {
+  searchInfo.limit = size;
+  getMudLevelHistory();
+};
+
+
+useRtuStore.handleMethod((val)=>{
+  searchInfo.range =val;
+  getMudChartData();
+  getMudLevelHistory();
+})
+
 </script>
 
 <template>
@@ -297,13 +307,11 @@ getMudLevelHistory();
           :tableProps="{ showSelection: false, border: true }"
         />
         <ElPagination
-          :currentPage="deviceData.page"
-          :page-size="deviceData.limit"
+          :currentPage="searchInfo.page"
+          :page-size="searchInfo.limit"
           :total="deviceData.total"
-          @pagination-change="(page) => getMudLevelHistory(page)"
-          @page-size-change="
-            (size) => getMudLevelHistory(deviceData.page, size)
-          "
+          @pagination-change="handleChangePage"
+          @page-size-change="handleChangeSize"
         />
       </ElCard>
     </ElCard>

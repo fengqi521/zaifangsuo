@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
@@ -16,12 +16,11 @@ const columns = ref([
 ]);
 
 const active = ref(1);
-const deviceData = ref([]);
+const deviceData = reactive({ total: 0, data: [] });
 const loading = ref(false);
 const searchInfo = ref({ status: 1 });
 const page = ref(1);
 const limit = ref(10);
-const total = ref(0);
 
 // 设备数据
 const getDeviceData = async () => {
@@ -31,12 +30,15 @@ const getDeviceData = async () => {
   try {
     const result = await rtuApi.getDeviceList(searchInfo.value);
     loading.value = false;
-    deviceData.value = result?.data?.list.map((item, index) => ({
-      num: index + 1,
-      ...item,
-    }));
+    Object.assign(
+      deviceData.data,
+      result?.data?.list.map((item, index) => ({
+        num: index + 1,
+        ...item,
+      }))
+    );
     page.value = result.data.current_page;
-    total.value = result.data.total_count;
+    deviceData.total = result.data.total_count;
   } catch (error) {}
 };
 getDeviceData();
@@ -56,14 +58,14 @@ const getType = (type) => {
 
 // 切换分页
 const handleChangeCurrent = (page) => {
-    page.value = page;
-    getDeviceData()
+  page.value = page;
+  getDeviceData();
 };
 
 // 改变条数
 const handlePageSizeChange = (size) => {
   limit.value = size;
-  getDeviceData()
+  getDeviceData();
 };
 </script>
 <template>
@@ -86,7 +88,7 @@ const handlePageSizeChange = (size) => {
       <ElTable
         :loading="loading"
         :columns="columns"
-        :data="deviceData"
+        :data="deviceData.data"
         :tableProps="{ showSelection: false, border: true }"
       >
         <template #device_type="scope" class="status-row">
@@ -103,7 +105,7 @@ const handlePageSizeChange = (size) => {
       <ElPagination
         :page="page"
         :page-size="limit"
-        :total="total"
+        :total="deviceData.total"
         @pagination-change="handleChangeCurrent"
         @page-size-change="handlePageSizeChange"
       />
@@ -113,8 +115,6 @@ const handlePageSizeChange = (size) => {
 <style lang="scss" scoped>
 .device-container {
   margin-top: 24px;
-
-  // border-radius: 2px;
 
   .device-head {
     display: flex;

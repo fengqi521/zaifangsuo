@@ -1,14 +1,16 @@
+import { ref } from "vue";
 import axios from "axios";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { get, merge } from "lodash";
 /** 退出登录并强制刷新页面（会重定向到登录页） */
 function logout() {
-  userInfoStoreHook().logout();
-  location.reload();
+  const useInfoStore = userInfoStoreHook();
+  useInfoStore.logout();
+  console.log(location, "ccccccccccc");
+  // location.reload();
 }
 
-
-const requestStatus = false;
+const requestStatus = ref(false);
 /** 创建请求实例 */
 function createService() {
   // 创建一个 axios 实例命名为 service
@@ -29,14 +31,17 @@ function createService() {
     (response) => {
       const data = response.data;
       const code = data.code;
-      if(requestStatus) return data;
+      if (requestStatus.value) return data;
+
       switch (code) {
         case 406:
-          requestStatus = true;
-          return userInfoStoreHook().logout();
+          requestStatus.value = true;
+          logout();
+          break;
+        default:
+          break;
       }
       return data;
-      console.log(response);
       // // 二进制数据则直接返回
       // const responseType = response.request?.responseType;
       // if (responseType === "blob" || responseType === "arraybuffer")
