@@ -1,4 +1,5 @@
 import { ref, onMounted, onUnmounted } from "vue";
+import { debounce } from "lodash";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { useMessage } from "@/plugins/message";
 export const useTimeoutHook = (timeoutDuration = 15, debounceDelay = 100) => {
@@ -11,15 +12,6 @@ export const useTimeoutHook = (timeoutDuration = 15, debounceDelay = 100) => {
     }
   };
 
-  // 防抖函数
-  const debounce = (func, wait) => {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  };
-
   // 初始化定时器
   const startTimeout = () => {
     resetTimer();
@@ -27,12 +19,10 @@ export const useTimeoutHook = (timeoutDuration = 15, debounceDelay = 100) => {
       const { warning } = useMessage();
       const userInfoStore = userInfoStoreHook();
       warning(`您已超过${timeoutDuration}分钟未进行操作，即将自动退出系统`);
-      userInfoStore.logout().then(() => {
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
-      });
-    }, timeoutDuration * 1000);
+      setTimeout(() => {
+        userInfoStore.logout();
+      }, 3000);
+    }, timeoutDuration * 60 * 1000);
   };
 
   // 在组件挂载时设置定时器
