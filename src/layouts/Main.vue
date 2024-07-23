@@ -27,8 +27,10 @@ import { Sidebar, AppMain } from "./components";
     @extend %scrollbar;
   }
 
-  .app-main{
-    flex:1;
+  .app-main {
+    flex: 1;
+    overflow: auto;
+    @extend %scrollbar;
   }
 }
 </style>

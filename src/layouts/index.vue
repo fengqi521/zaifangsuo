@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <!-- 顶部导航 -->
-    <Nav />
-    <!-- 主页面 -->
-    <Main />
-  </div>
+  <!-- 顶部导航 -->
+  <Nav />
+  <!-- 主页面 -->
+  <Main />
 </template>
 <script setup>
 import Nav from "./Nav.vue";

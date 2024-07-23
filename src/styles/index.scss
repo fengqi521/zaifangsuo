@@ -20,12 +20,8 @@ body {
     color: var(--body-text-color);
     font-size: var(--body-text-size);
     background-color: var(--body-bg-color);
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
         sans-serif;
-        // overflow: hidden
-    // @extend %scrollbar;
 }
 
 ul,
