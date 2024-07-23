@@ -14,12 +14,3 @@ import { onMounted } from "vue";
 
 useTimeoutHook();
 </script>
-<style lang="scss" scoped>
-.showGreyMode {
-  filter: grayscale(1);
-}
-
-.showColorWeakness {
-  filter: invert(0.8);
-}
-</style>

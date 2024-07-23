@@ -2,9 +2,9 @@
   <div class="table-container">
     <!-- 表格 -->
     <el-table
+      v-loading="props.loading"
       v-bind="tableProps"
       :data="props.data"
-      v-loading="props.loading"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
       scrollbar-always-on
@@ -19,7 +19,6 @@
         :key="column.prop"
         :prop="column.prop"
         :label="column.label"
-        :width="column.width"
         :sortable="column.sortable"
         :formatter="column.formatter"
       >
@@ -30,6 +29,10 @@
             :column="scope.column"
             :$index="scope.$index"
           >
+            <!-- <el-tooltip
+              :content="scope.row[column.prop]"
+              placement="top"
+            > -->
             <div v-if="Array.isArray(scope.row[column.prop])">
               <p v-for="(item, index) in scope.row[column.prop]" :key="index">
                 {{ item.device_name }}
@@ -38,10 +41,11 @@
             <div v-else>
               {{ scope.row[column.prop] }}
             </div>
+            <!-- </el-tooltip> -->
           </slot>
         </template>
       </el-table-column>
-      <el-table-column v-if="$slots.action" label="操作" align="center">
+      <el-table-column v-if="$slots.action" label="操作">
         <template #default="scope">
           <slot
             name="action"
@@ -59,6 +63,7 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 // 组件 props
 const props = defineProps({
   columns: Array,
@@ -70,7 +75,7 @@ const props = defineProps({
   defaultSort: Object,
   tableProps: Object,
 });
-
+const tableCell = ref(null);
 // 排序改变处理函数
 const handleSortChange = (sortInfo) => {
   emit("sort-change", sortInfo);
@@ -127,6 +132,7 @@ const emit = defineEmits([
     .cell {
       line-height: 18px;
       max-height: 76px;
+      @extend %ellipsis-3;
     }
   }
 }
