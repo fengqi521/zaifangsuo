@@ -30,13 +30,10 @@ const getDeviceData = async () => {
   try {
     const result = await rtuApi.getDeviceList(searchInfo.value);
     loading.value = false;
-    Object.assign(
-      deviceData.data,
-      result?.data?.list.map((item, index) => ({
-        num: index + 1,
-        ...item,
-      }))
-    );
+    deviceData.data = result?.data?.list.map((item, index) => ({
+      num: index + 1,
+      ...item,
+    }));
     page.value = result.data.current_page;
     deviceData.total = result.data.total_count;
   } catch (error) {}

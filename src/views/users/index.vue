@@ -134,7 +134,6 @@ const handleClickAuthor = (values) => {
     error('设备授权失败，至少授权一个设备')
     return;
   }
-  console.log(values,'-=============')
   userApi
     .updateUser({ uid: transferValue.value.uid, did: values.join(",") })
     .then((res) => {

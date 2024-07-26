@@ -429,25 +429,36 @@ const WATER_LEVEL_LEGEND = {
 };
 //--------------rtu管理start--------------
 
-const projectFormData = { number: "", name: "", type: "", status: "2" };
+const projectFormData = {
+  device_number: "",
+  device_name: "",
+  device_type: 0,
+  status: "2",
+};
 const deviceFormItems = [
   {
     label: "设备编号",
-    prop: "number",
+    prop: "device_number",
     attrs: { placeholder: "请输入设备编号" },
     type: "el-input",
   },
   {
     label: "设备名称",
-    prop: "name",
+    prop: "device_name",
     attrs: { placeholder: "请输入设备名称" },
     type: "el-input",
   },
   {
     label: "设备类型",
-    prop: "type",
-    type: "el-input",
+    prop: "device_type",
+    type: "el-select",
     attrs: { placeholder: "请输入设备类型" },
+    options: [
+      { label: "全部", value: 0 },
+      { label: "泥位计", value: 1 },
+      { label: "雨量计", value: 2 },
+      { label: "断线传感器", value: 3 },
+    ],
   },
   {
     label: "设备状态",
@@ -456,8 +467,8 @@ const deviceFormItems = [
     attrs: { placeholder: "请选择设备状态" },
     options: [
       { label: "全部", value: "2" },
-      { label: "在线", value: "1" }, 
-      { label: "离线", value: "0" }, 
+      { label: "在线", value: "1" },
+      { label: "离线", value: "0" },
     ],
   },
 ];

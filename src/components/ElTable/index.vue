@@ -4,7 +4,7 @@
     <el-table
       v-loading="props.loading"
       v-bind="tableProps"
-      :data="props.data"
+      :data="data"
       @sort-change="handleSortChange"
       @selection-change="handleSelectionChange"
       scrollbar-always-on
@@ -21,6 +21,7 @@
         :label="column.label"
         :sortable="column.sortable"
         :formatter="column.formatter"
+        :width="column.width"
       >
         <template #default="scope">
           <slot
@@ -29,19 +30,42 @@
             :column="scope.column"
             :$index="scope.$index"
           >
-            <!-- <el-tooltip
+            <el-tooltip
+              v-if="scope.row[column.prop + '_showTooltip']"
               :content="scope.row[column.prop]"
               placement="top"
-            > -->
-            <div v-if="Array.isArray(scope.row[column.prop])">
-              <p v-for="(item, index) in scope.row[column.prop]" :key="index">
-                {{ item.device_name }}
-              </p>
+            >
+              <div
+                v-if="Array.isArray(scope.row[column.prop])"
+                @mouseover="(e) => handleMouseOver(e, scope.row, scope.prop)"
+              >
+                <p v-for="(item, index) in scope.row[column.prop]" :key="index">
+                  {{ item.device_name }}
+                </p>
+              </div>
+              <div
+                v-else
+                @mouseover="(e) => handleMouseOver(e, scope.row, column.prop)"
+              >
+                {{ scope.row[column.prop] }}
+              </div>
+            </el-tooltip>
+            <div>
+              <div
+                v-if="Array.isArray(scope.row[column.prop])"
+                @mouseover="(e) => handleMouseOver(e, scope.row, scope.prop)"
+              >
+                <p v-for="(item, index) in scope.row[column.prop]" :key="index">
+                  {{ item.device_name }}
+                </p>
+              </div>
+              <div
+                v-else
+                @mouseover="(e) => handleMouseOver(e, scope.row, column.prop)"
+              >
+                {{ scope.row[column.prop] }}
+              </div>
             </div>
-            <div v-else>
-              {{ scope.row[column.prop] }}
-            </div>
-            <!-- </el-tooltip> -->
           </slot>
         </template>
       </el-table-column>
@@ -63,7 +87,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref, watch } from "vue";
 // 组件 props
 const props = defineProps({
   columns: Array,
@@ -75,7 +99,18 @@ const props = defineProps({
   defaultSort: Object,
   tableProps: Object,
 });
-const tableCell = ref(null);
+
+// const tableData = reactive([...props.data]);
+
+// watch(
+//   () => props.data,
+//   (newValues) => {
+//     console.log(newValues,'=========')
+//     tableData = [...tableData,newValues]
+//     // Object.assign(tableData, newValues);
+//   },
+//   { deep: true }
+// );
 // 排序改变处理函数
 const handleSortChange = (sortInfo) => {
   emit("sort-change", sortInfo);
@@ -92,6 +127,12 @@ const emit = defineEmits([
   "sort-change",
   "selection-change",
 ]);
+
+const handleMouseOver = (event, row, prop) => {
+  const scrollHeight = event.currentTarget.scrollHeight;
+  const clientHeight = event.currentTarget.clientHeight;
+  row[prop + "_showTooltip"] = scrollHeight > clientHeight;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -130,8 +171,12 @@ const emit = defineEmits([
     }
 
     .cell {
+      // display: flex;
+      // flex-wrap: wrap;
+      // justify-content: center;
       line-height: 18px;
       max-height: 76px;
+      text-align: center;
       @extend %ellipsis-3;
     }
   }

@@ -18,7 +18,7 @@ const loading = ref(false);
 const page = ref(1);
 const limit = ref(10);
 const total = ref(0);
-const rtuData = reactive([]);
+const rtuData = ref([]);
 const columns = ref([
   { prop: "num", label: "序号" },
   { prop: "device_number", label: "设备编号" },
@@ -36,10 +36,11 @@ const getRtuData = async () => {
   if (!res.code) {
     page.value = res.data.current_page;
     total.value = res.data.total_count;
-    Object.assign(
-      rtuData,
-      res.data.list.map((item, index) => ({ ...item, num: index + 1 }))
-    );
+    const newTableData = res.data.list.map((item, index) => ({
+      ...item,
+      num: index + 1,
+    }));
+    rtuData.value = [...newTableData];
   }
   loading.value = false;
 };

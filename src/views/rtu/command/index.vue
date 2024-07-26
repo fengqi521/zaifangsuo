@@ -1,13 +1,15 @@
 div
 <script setup>
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import Icon from "@/components/Icon.vue";
+import { useSocketRtuHook } from "@/store/modules/rtu";
 import { operateLists } from "@/constants";
 
 const route = useRoute();
+const useSocketRtuStore = useSocketRtuHook();
 const { id, type } = route.params;
 
 // 导航
@@ -88,14 +90,50 @@ const formConfig = {
     crc: { label: "校验码:", width: "200px", labelWidth: "44", disabled: true },
   },
   type1: {
-    high: { label: "安装高度:", labelWidth: "56",min: 0, max: 65.535, unit: "m" },
-    init: { label: "初始值:",labelWidth: "44", min: 0, max: 65.535, unit: "m" },
-    report: { label: "加报阈值:",labelWidth: "56", min: 0.001, max: 65.535, unit: "m" },
+    high: {
+      label: "安装高度:",
+      labelWidth: "56",
+      min: 0,
+      max: 65.535,
+      unit: "m",
+    },
+    init: {
+      label: "初始值:",
+      labelWidth: "44",
+      min: 0,
+      max: 65.535,
+      unit: "m",
+    },
+    report: {
+      label: "加报阈值:",
+      labelWidth: "56",
+      min: 0.001,
+      max: 65.535,
+      unit: "m",
+    },
   },
   type2: {
-    cycle: { label: "加报周期:",labelWidth: "56", min: 1, max: 255, unit: "min" },
-    alarm: { label: "报警阈值:",labelWidth: "56", min: 1, max: 6553.5, unit: "mm" },
-    duration: { label: "报警阈值时长:",labelWidth: "80", min: 1, max: 255, unit: "min" },
+    cycle: {
+      label: "加报周期:",
+      labelWidth: "56",
+      min: 1,
+      max: 255,
+      unit: "min",
+    },
+    alarm: {
+      label: "报警阈值:",
+      labelWidth: "56",
+      min: 1,
+      max: 6553.5,
+      unit: "mm",
+    },
+    duration: {
+      label: "报警阈值时长:",
+      labelWidth: "80",
+      min: 1,
+      max: 255,
+      unit: "min",
+    },
   },
 };
 
@@ -162,6 +200,7 @@ const dynamicFields = computed(() => {
 // 下发指令
 const handleClickSubmit = async () => {
   loading.value = true;
+  useSocketRtuStore.socket.send(JSON.stringify({ code:1, id: 3 }));
   const valid = await commandFormRef.value.validate();
   if (valid) {
     content.command = JSON.stringify(commonForm.value);
@@ -170,6 +209,11 @@ const handleClickSubmit = async () => {
     loading.value = false;
   }, 2000);
 };
+
+// 关闭socket
+onUnmounted(() => {
+  useSocketRtuStore.socket.close();
+});
 </script>
 <template>
   <div>
@@ -246,9 +290,9 @@ const handleClickSubmit = async () => {
 
           <el-form-item
             class="input-number__item"
-            v-for="({ label, labelWidth,min, max, unit }, key, index) in currentConfig[
-              `type${type}`
-            ]"
+            v-for="(
+              { label, labelWidth, min, max, unit }, key, index
+            ) in currentConfig[`type${type}`]"
             :key="index"
             :label="label"
             :label-width="labelWidth"
@@ -339,9 +383,9 @@ const handleClickSubmit = async () => {
     .el-input {
       width: 100px;
     }
-    
+
     .input-item__unit {
-      padding-inline:8px;
+      padding-inline: 8px;
       height: 32px;
       line-height: 32px;
       font-size: 12px;
