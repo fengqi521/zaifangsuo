@@ -14,8 +14,8 @@ export const getCurrentTime = () => {
  * @returns {Array}  [开始时间,结束时间]
  */
 export const getStartAndEndTime = (type) => {
-  const start = moment().startOf(type).format();
-  const end = moment().endOf(type).format();
+  const start = moment().startOf(type).format("YYYY-MM-DD HH:mm:ss");
+  const end = moment().endOf(type).format("YYYY-MM-DD HH:mm:ss");
   return [start, end];
 };
 

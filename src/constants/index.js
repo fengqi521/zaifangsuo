@@ -507,56 +507,53 @@ const parseFormItems = [
 
 const operateLists = [
   {
-    label: "链路维持报",
-    type: "2F",
-  },
-  {
-    label: "遥测站定时报",
-    type: "32",
-  },
-  {
-    label: "遥测站加报报",
-    type: "33",
-  },
-  {
     label: "中心站查询遥测站实时数据",
     type: "37",
+    code:3
   },
   {
     label: "中心站查询遥测站时段数据",
     type: "38",
+    code:4
   },
   {
     label: "中心站修改遥测站配置表",
     type: "40",
+    code:5,
   },
   {
     label: "中心站读取遥测站配置表",
     type: "41",
+    code:6
   },
   {
     label: "中心站设置遥测站时钟",
     type: "4A",
+    code:7
   },
   {
     label: "中心站读取遥测站时钟",
     type: "51",
+    code:8
   },
   {
     label: "中心站查询遥测站实时位置",
     type: "52",
+    code:9
   },
   {
     label: "遥测站软件复位",
     type: "E0",
+    code:10
   },
-  {
-    label: "遥测站上报自检数据",
-    type: "E1",
-  },
+  // {
+  //   label: "遥测站上报自检数据",
+  //   type: "E1",
+  // },
   {
     label: "中心站查询遥测站实时自检数据",
     type: "E2",
+    code:12
   },
 ];
 

@@ -105,7 +105,7 @@ export const dynamicRoutes = [
         },
       },
       {
-        path: "command/:type/:id",
+        path: "command/:name/:type/:id",
         component: RtuCommand,
         meta: {
           hidden: true,

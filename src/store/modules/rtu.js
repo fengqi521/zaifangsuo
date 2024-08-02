@@ -25,33 +25,3 @@ export const useRtuStoreHook = defineStore("rtuStore", () => {
 
   return { dateTimeRange, setDateRange, handleMethod };
 });
-
-import { useWebSocket } from "@vueuse/core";
-export const useSocketRtuHook = defineStore("socketRtuStore", () => {
-  const socket = ref(null);
-  socket.value = useWebSocket(import.meta.env.VITE_SOCKET_PATH, {
-    onOpen: () => {
-      console.log("WebSocket connection opened");
-    },
-    onClose: () => {
-      console.log("WebSocket connection closed");
-    },
-    onError: (error) => {
-      console.error("WebSocket connection error:", error);
-    },
-    onMessage: (message) => {
-      console.log("Received message:", message);
-    },
-    heartbeat: false,
-    autoReconnect: {
-      retries: 3,
-      delay: 3000,
-      onFailed() {
-        console.log("重连3次失败");
-      },
-    },
-  });
-  return {
-    socket,
-  };
-});

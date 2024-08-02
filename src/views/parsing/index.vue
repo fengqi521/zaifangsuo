@@ -3,6 +3,8 @@ import { reactive, ref, computed } from "vue";
 import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
+
+import parseApi from '@/api/parse'
 import { parseFormData, parseFormItems } from "@/constants";
 import {encodeMessage} from '@/utils'
 
@@ -22,6 +24,9 @@ const handleSearchSubmit = (data) => {
 
 // 获取解析内容
 const getParsing = () => {
+  parseApi.getParse().then(res=>{
+    
+  })
   const res = {
     code: 0,
     data: {

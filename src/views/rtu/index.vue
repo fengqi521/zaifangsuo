@@ -131,7 +131,7 @@ const handleChangeSize = (size) => {
           </router-link>
           <router-link
             class="rtu-table__action-btn rtu-table__action-btn--command"
-            :to="`/rtu/command/${row.device_type}/${row.id}`"
+            :to="`/rtu/command/${row.device_name}/${row.device_type}/${row.id}`"
           >
             下发指令</router-link
           >

@@ -34,13 +34,11 @@ const handleSizeChange = (size) => {
 </script>
 
 <template>
-  <!-- 分页 -->
   <el-pagination
     v-if="props.total"
     class="pagination"
-    background
-    v-model:current-page="props.currentPage"
-    v-model:page-size="props.pageSize"
+    :current-page="props.currentPage"
+    :page-size="props.pageSize"
     :total="props.total"
     :pager-count="props.pagerCount"
     layout="slot,prev, pager, next,sizes, jumper"

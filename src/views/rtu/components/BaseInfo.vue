@@ -10,27 +10,27 @@ const props = defineProps({
 </script>
 <template>
   <ElCard class="device-detail">
-    <h3 class="device-detail__name">{{ detail.name }}</h3>
-    <p class="device-detail__moditime">最新数据时间:{{ detail.moditime }}</p>
+    <h3 class="device-detail__name">{{ detail.device_name }}</h3>
+    <p class="device-detail__moditime">最新数据时间:{{ detail.update_time }}</p>
     <div class="device-detail__info">
       <p class="device-detail__item">
         <span class="device-detail__label">设备编号:</span>
-        {{ detail.cusno }}
+        {{ detail.device_number }}
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">在线状态:</span>
         <ElTag
-          :title="detail.status ? '在线' : '离线'"
-          :type="detail.status ? 'online' : 'offline'"
+          :title="detail.online ? '在线' : '离线'"
+          :type="detail.online ? 'online' : 'offline'"
         />
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">设备类型:</span>
-        {{ detail.devicetypename }}
+        {{ detail.device_type }}
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">位置信息(经纬度):</span>
-        {{ `${detail.lng},${detail.lat}` }}
+        {{ `${detail.langitude},${detail.latitude}` }}
       </p>
     </div>
   </ElCard>

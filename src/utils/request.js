@@ -125,7 +125,7 @@ function createRequest(service) {
       // Authorization: token ? `Bearer ${token}` : undefined,
       // "Content-Type": "application/json",
       // },
-      timeout: 30000,
+      timeout: 120000,
       baseURL: import.meta.env.VITE_BASE_API,
       data: {},
     };
