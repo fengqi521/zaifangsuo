@@ -52,16 +52,6 @@ const breadList = ref([
   { title: "设备详情" },
 ]);
 
-// 通过id获取详情
-const detail = ref({});
-const getDetailById = () => {
-  rtuApi.getDeviceDetail({id}).then(res=>{
-    if (!res.code) {
-      detail.value = res.data;
-    }
-  })
-};
-getDetailById();
 
 watchEffect(() => {
   useRtuStore.setDateRange(active.value);
@@ -78,7 +68,7 @@ const dateRange = computed({
 <template>
   <div class="detail-data">
     <Bread :breadList="breadList" />
-    <BaseInfo :detail="detail" />
+    <BaseInfo />
     <div class="detail-data__content">
       <div class="detail-data__actions">
         <el-radio-group v-model="active">

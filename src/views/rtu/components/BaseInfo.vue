@@ -1,12 +1,28 @@
 <script setup>
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+
 import ElCard from "@/components/ElCard/index.vue";
 import ElTag from "@/components/ElTag/index.vue";
-const props = defineProps({
-  detail: {
-    type: Object,
-    default: () => ({}),
-  },
-});
+
+import rtuApi from '@/api/rtu'
+import {deviceMap} from '@/constants'
+
+const route = useRoute();
+const { id } = route.params;
+
+// 通过id获取详情
+const detail = ref({});
+const getDetailById = () => {
+  rtuApi.getDeviceDetail({id}).then(res=>{
+    if (!res.code) {
+      const list = deviceMap.find(item=>item.value===res.data.device_type)
+      detail.value = {...res.data,deviceTypeName:list?.label}
+    }
+  })
+};
+getDetailById();
+
 </script>
 <template>
   <ElCard class="device-detail">
@@ -26,7 +42,7 @@ const props = defineProps({
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">设备类型:</span>
-        {{ detail.device_type }}
+        {{ detail.deviceTypeName }}
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">位置信息(经纬度):</span>

@@ -313,7 +313,7 @@ const getDetail = () => {
       password: "2012",
       code: "",
       version_length: "1002",
-      start: "31",
+      start: "02",
       end: "110111",
       content: "32",
       crc: "B8B4",
