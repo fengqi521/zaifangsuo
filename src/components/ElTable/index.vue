@@ -148,7 +148,7 @@ const handleMouseOver = (event, row, prop) => {
     }
 
     .el-scrollbar__wrap {
-      min-height: 250px;
+      // min-height: 250px;
       max-height: 480px;
       @extend %scrollbar;
     }
