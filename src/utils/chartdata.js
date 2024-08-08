@@ -7,7 +7,7 @@ import viewIconUrl from "@/assets/images/view.png";
 export const getCommonLine = function ({
   seriesUnit = ["mm"],
   yAxisTitlePadding = [0, 0, 0, 50],
-}={}) {
+} = {}) {
   return {
     legend: {
       show: false,
@@ -29,9 +29,6 @@ export const getCommonLine = function ({
       trigger: "axis",
       axisPointer: {
         type: "cross",
-        label: {
-          backgroundColor: "rgba(0,0,0,0.8)",
-        },
       },
       backgroundColor: "rgba(0,0,0,0.8)",
       borderRadius: 2,
@@ -39,12 +36,12 @@ export const getCommonLine = function ({
         let res = "";
         let formatterName = "";
         params.forEach((current) => {
-          let { name, color, value, seriesName,seriesIndex } = current;
-          if(seriesUnit&&seriesUnit.length===1) seriesIndex = 0;
+          let { name, color, value, seriesName, seriesIndex } = current;
+          if (seriesUnit && seriesUnit.length === 1) seriesIndex = 0;
           formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
           res +=
             `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
-            `width:6px;height:6px;background-color:${color};"></span>${seriesName}</div><span>${value}${
+            `width:6px;height:6px;background-color:${color};"></span>${seriesName}:</div><span>${value}${
               seriesUnit ? seriesUnit[seriesIndex] : "mm"
             }</span></div>`;
         });
@@ -56,7 +53,7 @@ export const getCommonLine = function ({
         color: getCssVariableValue("--text-color"),
       },
     },
-    
+
     xAxis: [
       {
         type: "category",
@@ -91,7 +88,7 @@ export const getCommonLine = function ({
       {
         name: "{title|累计降雨量(mm)}",
         type: "value",
-        alignTicks:true,
+        alignTicks: true,
         nameTextStyle: {
           fontSize: 12,
           color: getCssVariableValue("--normal-title-color"),
@@ -107,7 +104,7 @@ export const getCommonLine = function ({
       {
         type: "value",
         // 坐标轴刻度相关设置。
-        alignTicks:true,
+        alignTicks: true,
         axisTick: {
           show: false,
         },
@@ -178,46 +175,56 @@ export const getCommonLine = function ({
   };
 };
 // 柱状图公共配置
-export const getCommonBar = function (unit) {
+export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
   return {
     legend: {
       // 显示提示框组件，包括提示框浮层和 axisPointer。
       show: false,
-      itemWidth: 24,
-      itemHeight: 12,
+      itemWidth: 14,
+      itemHeight: 4,
       x: "left",
-      itemGap: 16,
+      itemGap: 24,
       data: [],
+      textStyle: {
+        fontSize: 14,
+        color: "#FFF",
+        rich: {
+          a: {
+            verticalAlign: "middle",
+          },
+        },
+        lineHeight: 12,
+        padding: [0, -2, -4, 4],
+      },
     },
     // 直角坐标系内绘图网格
     grid: {
-      top: 36,
+      top: 46,
       left: 10,
       right: 16,
-      bottom: 50,
+      bottom: 8,
       containLabel: true,
     },
     tooltip: {
       trigger: "axis",
       axisPointer: {
-        type: "shadow",
-        lineStyle: {
-          color: "rgb(228,235,249)",
-          type: "solid",
-          maxWidth: 50,
-        },
+        type: "cross",
       },
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      backgroundColor: "rgba(0,0,0,0.8)",
       formatter: (params) => {
         let res = "";
         let formatterName = "";
         params.forEach((current) => {
-          const { name, color, value, seriesName } = current;
+          let { name, color, value, seriesName, seriesIndex } = current;
+          if (typeof color !== "string" && color.colorStops) {
+            color = color.colorStops[0].color;
+          }
+          if (seriesUnit && seriesUnit.length === 1) seriesIndex = 0;
           formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
           res +=
             `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
-            `width:6px;height:6px;background-color:${color};"></span>${seriesName}</div><span>${value}${
-              unit ? unit : "mm"
+            `width:6px;height:6px;background-color:${color};"></span>${seriesName}：</div><span>${value}${
+              seriesUnit ? seriesUnit[seriesIndex] : "mm"
             }</span></div>`;
         });
         return formatterName + res;
@@ -243,13 +250,15 @@ export const getCommonBar = function (unit) {
           show: true,
           margin: 12,
           lineStyle: {
-            color: "#CCC",
+            color: "#2C4756",
+            width: 1,
           },
         },
         // 坐标轴刻度标签的相关设置
         axisLabel: {
-          color: "#666",
-          fontSize: 12,
+          color: "#96B4BE",
+          fontSize: 14,
+          margin: 16,
         },
         // 坐标轴在 grid(网格) 区域中的分隔线。
         splitLine: {
@@ -258,24 +267,28 @@ export const getCommonBar = function (unit) {
       },
     ],
     yAxis: [
+      // {
+      //   name: "{title|日降雨量(mm)}",
+      //   type: "value",
+      //   // show:false,
+      //   interval:1,
+      //   nameTextStyle: {
+      //     fontSize: 12,
+      //     color: getCssVariableValue("--normal-title-color"),
+      //     fontWeight: "normal",
+      //     rich: {
+      //       title: {
+      //         // padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
+      //         align: "left", // 左对齐
+      //       },
+      //     },
+      //   },
+
+      //   // max: 500
+      // },
       {
-        name: "{title|日降雨量(mm)}",
         type: "value",
-        nameTextStyle: {
-          fontSize: 12,
-          color: getCssVariableValue("--normal-title-color"),
-          fontWeight: "normal",
-          rich: {
-            title: {
-              // padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
-              align: "left", // 左对齐
-            },
-          },
-        },
-        // max: 500
-      },
-      {
-        type: "value",
+        interval: 1,
         // 坐标轴刻度相关设置。
         axisTick: {
           show: false,
@@ -286,12 +299,13 @@ export const getCommonBar = function (unit) {
         },
         // 坐标轴刻度标签的相关设置
         axisLabel: {
-          color: "#999",
+          color: "#96B4BE",
+          fontSize: 16,
         },
         splitLine: {
           show: true,
           lineStyle: {
-            color: "#ECECEC",
+            color: "#2C4756",
             width: 1,
           },
         },

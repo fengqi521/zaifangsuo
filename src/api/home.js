@@ -11,5 +11,10 @@ export default {
     return getRequest("/v1/device/category");
   },
 
+  // 获取实时数据
+  getHistory: function (params) {
+    return getRequest("/v1/history/realtime", params);
+  },
+
 
 };

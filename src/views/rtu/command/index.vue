@@ -20,6 +20,7 @@ import { useInputHook } from "@/hooks/useInput";
 import rtuApi from "@/api/rtu";
 
 import { operateLists } from "@/constants";
+// import {encodeMessage,deco} from '@/utils'
 
 const route = useRoute();
 const { setInputValue } = useInputHook();
@@ -312,11 +313,11 @@ const getDetail = () => {
       reserve: "00",
       password: "2012",
       code: "",
-      version_length: "1002",
+      version_length: "",
       start: "02",
-      end: "110111",
-      content: "32",
-      crc: "B8B4",
+      end: "05",
+      content: "",
+      crc: "",
     },
   };
 
@@ -349,8 +350,9 @@ const handleClickSubmit = () => {
   const code = commonForm.code;
   const data = commonForm.data;
   let params = { id, code };
+
   if (!isEmpty(data)) {
-    if (data.dateTimeRange) {
+    if (data.dateTimeRange) { 
       params.data = {
         start_time: data.dateTimeRange[0],
         end_time: data.dateTimeRange[1],
@@ -359,6 +361,8 @@ const handleClickSubmit = () => {
       params.data = data;
     }
   }
+
+
   rtuApi.downControl(params).then((res) => {
     if (!res.code) {
       clearInterval(timer.value);
@@ -482,7 +486,7 @@ onUnmounted(() => {
         </div>
 
         <div v-if="unfold" class="command-form__details">
-          <el-form-item
+          <!-- <el-form-item
             v-for="(
               { label, width, labelWidth, disabled }, key, index
             ) in currentConfig.common"
@@ -498,7 +502,7 @@ onUnmounted(() => {
               :style="{ width }"
               :disabled="disabled"
             />
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item
             label="时间段:"

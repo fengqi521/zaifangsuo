@@ -2,6 +2,9 @@ import { createRouter } from "vue-router";
 import { loadComponent, history } from "./helper";
 
 const Layout = () => import("@/layouts/index.vue");
+
+// 大屏
+const ScreenLayout = () => import("@/layouts/screenLayout.vue");
 // 登录
 const Login = () => import("@/views/login/index.vue");
 // 首页
@@ -22,6 +25,12 @@ const UserList = () => import("@/views/users/index.vue");
 
 // 报文解析
 const Parsing = () => import("@/views/parsing/index.vue");
+
+// 下发记录
+const HistoryRecord = () => import("@/views/history/index.vue");
+
+// 大屏
+const Dashboard = () => import("@/views/dashboard/index.vue");
 
 export const constantRoutes = [
   {
@@ -48,6 +57,23 @@ export const constantRoutes = [
 ];
 export const dynamicRoutes = [
   {
+    path: "/screen",
+    component: ScreenLayout,
+    children: [
+      {
+        path: "",
+        component: Dashboard,
+        meta: {
+          title: "大屏",
+          icon: "icon-dapingzhanshi",
+          size: "20px",
+          affix: true,
+          roles: [1, 2, 3, 4, 5],
+        },
+      },
+    ],
+  },
+  {
     path: "/",
     component: Layout,
     redirect: "/home",
@@ -58,13 +84,14 @@ export const dynamicRoutes = [
         meta: {
           title: "首页",
           icon: "icon-ai-home",
-          size:'20px',
+          size: "20px",
           affix: true,
           roles: [1, 2, 3, 4, 5],
         },
       },
     ],
   },
+
   // {
   //   path: "/device",
   //   component: Layout,
@@ -91,7 +118,7 @@ export const dynamicRoutes = [
         meta: {
           title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
-          size:'18px',
+          size: "18px",
           affix: true,
           roles: [1],
         },
@@ -124,7 +151,7 @@ export const dynamicRoutes = [
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
-          size:'20px',
+          size: "20px",
           roles: [1],
         },
       },
@@ -140,7 +167,23 @@ export const dynamicRoutes = [
         meta: {
           title: "报文解析",
           icon: "icon-baowenjiexi",
-           size:'18px',
+          size: "18px",
+          roles: [1],
+        },
+      },
+    ],
+  },
+  {
+    path: "/history",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: HistoryRecord,
+        meta: {
+          title: "下发记录",
+          icon: "icon-xiafajilu",
+          size: "18px",
           roles: [1],
         },
       },

@@ -408,6 +408,33 @@ const MESSAGE = [
   },
 ];
 
+const allOperateType = [
+  { label: "遥测站定时报", value: 0 },
+  { label: "遥测站加报报", value: 1 },
+  { label: "心跳", value: 2 },
+  { label: "查询遥测站实时数据", value: 3 },
+  { label: "查询遥测站时段数据", value: 4 },
+  { label: "修改遥测站配置", value: 5 },
+  { label: "读取遥测站配置", value: 6 },
+  { label: "设置遥测站时钟", value: 7 },
+  { label: "读取遥测站时钟", value: 8 },
+  { label: "查询遥测站实时位置", value: 9 },
+  { label: "遥测站复位", value: 10 },
+  { label: "上报自检数据", value: 11 },
+  { label: "查询实时自检数据", value: 12 },
+];
+const messageFormData = { category: 13 };
+const messageFormItems = [
+  {
+    label: "",
+    prop: "category",
+    attrs: { placeholder: "请选择报文类型" },
+    type: "el-select",
+    options: [{ label: "全部", value: 13 }],
+  },
+  ...allOperateType
+];
+
 //  ------------首页start--------------
 
 // form表单初始值
@@ -428,6 +455,58 @@ const WATER_LEVEL_LEGEND = {
   z: { icon: legend3, color: legendColor3 },
 };
 //--------------rtu管理start--------------
+
+const operateLists = [
+  {
+    label: "中心站查询遥测站实时数据",
+    type: "37",
+    code: 3,
+  },
+  {
+    label: "中心站查询遥测站时段数据",
+    type: "38",
+    code: 4,
+  },
+  {
+    label: "中心站修改遥测站配置表",
+    type: "40",
+    code: 5,
+  },
+  {
+    label: "中心站读取遥测站配置表",
+    type: "41",
+    code: 6,
+  },
+  {
+    label: "中心站设置遥测站时钟",
+    type: "4A",
+    code: 7,
+  },
+  {
+    label: "中心站读取遥测站时钟",
+    type: "51",
+    code: 8,
+  },
+  {
+    label: "中心站查询遥测站实时位置",
+    type: "52",
+    code: 9,
+  },
+  {
+    label: "遥测站软件复位",
+    type: "E0",
+    code: 10,
+  },
+  // {
+  //   label: "遥测站上报自检数据",
+  //   type: "E1",
+  // },
+  {
+    label: "中心站查询遥测站实时自检数据",
+    type: "E2",
+    code: 12,
+  },
+];
 
 const projectFormData = {
   device_number: "",
@@ -493,69 +572,64 @@ const userFormItems = [
 
 //---------------报文解析start--------------------
 
-const parseFormData = { text: "" };
+const parseFormData = { code: "" };
 const parseFormItems = [
   {
     label: "报文信息",
-    prop: "text",
+    prop: "code",
     attrs: { placeholder: "请输入报文信息" },
     type: "el-input",
   },
 ];
 
-//---------------功能码对应关系 start--------------------
+//---------------------报文记录----------------
+const recordFormData = {
+  Category: 14,
+  Transfer: "",
+  Did: "",
+  range: [],
+}; // transfer 1是上行报文解析
+const recordOptions = [...allOperateType,  { label: "自定义", value: 13 }]
+const recordFormItems = [
+  {
+    label: "操作类型",
+    prop: "Category",
+    attrs: { placeholder: "请选择操作类型" },
+    type: "el-select",
+    options: [{ label: "全部", value: 14 }, ...recordOptions],
+  },
+  {
+    label: "传输类型",
+    prop: "Transfer",
+    attrs: { placeholder: "请选择传输类型" },
+    type: "el-select",
+    options: [
+      { label: "上行", value: 1 },
+      { label: "下行", value: 2 },
+    ],
+  },
+  {
+    label: "设备名称",
+    prop: "Did",
+    attrs: { placeholder: "请选择设备" },
+    type: "el-select",
+    options: [],
+  },
 
-const operateLists = [
   {
-    label: "中心站查询遥测站实时数据",
-    type: "37",
-    code:3
-  },
-  {
-    label: "中心站查询遥测站时段数据",
-    type: "38",
-    code:4
-  },
-  {
-    label: "中心站修改遥测站配置表",
-    type: "40",
-    code:5,
-  },
-  {
-    label: "中心站读取遥测站配置表",
-    type: "41",
-    code:6
-  },
-  {
-    label: "中心站设置遥测站时钟",
-    type: "4A",
-    code:7
-  },
-  {
-    label: "中心站读取遥测站时钟",
-    type: "51",
-    code:8
-  },
-  {
-    label: "中心站查询遥测站实时位置",
-    type: "52",
-    code:9
-  },
-  {
-    label: "遥测站软件复位",
-    type: "E0",
-    code:10
-  },
-  // {
-  //   label: "遥测站上报自检数据",
-  //   type: "E1",
-  // },
-  {
-    label: "中心站查询遥测站实时自检数据",
-    type: "E2",
-    code:12
+    label: "时间范围",
+    prop: "range",
+    type: "el-date-picker",
+    attrs: {
+      type: "datetimerange",
+      startPlaceholder: "开始日期",
+      endPlaceholder: "结束日期",
+      // format: "yyyy-MM-dd HH:mm:ss", // 你可以根据需要自定义格式
+      valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
+    },
   },
 ];
+//---------------功能码对应关系 start--------------------
 
 export {
   userRolesMap,
@@ -573,4 +647,9 @@ export {
   parseFormData,
   parseFormItems,
   operateLists,
+  messageFormData,
+  messageFormItems,
+  recordFormData,
+  recordFormItems,
+  recordOptions
 };

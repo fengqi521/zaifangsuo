@@ -5,9 +5,7 @@ import eventBus from "@/utils/eventBus";
 const { initEchart, resizeChart, setEchartOption, updateEchartOption } =
   useEchartsHook();
 import { getCssVariableValue } from "@/utils";
-const eleWidth = getCssVariableValue("--bar-width");
 const barGap = getCssVariableValue("--bar-gap");
-const names = inject("names");
 // 定义变量
 const chartContainer = ref(null);
 const props = defineProps({
@@ -25,17 +23,6 @@ onMounted(() => {
   //     dataZoom: [{ ...props.option.dataZoom[0], end },{ ...props.option.dataZoom[1], end }],
   //   }
   setEchartOption(props.option);
-  if (names?.length) {
-    names.forEach((eleName) => {
-      eventBus.on(eleName, resizeChart);
-    });
-
-    onUnmounted(() => {
-      names.forEach((eleName) => {
-        eventBus.off(eleName, resizeChart);
-      });
-    });
-  }
 });
 
 // 动态设置加载
@@ -48,6 +35,7 @@ const setChartItemZoom = () => {
 watch(
   () => props.option,
   (newOption, oldOption) => {
+    console.log(newOption)
     updateEchartOption(newOption);
   },
   { deep: true }

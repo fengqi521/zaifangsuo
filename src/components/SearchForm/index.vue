@@ -48,7 +48,6 @@ const formRef = ref(null);
 watch(
   () => props.initialData,
   (newData) => {
-    console.log(newData)
     Object.assign(formData.value, newData);
   },
   { deep: true }

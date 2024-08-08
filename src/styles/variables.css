@@ -122,5 +122,11 @@
     --command-message-req-bg: #F0F2F5;
     --command-message-color:#333;
     --command-message-bg:#FCF6EB;
+
+
+    /* 大屏 */
+
+    --screen-card-border: #00787b;
+    --screen-card-bg:rgba(2,18,67,.3);
  
 }

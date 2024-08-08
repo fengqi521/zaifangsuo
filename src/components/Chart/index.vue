@@ -5,14 +5,9 @@ const props = defineProps({
     options:{
         type:Array,
         default:()=>[]
-    },
-    eleNames:{
-      type:Array,
-      default:()=>[]
     }
 })
 
-provide('names',props.eleNames)
 </script>
 <template>
   <Chart

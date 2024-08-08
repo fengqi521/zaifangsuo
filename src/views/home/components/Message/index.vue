@@ -1,21 +1,88 @@
 <script setup>
-import { ref, nextTick, onMounted } from "vue";
-import MessageSearch from "../MessageSearch/index.vue";
+import { ref, nextTick, reactive, watch, onUnmounted } from "vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
-import { MESSAGE } from "@/constants";
-import {getCurrentTime} from '@/utils'
+import SearchForm from "@/components/SearchForm/index.vue";
+import { messageFormData, messageFormItems } from "@/constants";
+import { getCurrentTime } from "@/utils";
+import homeApi from "@/api/home";
 
-let timer = ref(null);
-const messages = ref([...MESSAGE]);
+let timer = null;
 const drawStatus = ref(false);
 const dynamicScrollerRef = ref(null);
 let isScrollingEnabled = false;
-const props = defineProps({
-  messages: {
-    type: Array,
-    default: () => [],
-  },
+const messageSearchModel = ref({ ...messageFormData });
+const curCategory = ref(messageFormData.category);
+const messages = reactive({
+  all: [],
+  category: [],
 });
+
+// 获取当前数据
+const getCurrentCategoryList = () => {
+  homeApi.getHistory(messageSearchModel.value).then((res) => {
+    if (!res.code) {
+      const data = res.data.list;
+      if (data.length > 0) {
+        messageSearchModel.value.time = data[data.length - 1].CreateTime;
+        const lists = data.map((item) => ({
+          ...item,
+          id: `data-id-${item.Id}-${getCurrentTime()}`,
+        }));
+        // 全部数据
+        messages.all.push(...lists);
+
+        // 当前选择非全部
+        if (messageFormData.category !== curCategory.value) {
+          messages.category.push(
+            ...lists.filter((item) => item.Operate === curCategory)
+          );
+        }
+        if (isScrollingEnabled) return;
+        scrollToBottom();
+      }
+    }
+  });
+};
+
+// 查询数据
+const handleSearchSubmit = (data) => {
+  curCategory.value = data.category;
+  messages.category = [];
+  const lists = messages.all.filter((item) => item.Operate === data.category);
+  if (lists.length > 0) messages.category = [...lists];
+};
+
+// 重置
+const handleReset = () => {
+  messageSearchModel.value.category = curCategory.value;
+};
+
+// 监听drawer状态
+watch(
+  () => drawStatus.value,
+  (val) => {
+    if (val) {
+      messageSearchModel.value.time = getCurrentTime();
+      getRealList();
+      return;
+    }
+    clearInterval(timer);
+    timer = null;
+  }
+);
+
+onUnmounted(() => {
+  clearInterval(timer);
+  timer = null;
+});
+
+// 轮询数据
+const getRealList = () => {
+  getCurrentCategoryList();
+  timer = setTimeout(() => {
+    getRealList();
+  }, 3000);
+};
 
 // 显示隐藏
 const handleChangeDrawer = () => {
@@ -36,26 +103,6 @@ const handleMouseOut = () => {
 const scrollToBottom = () => {
   dynamicScrollerRef?.value?.scrollToBottom();
 };
-
-onMounted(() => {
-  timer.value = setInterval(() => {
-    const lists = [...messages.value];
-    const list = {
-      title: "Topic rtu/upload/heartbeat/1523453 QoS:0",
-      info: "{1242363635435436436437568723322364366,2434,435,332,23,43,43,:1:2:3:4}",
-      date: getCurrentTime(),
-    };
-    lists.push(list);
-    messages.value = lists.map((item, index) => ({
-      ...item,
-      id: `data-id-${index}`,
-    }));
-    nextTick(() => {
-      if (isScrollingEnabled) return;
-      scrollToBottom();
-    });
-  }, 1000);
-});
 </script>
 
 <template>
@@ -69,11 +116,22 @@ onMounted(() => {
     :with-header="false"
     size="360px"
   >
-    <MessageSearch />
+    <SearchForm
+      class="search-form"
+      :initialData="messageSearchModel"
+      :formItems="messageFormItems"
+      @submit="handleSearchSubmit"
+      @reset="handleReset"
+    >
+    </SearchForm>
     <DynamicScroller
       class="message-scrollbar"
       ref="dynamicScrollerRef"
-      :items="messages"
+      :items="
+        messageSearchModel.category !== curCategory
+          ? messages.category
+          : messages.all
+      "
       :min-item-size="24"
       @resize="scrollToBottom"
       @mouseover="handleMouseOver"
@@ -86,10 +144,10 @@ onMounted(() => {
           :active="active"
           class="message-item"
         >
-          <p class="message-item-top">{{ item.date }}</p>
+          <p class="message-item-top">{{ item.CreateTime }}</p>
           <div class="message-item-bom">
             <p class="message-item-title">{{ item.title }}</p>
-            <p class="message-item-info">{{ item.info }}</p>
+            <p class="message-item-info">{{ item.Response }}</p>
           </div>
         </DynamicScrollerItem>
       </template>
@@ -116,8 +174,22 @@ onMounted(() => {
 }
 
 .message-container {
+
+  .search-form {
+    justify-content: center;
+    padding: 0 16px 16px;
+    margin-bottom: 0cap;
+    :deep(.el-form-item) {
+      margin: 0 8px 0 0;
+    }
+    :deep(.el-button) {
+      padding: 4px;
+      height: 24px;
+    }
+  }
+
   .message-scrollbar {
-    height: calc(100% - 69px);
+    height: calc(100% - 49px);
     overflow-y: auto;
     @extend %scrollbar;
   }
@@ -125,9 +197,6 @@ onMounted(() => {
   .message-item {
     padding-bottom: 24px;
     word-break: break-all;
-    // &:last-child {
-    //   padding-bottom: 0;
-    // }
   }
 
   .message-item-bom {

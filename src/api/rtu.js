@@ -25,10 +25,10 @@ export default {
     return postRequest("/v1/device/work", params);
   },
 
-    // 获取设备工况分页数据
-    getWorkHistory: function (params) {
-      return postRequest("/v1/device/workByPage", params);
-    },
+  // 获取设备工况分页数据
+  getWorkHistory: function (params) {
+    return postRequest("/v1/device/workByPage", params);
+  },
 
   // 命令下发
   downControl: function (params) {
@@ -38,5 +38,10 @@ export default {
   // 获取响应数据
   getResponse: function (params) {
     return getRequest("/v1/device/response", params);
+  },
+
+  // 下发记录
+  getRecord: function (params) {
+    return getRequest("/v1/history/lists", params);
   },
 };
