@@ -1,11 +1,12 @@
 import moment from "moment";
-
+import 'moment/dist/locale/zh-cn'
+moment.locale('zh-cn')
 /**
  * 获取本机时间
  * @returns
  */
-export const getCurrentTime = () => {
-  return moment().format("YYYY-MM-DD HH:mm:ss");
+export const getCurrentTime = (format) => {
+  return moment().format(format||"YYYY-MM-DD HH:mm:ss");
 };
 
 /**

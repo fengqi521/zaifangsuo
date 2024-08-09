@@ -4,10 +4,11 @@ import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 
-import { parseFormData, parseFormItems } from "@/constants";
-import { encodeMessage, getCRCAsHex } from "@/utils";
-import parseApi from "@/api/parse";
+import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
+import { encodeMessage, getCRCAsHex } from "@/utils";
+import { parseFormData, parseFormItems } from "@/constants";
+import parseApi from "@/api/parse";
 
 const { error } = useMessage();
 const breadList = ref([{ title: "报文解析" }]);
@@ -22,15 +23,18 @@ console.log(
 );
 // 解析报文
 const handleSearchSubmit = (data) => {
+  if (!data.code) return;
+  // data.code =
+  //   "7E7E0011010208892012323014020002240808091157320136000000010521020AB1038A0A";
   searchModel.value = { ...searchModel.value, ...data };
   getParse();
 };
 
+// 获取数据
 const getParse = () => {
   parseApi.getParse(searchModel.value).then((res) => {
     if (!res.code) {
-      const { content, ...others } = res.data;
-      parseData.detail = { ...others };
+      parseData.detail = res.data;
       return;
     }
 
@@ -38,14 +42,31 @@ const getParse = () => {
   });
 };
 
-const isDetailEmpty = computed(() => {
-  return Object.keys(parseData.detail).length === 0;
+// 内容中数据
+const content = computed(() => {
+  const { content } = parseData.detail;
+  console.log(content);
+  if (!content) return;
+  try {
+    const { collect_time, data, sensor_name, serial } = content;
+    const { ambient_temperature, collect, battery_voltage } = data;
+    return (
+      (serial && `流水号：${serial}，`) +
+      (sensor_name && `设备类型：${sensor_name}，`) +
+      (collect_time && `采集时间：${collect_time}，`) +
+      (collect !== "" && `泥水位：${collect}，`) +
+      (ambient_temperature !== "" && `温度：${ambient_temperature}，`) +
+      (battery_voltage !== "" && `电压：${battery_voltage}`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // 重置
 const handleReset = () => {
   searchModel.value.code = "";
-  handleSearchSubmit();
+  // handleSearchSubmit();
 };
 </script>
 
@@ -65,7 +86,7 @@ const handleReset = () => {
 
     <!-- 基本信息 -->
     <ElCard title="解析内容" v-loading="loading">
-      <el-empty v-if="isDetailEmpty" :image-size="80" />
+      <el-empty v-if="isEmpty(parseData.detail)" :image-size="80" />
       <div v-else class="parse-detail">
         <p class="parse-detail__item">
           <span class="parse-detail__label"> 帧起始符:</span>
@@ -103,17 +124,23 @@ const handleReset = () => {
           <span class="parse-detail__label">校验码:</span>
           {{ parseData.detail.crc }}
         </p>
-        <p class="parse-detail__item">
+        <p class="parse-detail__item parse-detail__content">
           <span class="parse-detail__label">报文正文:</span>
           {{ parseData.detail.origin }}
+        </p>
+        <p class="parse-detail__item parse-detail__data" v-if="content">
+          <span class="parse-detail__label">数据内容:</span>
+          {{ content }}
         </p>
       </div>
     </ElCard>
   </div>
 </template>
 <style lang="scss" scoped>
-.parse-list {
-  margin-top: 24px;
+.el-form {
+  :deep(.el-input) {
+    width: 468px;
+  }
 }
 .parse-detail {
   display: flex;
@@ -126,6 +153,11 @@ const handleReset = () => {
     width: 32%;
     color: var(--normal-title-color);
     font-weight: 700;
+  }
+
+  &__data,
+  &__content {
+    width: 100%;
   }
 
   &__label {

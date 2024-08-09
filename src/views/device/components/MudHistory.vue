@@ -15,7 +15,7 @@ const route = useRoute();
 const { id, type } = route.params;
 
 const mudLevelImages = reactive({ timeList: [], valueList: [] });
-const searchInfo = reactive({
+const searchInfo = ref({
   id,
   type,
   page: 1,
@@ -32,7 +32,7 @@ const chartData = reactive({ timeList: [], valueList: [] });
 
 // 获取泥水位图表数据
 const getMudChartData = () => {
-  const { page, limit, ...params } = searchInfo;
+  const { page, limit, ...params } = searchInfo.value;
   rtuApi.getRainData(params).then((res) => {
     if (!res.code) {
       Object.assign(chartData, res.data.list[0]);
@@ -72,12 +72,13 @@ const tableColumns = [
 ];
 // 获取泥水位历史数据
 const getMudLevelHistory = () => {
-  rtuApi.getRainHistory(searchInfo).then((res) => {
+  const { page, limit } = searchInfo.value;
+  rtuApi.getRainHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
         ...item,
-        num: index + 1,
+        num: (page - 1) * limit + index + 1,
       }));
     }
   });
@@ -85,21 +86,21 @@ const getMudLevelHistory = () => {
 
 // 切换分页
 const handleChangePage = (page) => {
-  searchInfo.page = page;
+  searchInfo.value.page = page;
   getMudLevelHistory();
 };
 
 // 切换条数
 const handleChangeSize = (size) => {
-  searchInfo.limit = size;
+  searchInfo.value.limit = size;
   getMudLevelHistory();
 };
 
 useRtuStore.handleMethod((val) => {
   try {
-    searchInfo.start_time = val[0];
-    searchInfo.end_time = val[1];
-    searchInfo.page = 1;
+    searchInfo.value.start_time = val[0];
+    searchInfo.value.end_time = val[1];
+    searchInfo.value.page = 1;
     getMudChartData();
     getMudLevelHistory();
   } catch (error) {
@@ -112,7 +113,7 @@ useRtuStore.handleMethod((val) => {
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
       <div class="device-data__history">
-        <Chart :options="[collectOption]" :eleNames="['historyChart']" />
+        <Chart :options="[collectOption]" />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
       <ElCard v-loading="loading" class="history-data-card">

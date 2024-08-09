@@ -15,6 +15,8 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { AppMain } from "./components";
+import { useScreenStoreHook } from "@/store/modules/screen";
+const screenStore = useScreenStoreHook();
 const screenObj = {
   width: 1920,
   height: 1080,
@@ -41,8 +43,9 @@ const getViewStyle = computed(() => {
   let _top = screenHeight - screenObj.height * viewScale;
   _left = (_left <= 0 ? 0 : Math.abs(_left) / 2).toFixed(2) + "px";
   _top = (_top <= 0 ? 0 : Math.abs(_top) / 2).toFixed(2) + "px";
-
-  let attr = `transform: scale(${viewScale.toFixed(2)});
+  const scale = viewScale.toFixed(2);
+  screenStore.setScale(scale);
+  let attr = `transform: scale(${scale});
           width:${screenObj.width}px;
           height:${screenObj.height}px;
           left:${_left};
@@ -92,11 +95,11 @@ const getScreenSize = () => {
       font-size: 40px;
       line-height: 102px;
       font-weight: bold;
-      background: linear-gradient(to bottom, #F7FDFF, #2ac0f9);
+      background: linear-gradient(to bottom, #f7fdff, #2ac0f9);
       -webkit-background-clip: text;
       letter-spacing: 6px;
       -webkit-text-fill-color: transparent; /* 使文字填充透明 */
-      // text-shadow: 
+      // text-shadow:
       //           1px 1px 2px rgba(0, 0, 0, 0.3), /* 主阴影 */
       //           0 0 5px rgba(0, 0, 0, 0.5), /* 辅助阴影 */
       //           0 0 10px rgba(0, 0, 0, 0.4), /* 辅助阴影 */
@@ -104,7 +107,7 @@ const getScreenSize = () => {
     }
 
     .app-main {
-      height:100%;
+      height: 100%;
     }
   }
 }

@@ -35,7 +35,6 @@ const setChartItemZoom = () => {
 watch(
   () => props.option,
   (newOption, oldOption) => {
-    console.log(newOption)
     updateEchartOption(newOption);
   },
   { deep: true }

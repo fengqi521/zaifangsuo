@@ -27,11 +27,11 @@ const formItems = ref(userFormItems);
 const loading = ref(false);
 const userData = ref([]);
 const columns = ref([
-  { prop: "id", label: "ID" },
-  { prop: "user_name", label: "用户名" },
-  { prop: "phone", label: "手机号" },
+  { prop: "id", label: "ID",width:40 },
+  { prop: "user_name", label: "用户名",width:300 },
+  { prop: "phone", label: "手机号" ,width:150},
   // { prop: "email", label: "邮箱" },
-  { prop: "devices", label: "已授权设备" },
+  { prop: "devices", label: "已授权设备",width:300 },
   { prop: "create_time", label: "创建时间" },
 ]);
 

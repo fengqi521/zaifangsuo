@@ -2,12 +2,12 @@ import { ref } from "vue";
 import axios from "axios";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { get, merge } from "lodash";
-/** 退出登录并强制刷新页面（会重定向到登录页） */
+import { removeUserCookie } from "@/utils/cache/cookie";
+
+/** 删除cookie并强制刷新页面（会重定向到登录页） */
 function logout() {
-  const useInfoStore = userInfoStoreHook();
-  useInfoStore.logout();
-  console.log(location, "ccccccccccc");
-  // location.reload();
+  removeUserCookie();
+  window.location.reload();
 }
 
 const requestStatus = ref(false);

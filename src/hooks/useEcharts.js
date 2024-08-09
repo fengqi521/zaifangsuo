@@ -11,6 +11,7 @@ export function useEchartsHook() {
   const setEchartOption = (option) => {
     if (chart.value && option) {
       chart.value.setOption(option);
+      window.addEventListener("resize", resizeChart);
     }
   };
 

@@ -1,5 +1,0 @@
-export  {default as  BaseInfo} from "./BaseInfo.vue"
-export  {default as  MudHistory} from "./MudHistory.vue"
-export  {default as  Work} from "./Work.vue"
-export  {default as  RainHistory} from "./RainHistory.vue"
-export  {default as  BreakHistory} from "./BreakHistory.vue"

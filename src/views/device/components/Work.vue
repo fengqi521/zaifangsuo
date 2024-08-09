@@ -17,7 +17,7 @@ const collectOption = reactive(
   getCommonLine({ seriesUnit: ["V", "°C"], yAxisTitlePadding: [0, 0, 0, 10] })
 );
 
-const searchInfo = reactive({
+const searchInfo = ref({
   page: 1,
   limit: 10,
   type,
@@ -37,12 +37,12 @@ const colors = ["#ffd285", "#ff733f"];
 const chartData = reactive({ timeList: [], voltage: [], temperature: [] });
 // 获取图表数据
 const getWorkChartData = () => {
-  const { page, limit, ...params } = searchInfo;
+  const { page, limit, ...params } = searchInfo.value;
   rtuApi.getWorkData(params).then((res) => {
     if (!res.code) {
-      chartData.timeList = res.data.list[0]?.timeList
-      chartData.voltage = res.data.list[0]?.valueList
-      chartData.temperature = res.data.list[1]?.valueList
+      chartData.timeList = res.data.list[0]?.timeList;
+      chartData.voltage = res.data.list[0]?.valueList;
+      chartData.temperature = res.data.list[1]?.valueList;
     }
   });
 };
@@ -88,30 +88,35 @@ const workData = reactive({
 
 // 获取工况历史数据
 const getWorkHistory = () => {
-  rtuApi.getWorkHistory(searchInfo).then(res=>{
-    if(!res.code){
-      workData.total = res.data.total_count
-      workData.data = res.data.list.map((item, index) => ({ ...item, num: index + 1 }))
+  const {page,limit} = searchInfo.value;
+  rtuApi.getWorkHistory(searchInfo.value).then((res) => {
+    if (!res.code) {
+      workData.total = res.data.total_count;
+      workData.data = res.data.list.map((item, index) => ({
+        ...item,
+        num:(page-1)*limit + index + 1,
+      }));
     }
-  })
+  });
+};
+
+// 切换页数
+const handleChangePage = (page) => {
+  searchInfo.value.page = page;
+  getWorkHistory();
 };
 
 // 处理分页
 const handleChangeLimit = (size) => {
-  searchInfo.limit = size;
-  getWorkHistory();
-};
-
-const handleChangePage = (page) => {
-  searchInfo.page = page;
+  searchInfo.value.limit = size;
   getWorkHistory();
 };
 
 useRtuStore.handleMethod((val) => {
   try {
-    searchInfo.start_time = val[0];
-    searchInfo.end_time = val[1];
-    searchInfo.page = 1;
+    searchInfo.value.start_time = val[0];
+    searchInfo.value.end_time = val[1];
+    searchInfo.value.page = 1;
     getWorkChartData();
     getWorkHistory();
   } catch (error) {

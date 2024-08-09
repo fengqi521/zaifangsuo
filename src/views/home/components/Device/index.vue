@@ -6,35 +6,30 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import rtuApi from "@/api/rtu";
 import { deviceMap } from "@/constants";
 const columns = ref([
-  { prop: "num", label: "序号" },
+  { prop: "num", label: "序号",width:80 },
   { prop: "device_name", label: "设备名称" },
-  { prop: "device_type", label: "设备类型" },
+  { prop: "device_type", label: "设备类型",width:100 },
   { prop: "location", label: "位置" },
-  { prop: "online", label: "在线状态" },
-  { prop: "online_last", label: "在线时间" },
-  { prop: "create_time", label: "创建时间" },
+  { prop: "online", label: "在线状态",width:80 },
+  { prop: "online_last", label: "在线时间",width:180 },
+  { prop: "create_time", label: "创建时间",width:180 },
 ]);
 
 const active = ref(1);
 const deviceData = reactive({ total: 0, data: [] });
 const loading = ref(false);
-const searchInfo = ref({ status: 1 });
-const page = ref(1);
-const limit = ref(10);
-
+const searchInfo = ref({ status: 1, page: 1, limit: 10 });
 // 设备数据
 const getDeviceData = async () => {
   loading.value = true;
-  searchInfo.value.page = page.value;
-  searchInfo.value.limit = limit.value;
+  const { page, limit } = searchInfo.value;
   try {
     const result = await rtuApi.getDeviceList(searchInfo.value);
     loading.value = false;
     deviceData.data = result?.data?.list.map((item, index) => ({
-      num: index + 1,
+      num: (page - 1) * limit + (index + 1),
       ...item,
     }));
-    page.value = result.data.current_page;
     deviceData.total = result.data.total_count;
   } catch (error) {}
 };
@@ -42,7 +37,7 @@ getDeviceData();
 // 切换设备查询
 const handleSearchStatus = (status) => {
   active.value = status;
-  page.value = 1;
+  searchInfo.value.page = 1;
   searchInfo.value.status = status;
   getDeviceData();
 };
@@ -55,13 +50,13 @@ const getType = (type) => {
 
 // 切换分页
 const handleChangeCurrent = (page) => {
-  page.value = page;
+  searchInfo.value.page = page;
   getDeviceData();
 };
 
 // 改变条数
 const handlePageSizeChange = (size) => {
-  limit.value = size;
+  searchInfo.value.limit = size;
   getDeviceData();
 };
 </script>
@@ -100,8 +95,8 @@ const handlePageSizeChange = (size) => {
         </template>
       </ElTable>
       <ElPagination
-        :page="page"
-        :page-size="limit"
+        :page="searchInfo.page"
+        :page-size="searchInfo.limit"
         :total="deviceData.total"
         @pagination-change="handleChangeCurrent"
         @page-size-change="handlePageSizeChange"

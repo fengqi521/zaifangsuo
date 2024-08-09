@@ -4,12 +4,21 @@ export function useCurrentDate(interval = 1000) {
   // 使用 ref 来存储日期
   const currentDate = ref("");
 
+  //HH:mm
+  const hourMinutes = ref("");
+
+  // 星期
+  const weekday = ref("");
+
+  // 年月日
+  const day = ref("");
+
   // 创建一个函数来更新日期
   const updateDate = () => {
     currentDate.value = getCurrentTime();
   };
 
-  // 当组件挂载时开始计时
+  // 实时获取当前完整时间
   onMounted(() => {
     updateDate();
     const intervalId = setInterval(updateDate, interval);
@@ -19,7 +28,27 @@ export function useCurrentDate(interval = 1000) {
     });
   });
 
+  // 获取当前时间HH:mm
+  const getHourMinutes = () => {
+    hourMinutes.value = getCurrentTime("HH:mm:ss");
+  };
+  // 获取星期
+  const getWeek = () => {
+    weekday.value = getCurrentTime("dddd");
+  };
+
+  // 获取星期
+  const getCurrentDay = () => {
+    day.value = getCurrentTime("LL");
+  };
+
   return {
     currentDate,
+    hourMinutes,
+    weekday,
+    day,
+    getHourMinutes,
+    getWeek,
+    getCurrentDay,
   };
 }

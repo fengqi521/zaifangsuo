@@ -89,6 +89,10 @@ export const getCommonLine = function ({
         name: "{title|累计降雨量(mm)}",
         type: "value",
         alignTicks: true,
+        axisLabel:{},
+        splitLine: {
+          show: false,
+        },
         nameTextStyle: {
           fontSize: 12,
           color: getCssVariableValue("--normal-title-color"),
@@ -117,7 +121,6 @@ export const getCommonLine = function ({
           color: "#999",
         },
         splitLine: {
-          show: true,
           lineStyle: {
             color: "#ECECEC",
             width: 1,
@@ -174,6 +177,9 @@ export const getCommonLine = function ({
     ],
   };
 };
+
+
+
 // 柱状图公共配置
 export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
   return {

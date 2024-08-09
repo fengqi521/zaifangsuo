@@ -1,6 +1,6 @@
 import { markRaw } from "vue";
-import RainLevelChart from "@/views/device/components/RainLevelChart.vue";
-import MudLevelChart from "@/views/device/components/MudLevelChart.vue";
+// import RainLevelChart from "@/views/device/components/RainLevelChart.vue";
+// import MudLevelChart from "@/views/device/components/MudLevelChart.vue";
 import { getCssVariableValue } from "@/utils";
 import legend1 from "@/assets/images/legend-1.png";
 import legend2 from "@/assets/images/legend-2.png";
@@ -441,11 +441,11 @@ const messageFormItems = [
 const initialFormData = { type: "13", station: "", rtu: "", dateTimeRange: [] };
 
 // 感应器类型映射
-const SENSOR = {
-  6: markRaw(RainLevelChart),
-  7: "",
-  13: markRaw(MudLevelChart),
-};
+// const SENSOR = {
+//   6: markRaw(RainLevelChart),
+//   7: "",
+//   13: markRaw(MudLevelChart),
+// };
 
 // 泥位计映射
 const WATER_LEVEL = { x: "SJ-1", y: "SJ-2", z: "SJ-3" };
@@ -637,7 +637,6 @@ export {
   MESSAGE,
   deviceMap,
   WATER_LEVEL,
-  SENSOR,
   WATER_LEVEL_LEGEND,
   initialFormData,
   projectFormData,

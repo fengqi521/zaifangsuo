@@ -13,7 +13,7 @@ const useRtuStore = useRtuStoreHook();
 const route = useRoute();
 
 const { id, type } = route.params;
-const searchInfo = reactive({
+const searchInfo = ref({
   id,
   type,
   page: 1,
@@ -52,7 +52,7 @@ const rainData = reactive({
 });
 // 获取雨量图表数据
 const getRainChartData = () => {
-  const { page, limit, ...params } = searchInfo;
+  const { page, limit, ...params } = searchInfo.value;
   rtuApi.getRainData(params).then((res) => {
     if (!res.code) {
       rainData.timeList = res.data.list[0].timeList;
@@ -166,12 +166,13 @@ const deviceData = reactive({
 
 // 获取雨量历史数据
 const getRainHistory = () => {
-  rtuApi.getRainHistory(searchInfo).then((res) => {
+  const { page, limit } = searchInfo.value;
+  rtuApi.getRainHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
         ...item,
-        num: index + 1,
+        num: (page - 1) * limit + index + 1,
       }));
     }
   });
@@ -179,14 +180,14 @@ const getRainHistory = () => {
 
 // 切换分页
 const handleChangePage = (page) => {
-  searchInfo.page = page;
+  searchInfo.value.page = page;
   getRainHistory();
 };
 
 // 切换条数
 const handleChangeSize = (size) => {
-  searchInfo.page = 1;
-  searchInfo.limit = size;
+  searchInfo.value.page = 1;
+  searchInfo.value.limit = size;
   getRainHistory();
 };
 
@@ -197,8 +198,8 @@ watchEffect(() => {
 
 useRtuStore.handleMethod((val) => {
   try {
-    searchInfo.start_time = val[0];
-    searchInfo.end_time = val[1];
+    searchInfo.value.start_time = val[0];
+    searchInfo.value.end_time = val[1];
     searchInfo.page = 1;
     getRainChartData();
     getRainHistory();

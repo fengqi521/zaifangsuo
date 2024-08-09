@@ -33,12 +33,12 @@ const recordItems = reactive(recordFormItems);
 
 // 表格头部
 const columns = ref([
-  { prop: "num", label: "序号" },
+  { prop: "num", label: "序号" ,width:80},
   { prop: "device_name", label: "设备名称" },
-  { prop: "operate_type", label: "操作类型" },
+  { prop: "operate_type", label: "操作类型",width:180 },
   { prop: "response", label: "报文内容" },
-  { prop: "transfer_name", label: "传输类型" },
-  { prop: "create_time", label: "创建时间" },
+  { prop: "transfer_name", label: "传输类型" ,width:100},
+  { prop: "create_time", label: "创建时间" ,width:200},
 ]);
 // 表格数据
 const recordData = reactive({ lists: [], total: 0 });
@@ -71,6 +71,8 @@ const getRecord = async () => {
   loading.value = true;
   try {
     const res = await rtuApi.getRecord(searchModel.value);
+    const {page,limit} = searchModel.value;
+    console.log(page)
     loading.value = false;
     if (!res.code) {
       recordData.lists = (res?.data?.list ?? []).map((item, index) => {
@@ -78,7 +80,7 @@ const getRecord = async () => {
         item.operate_type = list ? list.label : "";
         item.transfer_name = item.transfer_type === 1 ? "上行" : "下行";
         item.response = item.transfer_type === 1 ? item.response : item.request;
-        item.num = index + 1;
+        item.num = (page - 1) * limit + (index + 1);
         item.device_name = device.value.find(
           (cur) => cur.id === item.device_id
         ).device_name;
