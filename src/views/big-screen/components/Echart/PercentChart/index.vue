@@ -71,7 +71,7 @@ var colors = [
     colorStops: [
       {
         offset: 0,
-        color: "#8B69FF", // 0% 处的颜色
+        color: "#5CFFCD", // 0% 处的颜色
       },
       {
         offset: 1,

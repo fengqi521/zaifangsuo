@@ -104,7 +104,7 @@ export const dynamicRoutes = [
           icon: "icon-a-RTUguanliweixuan",
           size: "18px",
           affix: true,
-          roles: [1],
+          roles: [1,4],
         },
       },
       {
@@ -136,23 +136,7 @@ export const dynamicRoutes = [
           title: "下发记录",
           icon: "icon-xiafajilu",
           size: "18px",
-          roles: [1],
-        },
-      },
-    ],
-  },
-  {
-    path: "/user",
-    component: Layout,
-    children: [
-      {
-        path: "",
-        component: UserList,
-        meta: {
-          title: "用户管理",
-          icon: "icon-yonghuguanli",
-          size: "20px",
-          roles: [1],
+          roles: [1,4],
         },
       },
     ],
@@ -168,6 +152,22 @@ export const dynamicRoutes = [
           title: "报文解析",
           icon: "icon-baowenjiexi",
           size: "18px",
+          roles: [1,4],
+        },
+      },
+    ],
+  },
+  {
+    path: "/user",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: UserList,
+        meta: {
+          title: "用户管理",
+          icon: "icon-yonghuguanli",
+          size: "20px",
           roles: [1],
         },
       },

@@ -128,7 +128,7 @@ useRtuStore.handleMethod((val) => {
 <template>
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
-      <Chart :options="[collectOption]" :eleNames="['wordChart']" />
+      <Chart :options="[collectOption]"/>
       <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"

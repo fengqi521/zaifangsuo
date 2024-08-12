@@ -1,12 +1,12 @@
 import moment from "moment";
-import 'moment/dist/locale/zh-cn'
-moment.locale('zh-cn')
+import "moment/dist/locale/zh-cn";
+moment.locale("zh-cn");
 /**
  * 获取本机时间
  * @returns
  */
 export const getCurrentTime = (format) => {
-  return moment().format(format||"YYYY-MM-DD HH:mm:ss");
+  return moment().format(format || "YYYY-MM-DD HH:mm:ss");
 };
 
 /**
@@ -53,17 +53,17 @@ export const encodeMessage = (version, contentLength) => {
 // CRC-16/MODBUS 校验码计算
 function calculateCRC16Modbus(data) {
   const POLYNOMIAL = 0x8005; // CRC-16/MODBUS 多项式
-  let crc = 0xFFFF; // 初始化 CRC 值为 0xFFFF
+  let crc = 0xffff; // 初始化 CRC 值为 0xFFFF
 
   for (let byte of data) {
-    crc ^= (byte & 0xFF); // 将当前字节异或到 CRC
+    crc ^= byte & 0xff; // 将当前字节异或到 CRC
     for (let i = 0; i < 8; i++) {
       if (crc & 0x0001) {
         crc = (crc >> 1) ^ POLYNOMIAL; // 低位为 1 时，CRC 右移并异或多项式
       } else {
         crc >>= 1; // 低位为 0 时，CRC 仅右移
       }
-      crc &= 0xFFFF; // 确保 CRC 值保持在 16 位
+      crc &= 0xffff; // 确保 CRC 值保持在 16 位
     }
   }
 
@@ -80,16 +80,30 @@ function hexStringToByteArray(hexString) {
 }
 
 // 计算给定数据的 CRC 校验码并转换为十六进制字符串
-export const getCRCAsHex=(hexString) =>{
+export const getCRCAsHex = (hexString) => {
   const byteArray = hexStringToByteArray(hexString);
   const crc = calculateCRC16Modbus(byteArray);
-  
+
   // 将 CRC 值格式化为两位高位字节和两位低位字节
-  const highByte = (crc >> 8) & 0xFF;
-  const lowByte = crc & 0xFF;
-  
+  const highByte = (crc >> 8) & 0xff;
+  const lowByte = crc & 0xff;
+
   // 格式化为十六进制字符串
-  return `${highByte.toString(16).toUpperCase().padStart(2, '0')}${lowByte.toString(16).toUpperCase().padStart(2, '0')}`;
-}
+  return `${highByte.toString(16).toUpperCase().padStart(2, "0")}${lowByte
+    .toString(16)
+    .toUpperCase()
+    .padStart(2, "0")}`;
+};
 
+export const timeToHex = (timeString) => {
+  // 解析时间字符串
+  const [hours, minutes] = timeString.split(':').map(Number);
+      // 将小时和分钟转换为十六进制，并确保两位数
+      const hoursHex = hours.toString(16).toUpperCase().padStart(2, '0');
+      const minutesHex = minutes.toString(16).toUpperCase().padStart(2, '0');
+  
+      // 拼接小时和分钟的十六进制值
+      return hoursHex + minutesHex;
 
+  return hexValue;
+};

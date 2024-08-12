@@ -66,7 +66,7 @@ watchEffect(() => {
 const loading = ref(false);
 const deviceData = reactive({ total: 0, data: [] });
 const tableColumns = [
-  { prop: "num", label: "序号" },
+  { prop: "num", label: "序号",width:80 },
   { prop: "upload_time", label: "监测时间" },
   { prop: "data", label: "泥水位(m)" },
 ];

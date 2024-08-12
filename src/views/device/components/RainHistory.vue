@@ -215,7 +215,6 @@ useRtuStore.handleMethod((val) => {
       <div class="device-data__history">
         <Chart
           :options="[rainOption, tempOption, windOption, speedOption]"
-          :eleNames="['historyChart']"
         />
       </div>
       <ElCard v-loading="loading" class="history-data-card">

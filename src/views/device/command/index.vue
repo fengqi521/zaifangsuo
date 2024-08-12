@@ -20,7 +20,7 @@ import { useInputHook } from "@/hooks/useInput";
 import rtuApi from "@/api/rtu";
 
 import { operateLists } from "@/constants";
-// import {encodeMessage,deco} from '@/utils'
+import { timeToHex } from "@/utils";
 
 const route = useRoute();
 const { setInputValue } = useInputHook();
@@ -29,85 +29,55 @@ const { name, id, type } = route.params;
 
 // 导航
 const breadList = ref([
-  { to: "/rtu", title: "设备管理" },
+  { to: "/device", title: "设备管理" },
   { title: "指令下发" },
 ]);
-
-const speForm = {
-  type1: {
-    addr: "", // 地址
-    high: 0, // 安装高度
-    origin: 0, // 初始值
-    threshold: 1, // 加报阈值
-  },
-  type2: {
-    addr: "", // 雨量地址
-    cycle: 1, // 加报周期
-    threshold: 1, // 报警阈值
-    the_time: 1, // 报警阈值时长
-    sum: 0, // 累计雨量
-  },
-};
-const baseForm = {
-  id,
-  frame_start: "",
-  address: "",
-  reserve: "",
-  password: "",
-  code: "",
-  version_length: "",
-  start: "",
-  end: "",
-  crc: "",
-  data: {}, // 存储上传参数
-};
 
 // 表单配置
 const formConfig = {
   common: {
-    frame_start: {
-      label: "帧起始符:",
-      width: "120px",
-      labelWidth: "56",
-      disabled: true,
-    },
     address: {
       label: "遥测站地址:",
       width: "180px",
       labelWidth: "68",
-      disabled: true,
+      minLen: 0,
+      maxLen: 255,
+      placeholder: "请输入遥测站地址",
+      type: "el-input",
     },
-    reserve: {
-      label: "预留位:",
-      width: "120px",
-      labelWidth: "44",
-      disabled: true,
-    },
-    password: {
+    pass: {
       label: "密码:",
       width: "200px",
       labelWidth: "32",
-      disabled: true,
+      placeholder: "请输入密码",
+      type: "el-input",
     },
-    version_length: {
-      label: "版本号及长度:",
-      width: "120px",
-      labelWidth: "80",
-      disabled: true,
+    collect: {
+      label: "采集周期:",
+      labelWidth: "56",
+      min: 1,
+      max: 255,
+      unit: "min",
+      placeholder: "采集周期",
     },
-    start: {
-      label: "报文起始符:",
-      width: "120px",
+    timer: {
+      label: "定时报周期:",
       labelWidth: "68",
-      disabled: true,
+      min: 1,
+      max: 255,
+      unit: "min",
+      placeholder: "定时报周期",
     },
-    end: {
-      label: "报文结束符:",
-      width: "120px",
-      labelWidth: "68",
-      disabled: true,
+    timer_start: {
+      label: "定时报开始时间:",
+      labelWidth: "92",
+      placeholder: "定时报开始时间",
+      type: "el-time-picker",
     },
-    crc: { label: "校验码:", width: "200px", labelWidth: "44", disabled: true },
+    // check: {
+    //   label: "自检上报参数:",
+    //   labelWidth: "92",
+    // },
   },
   type1: {
     addr: {
@@ -133,7 +103,7 @@ const formConfig = {
     threshold: {
       label: "加报阈值:",
       labelWidth: "56",
-      min:0.01,
+      min: 0.01,
       max: 65.535,
       unit: "m",
     },
@@ -178,6 +148,33 @@ const formConfig = {
   },
 };
 
+// 参数
+const speForm = {
+  type1: {
+    addr: "", // 地址
+    high: 0, // 安装高度
+    origin: 0, // 初始值
+    threshold: 1, // 加报阈值
+  },
+  type2: {
+    addr: "", // 雨量地址
+    cycle: 1, // 加报周期
+    threshold: 1, // 报警阈值
+    the_time: 1, // 报警阈值时长
+    sum: 0, // 累计雨量
+  },
+};
+const baseForm = {
+  id,
+  code: "",
+  address: "",
+  pass: "",
+  collect: "",
+  timer: "",
+  timer_start: "",
+  check: "",
+};
+
 const currentConfig = computed(() => {
   return {
     common: { ...formConfig.common },
@@ -188,7 +185,7 @@ const timerFields = ["version_length", "start", "end", "crc"];
 
 const unfold = ref(true);
 // 表单
-const commonForm = reactive({ ...baseForm });
+const commonForm = reactive({ ...baseForm, data: {} });
 
 watch(
   () => commonForm.code,
@@ -203,105 +200,14 @@ watch(
     }
   }
 );
+const handleCommonInput = (value,key,decimals,min,max)=>{
+  commonForm[key] = setInputValue(value, decimals, min, max);
+}
 const handleInput = (value, key, decimals, min, max) => {
   commonForm.data[key] = setInputValue(value, decimals, min, max);
 };
 // 下发及响应数据
-const commandData = reactive([
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-  // {
-  //   type: "up",
-  //   deadline: "2024-10-23 10:23:32",
-  //   content:
-  //     "FFS203332S032445500WSS2234455XCC-2334434332636463353454634460DFFF034456663",
-  // },
-  // {
-  //   type: "down",
-  //   deadline: "2024-10-11 10:23:23",
-  //   content: "WFGEWWGEGW24245SGWEGWEGWG",
-  // },
-]);
+const commandData = reactive([]);
 
 // 获取设备详情
 const getDetail = () => {
@@ -345,6 +251,7 @@ const controlListRef = ref(null);
 const resizeObserver = ref(null);
 const maxHeight = ref(0);
 let timer = ref(null);
+
 // 下发指令
 const handleClickSubmit = () => {
   const code = commonForm.code;
@@ -352,7 +259,7 @@ const handleClickSubmit = () => {
   let params = { id, code };
 
   if (!isEmpty(data)) {
-    if (data.dateTimeRange) { 
+    if (data.dateTimeRange) {
       params.data = {
         start_time: data.dateTimeRange[0],
         end_time: data.dateTimeRange[1],
@@ -361,7 +268,6 @@ const handleClickSubmit = () => {
       params.data = data;
     }
   }
-
 
   rtuApi.downControl(params).then((res) => {
     if (!res.code) {
@@ -377,9 +283,9 @@ const handleClickSubmit = () => {
 };
 
 // 重置
-const handleReset = ()=>{
-  commonForm.code = ''
-}
+const handleReset = () => {
+  commonForm.code = "";
+};
 
 // 实时获取响应数据
 const realResponse = async (params) => {
@@ -486,23 +392,42 @@ onUnmounted(() => {
         </div>
 
         <div v-if="unfold" class="command-form__details">
-          <!-- <el-form-item
+          <!-- 公共部分表单 -->
+          <el-form-item
+            class="input-number__item"
             v-for="(
-              { label, width, labelWidth, disabled }, key, index
+              {
+                label,
+                labelWidth,
+                min,
+                max,
+                unit,
+                decimals,
+                type,
+                placeholder,
+              },
+              key,
+              index
             ) in currentConfig.common"
             :key="index"
             :label="label"
             :label-width="labelWidth"
-            v-show="
-              !(timerFields.includes(key) && dynamicFields.showDateTimeRange)
-            "
           >
-            <el-input
+            <el-input v-model="commonForm[key]" v-if="type === 'el-input'">
+            </el-input>
+            <el-time-picker
+              v-else-if="type === 'el-time-picker'"
               v-model="commonForm[key]"
-              :style="{ width }"
-              :disabled="disabled"
+              format="HH:mm"
+              :placeholder="placeholder"
             />
-          </el-form-item> -->
+            <el-input
+              v-else
+              :model-value="commonForm[key]"
+              @input="handleCommonInput($event, key, decimals || 0, min, max)"
+            />
+            <div class="input-item__unit" v-if="unit">{{ unit }}</div>
+          </el-form-item>
 
           <el-form-item
             label="时间段:"
@@ -522,6 +447,7 @@ onUnmounted(() => {
             />
           </el-form-item>
 
+          <!-- 按类型显示表单 -->
           <el-form-item
             class="input-number__item"
             v-for="(
@@ -651,8 +577,8 @@ onUnmounted(() => {
       width: 60px;
     }
 
-    .input-text{
-      width:150px;
+    .input-text {
+      width: 150px;
     }
 
     .input-item__unit {

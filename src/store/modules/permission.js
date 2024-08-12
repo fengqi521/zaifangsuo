@@ -9,17 +9,19 @@ const isHavePermission = (curRoute, role) => {
 
 // 过滤动态路由
 const filterDynamicRoutes = (routes, role) => {
-  let newRoutes = []
+  let newRoutes = [];
   routes.forEach((route) => {
     let curRoute = { ...route };
     if (isHavePermission(curRoute, role)) {
       if (curRoute.children) {
         curRoute.children = filterDynamicRoutes(curRoute.children, role);
       }
+     
+      if(curRoute.children&&!curRoute.children.length) return;
+      newRoutes.push(curRoute);
     }
-    newRoutes.push(curRoute)
   });
-
+  
   return newRoutes;
 };
 export const usePermissionStoreHook = defineStore("permission", () => {

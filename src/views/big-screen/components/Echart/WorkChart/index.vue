@@ -6,7 +6,7 @@ import { ref, reactive, watchEffect } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import { getCommonLine } from "@/utils/chartData";
 const collectOption = reactive(
-  getCommonLine({ seriesUnit: ["V", "°C"], yAxisTitlePadding: [0, 0, 0, 80] })
+  getCommonLine({ seriesUnit: ["V", "°C"] })
 );
 // const props =
 const data = {
@@ -24,7 +24,7 @@ const data = {
 };
 // 图表数据重组
 const resetOptions = () => {
-  // collectOption.color = colors;
+  collectOption.color = ['rgba(255,115,63,1)','rgba(255,148,84,1)'];
   collectOption.grid.bottom = 0;
   collectOption.grid.top = 30;
   collectOption.xAxis[0].data = data.timeList;
@@ -34,7 +34,7 @@ const resetOptions = () => {
   collectOption.yAxis[1].name = "{title|温度(V)}";
   collectOption.yAxis[0].nameTextStyle.fontSize = 14;
   collectOption.yAxis[0].nameTextStyle.color = "#FFF";
-  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 10];
+  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 10, 0, 0];
   collectOption.yAxis[1].nameTextStyle.rich.title.padding = [100, 0, 0, 0];
   collectOption.yAxis[1].nameTextStyle.color = "#FFF";
   collectOption.yAxis[0].splitLine = {

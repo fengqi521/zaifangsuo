@@ -90,9 +90,6 @@ export const getCommonLine = function ({
         type: "value",
         alignTicks: true,
         axisLabel:{},
-        splitLine: {
-          show: false,
-        },
         nameTextStyle: {
           fontSize: 12,
           color: getCssVariableValue("--normal-title-color"),

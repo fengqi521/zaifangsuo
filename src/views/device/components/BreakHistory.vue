@@ -203,7 +203,7 @@ getBreakLevelHistory()
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
       <div class="device-data__history">
-        <Chart :options="[collectOption]" :eleNames="['historyChart']" />
+        <Chart :options="[collectOption]" />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
       <div class="device-data__table">

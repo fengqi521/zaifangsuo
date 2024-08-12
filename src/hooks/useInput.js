@@ -1,7 +1,8 @@
-function setInputValue(value, decimals,min, max) {
-  if(!value) return ''
+function setInputValue(value, decimals, min, max) {
+  if (!value) return "";
   const numericValue = parseFloat(value);
-  if(numericValue>=max) return max;
+  if (isNaN(numericValue)) return "";
+  if (numericValue >= max) return max;
   // 处理输入值
   value = value
     // 移除非数字和小数点字符
