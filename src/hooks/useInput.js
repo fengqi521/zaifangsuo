@@ -1,3 +1,5 @@
+import { number } from "echarts";
+
 function setInputValue(value, decimals, min, max) {
   if (!value) return "";
   const numericValue = parseFloat(value);
@@ -32,6 +34,41 @@ function setInputValue(value, decimals, min, max) {
 
   return value;
 }
+
+function setInputMaxLen(value, length) {
+  if (!value) return "";
+  const numericValue = parseFloat(value);
+  if (isNaN(numericValue)) return "";
+
+  // 只允许输入数字
+  const numberValue = value.replace(/\D/g, "");
+
+  // 限制长度为最大位
+  if (numberValue.length > length) {
+    return numberValue.slice(0, length);
+  } else {
+    return numberValue;
+  }
+}
+
+let prevValue;
+function setInputExactDivision(value) {
+  if (!value) return "";
+  const numericValue = parseFloat(value);
+  if (isNaN(numericValue)) return "";
+
+  // 只允许输入数字
+  const numberValue = value.replace(/\D/g, "");
+
+  // 检查是否能被24整除
+  if (24 % numberValue === 0) {
+    prevValue = numberValue;
+    return numberValue;
+  } else {
+    // 如果不能被24整除，则还原为原值
+    return prevValue;
+  }
+}
 export function useInputHook() {
-  return { setInputValue };
+  return { setInputValue, setInputMaxLen,setInputExactDivision };
 }

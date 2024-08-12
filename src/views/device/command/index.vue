@@ -18,12 +18,10 @@ import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { useInputHook } from "@/hooks/useInput";
 import rtuApi from "@/api/rtu";
-
 import { operateLists } from "@/constants";
-import { timeToHex } from "@/utils";
 
 const route = useRoute();
-const { setInputValue } = useInputHook();
+const { setInputValue, setInputMaxLen, setInputExactDivision } = useInputHook();
 const { success, error } = useMessage();
 const { name, id, type } = route.params;
 
@@ -40,14 +38,14 @@ const formConfig = {
       label: "遥测站地址:",
       width: "180px",
       labelWidth: "68",
-      minLen: 0,
-      maxLen: 255,
+      maxLen: 10,
       placeholder: "请输入遥测站地址",
       type: "el-input",
     },
     pass: {
       label: "密码:",
       width: "200px",
+      maxLen: 4,
       labelWidth: "32",
       placeholder: "请输入密码",
       type: "el-input",
@@ -64,7 +62,7 @@ const formConfig = {
       label: "定时报周期:",
       labelWidth: "68",
       min: 1,
-      max: 255,
+      max: 1440,
       unit: "min",
       placeholder: "定时报周期",
     },
@@ -74,10 +72,17 @@ const formConfig = {
       placeholder: "定时报开始时间",
       type: "el-time-picker",
     },
-    // check: {
-    //   label: "自检上报参数:",
-    //   labelWidth: "92",
-    // },
+    check_time: {
+      label: "自检上报参数:",
+      labelWidth: "80",
+      type: "el-time-select",
+      placeholder: "开始时刻",
+    },
+    check_num: {
+      label: "",
+      type: "num",
+      placeholder: "每天上报次数",
+    },
   },
   type1: {
     addr: {
@@ -172,7 +177,8 @@ const baseForm = {
   collect: "",
   timer: "",
   timer_start: "",
-  check: "",
+  check_time: "",
+  check_num: "",
 };
 
 const currentConfig = computed(() => {
@@ -186,6 +192,8 @@ const timerFields = ["version_length", "start", "end", "crc"];
 const unfold = ref(true);
 // 表单
 const commonForm = reactive({ ...baseForm, data: {} });
+// 下发及响应数据
+const commandData = reactive([]);
 
 watch(
   () => commonForm.code,
@@ -200,14 +208,23 @@ watch(
     }
   }
 );
-const handleCommonInput = (value,key,decimals,min,max)=>{
+
+const handleCommonInput = (value, key, decimals, min, max) => {
   commonForm[key] = setInputValue(value, decimals, min, max);
-}
+};
 const handleInput = (value, key, decimals, min, max) => {
   commonForm.data[key] = setInputValue(value, decimals, min, max);
 };
-// 下发及响应数据
-const commandData = reactive([]);
+
+// 限制输入 (上报次数限制)
+const handleLimitInput = (value, key, length) => {
+  commonForm[key] = setInputMaxLen(value, length);
+};
+
+// 能被24整除的数
+const handleExactDivisionInput = (value, key) => {
+  commonForm[key] = setInputExactDivision(value);
+};
 
 // 获取设备详情
 const getDetail = () => {
@@ -217,7 +234,7 @@ const getDetail = () => {
       frame_start: "7E7E",
       address: "11009001",
       reserve: "00",
-      password: "2012",
+      pass: "2012",
       code: "",
       version_length: "",
       start: "02",
@@ -254,19 +271,34 @@ let timer = ref(null);
 
 // 下发指令
 const handleClickSubmit = () => {
-  const code = commonForm.code;
-  const data = commonForm.data;
+  const {
+    code,
+    data,
+    address,
+    pass,
+    collect,
+    timer,
+    timer_start,
+    check_time,
+    check_num,
+  } = commonForm;
+
   let params = { id, code };
 
-  if (!isEmpty(data)) {
-    if (data.dateTimeRange) {
-      params.data = {
-        start_time: data.dateTimeRange[0],
-        end_time: data.dateTimeRange[1],
-      };
-    } else {
-      params.data = data;
-    }
+  params.data = { ...params.data, address, pass, collect, timer };
+  console.log(timer_start,'=========')
+  if (timer_start) {
+    params.data.timer_start = timer_start.split(":").join(",");
+  }
+  if (check_time && check_num) {
+    params.data.check = `${check_time},${check_num}`;
+  }
+
+  if (!isEmpty(data) && data.dateTimeRange) {
+    params.data = {
+      start_time: data.dateTimeRange[0],
+      end_time: data.dateTimeRange[1],
+    };
   }
 
   rtuApi.downControl(params).then((res) => {
@@ -319,7 +351,6 @@ const setControlListScroll = () => {
       const scrollHeight = ele.scrollHeight;
       controlListRef.value.scrollTo({
         top: scrollHeight,
-        // behavior: "smooth",
       });
     }
   });
@@ -401,6 +432,7 @@ onUnmounted(() => {
                 labelWidth,
                 min,
                 max,
+                maxLen,
                 unit,
                 decimals,
                 type,
@@ -413,18 +445,46 @@ onUnmounted(() => {
             :label="label"
             :label-width="labelWidth"
           >
-            <el-input v-model="commonForm[key]" v-if="type === 'el-input'">
+            <el-input
+              class="input-text"
+              v-model="commonForm[key]"
+              v-if="type === 'el-input'"
+              @input="handleLimitInput($event, key, maxLen)"
+              :placeholder="placeholder"
+            >
             </el-input>
+
+            <el-input
+              v-else-if="type === 'num'"
+              class="input-text"
+              v-model="commonForm[key]"
+              @input="handleExactDivisionInput($event, key)"
+              :placeholder="placeholder"
+            ></el-input>
+
             <el-time-picker
               v-else-if="type === 'el-time-picker'"
               v-model="commonForm[key]"
               format="HH:mm"
+              value-format="HH:mm"
+              :placeholder="placeholder"
+              width="156px"
+            />
+            <el-time-select
+              v-else-if="type === 'el-time-select'"
+              v-model="commonForm[key]"
+              start="00:00"
+              step="1:00"
+              end="23:00"
+              format="HH"
+              style="width: 128px"
               :placeholder="placeholder"
             />
             <el-input
               v-else
               :model-value="commonForm[key]"
               @input="handleCommonInput($event, key, decimals || 0, min, max)"
+              :placeholder="placeholder"
             />
             <div class="input-item__unit" v-if="unit">{{ unit }}</div>
           </el-form-item>
@@ -574,7 +634,7 @@ onUnmounted(() => {
 
   .input-number__item {
     .el-input {
-      width: 60px;
+      width: 96px;
     }
 
     .input-text {
