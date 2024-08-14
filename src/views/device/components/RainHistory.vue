@@ -197,10 +197,11 @@ watchEffect(() => {
 });
 
 useRtuStore.handleMethod((val) => {
+  console.log(val)
   try {
     searchInfo.value.start_time = val[0];
     searchInfo.value.end_time = val[1];
-    searchInfo.page = 1;
+    searchInfo.value.page = 1;
     getRainChartData();
     getRainHistory();
   } catch (error) {

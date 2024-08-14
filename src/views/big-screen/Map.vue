@@ -20,7 +20,6 @@
 <script setup>
 import { onMounted, ref, watchEffect } from "vue";
 import * as Cesium from "cesium";
-import Card from "./components/Card.vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 window.CESIUM_BASE_URL = "/Cesium";
@@ -34,6 +33,10 @@ const props = defineProps({
   deviceList: {
     type: Array,
     default: () => [],
+  },
+  fetchData: {
+    type: Function,
+    default: () => {},
   },
 });
 
@@ -101,6 +104,8 @@ const handleChangeDevice = (code) => {
   });
   const marker = viewer.entities.getById(list.device_number);
   updateMarker(marker, 0.6);
+  // 请求接口数据
+  props.fetchData(list.id, list.device_type);
 };
 
 // 添加marker
@@ -176,12 +181,12 @@ const updateMarker = (marker) => {
 
 // 数据
 watchEffect(() => {
+
   setTimeout(() => {
     props.deviceList.forEach((item) => {
       addMarker(item);
     });
-
-    selectList.value = props.deviceList[0].device_number;
+    selectList.value = props.deviceList[2].device_number;
     handleChangeDevice(selectList.value);
   }, 3000);
 });
@@ -207,7 +212,7 @@ const handleClick = (handler) => {
 
 .map-container {
   position: relative;
-  flex:1;
+  flex: 1;
   .map-select {
     position: absolute;
     left: 0;

@@ -18,9 +18,15 @@ function createService() {
   // 请求拦截
   service.interceptors.request.use(
     (config) => {
-      config.headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-      };
+      // config.headers = {
+      //   "Content-Type": "application/x-www-form-urlencoded",
+      // };
+      // if(config.url.indexOf('upload')>-1){
+      //   config.headers = {
+      //     "Content-Type": "multipart/form-data",
+      //   };
+      // }
+     
       return config;
     },
     // 发送失败

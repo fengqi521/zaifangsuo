@@ -95,15 +95,68 @@ export const getCRCAsHex = (hexString) => {
     .padStart(2, "0")}`;
 };
 
-export const timeToHex = (timeString) => {
-  // 解析时间字符串
-  const [hours, minutes] = timeString.split(':').map(Number);
-      // 将小时和分钟转换为十六进制，并确保两位数
-      const hoursHex = hours.toString(16).toUpperCase().padStart(2, '0');
-      const minutesHex = minutes.toString(16).toUpperCase().padStart(2, '0');
-  
-      // 拼接小时和分钟的十六进制值
-      return hoursHex + minutesHex;
+/**
+ * 十进制转十六进制
+ * @param {*} timeString 时间{时：分}
+ * @returns   十六进制值
+ */
+export const strToHex = (str) => {
+  // 解析字符串
+  const strArr = str.split(":").map(Number);
+  console.log(strArr);
+  if (strArr && strArr.length > 1) {
+    const str1 = strArr[0];
+    const str2 = strArr[1];
+    const hoursHex = str1.toString(16).toUpperCase().padStart(2, "0");
+    const minutesHex = str2.toString(16).toUpperCase().padStart(2, "0");
+    return hoursHex + minutesHex;
+  }
 
-  return hexValue;
+  if (strArr && strArr.length < 2) {
+    const str1 = strArr[0];
+    return str1.toString(16).toUpperCase().padStart(2, "0");
+  }
+};
+
+/**
+ * 计算在线和离线数量的占比，并确保总和为100%
+ * @param {Array<number>}  values  各项数据数组
+ * @returns  {Array<number>} - 包含每项调整后的百分比
+ */
+export const calculatePercentages = (values) => {
+  // 计算总数
+  const total = values.reduce((sum, value) => sum + value, 0);
+
+  // 计算每项的初步占比
+  const percentages = values.map((value) => ((value / total) * 100).toFixed(2));
+
+  // 计算总的百分比之和
+  const totalPercent = percentages
+    .reduce((sum, percent) => sum + parseFloat(percent), 0)
+    .toFixed(2);
+
+  // 计算调整值
+  const adjustment = (100 - totalPercent).toFixed(2);
+
+  // 调整第一个百分比，确保总和为100%
+  const adjustedPercentages = percentages.map((percent, index) => {
+    if (index === 0) {
+      return (parseFloat(percent) + parseFloat(adjustment)).toFixed(2);
+    }
+    return percent;
+  });
+
+  return adjustedPercentages;
+};
+
+export const formatSize = (bytes) => {
+  if (bytes < 1024) {
+    return `${bytes} bytes`;
+  } else if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(2)} KB`;
+  } else if (bytes < 1024 * 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  } else {
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
 };

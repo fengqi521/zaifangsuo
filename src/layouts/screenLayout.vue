@@ -1,7 +1,7 @@
 <template>
   <div class="geo-app">
     <div
-      :class="[`geo-box geo-box-${theme}`, { 'geo-box-config': !show }]"
+      :class="[`geo-box`,  'geo-box-config' ]"
       :style="getViewStyle"
     >
       <div class="screen-head">

@@ -23,10 +23,11 @@ const handleClickClose = () => {
 </script>
 
 <template>
-  <div>
+  <div class="modal">
     <el-dialog
       :model-value="props.dialogVisible"
       :destroy-on-close="true"
+      :show-close="false"
       :title="props.title"
       :width="props.width"
       @close="handleClickClose"
@@ -40,15 +41,32 @@ const handleClickClose = () => {
           </div> -->
         </slot>
       </template>
+      <img class="cancel-icon" src="@/assets/images/cancel.png" alt="" @click="handleClickClose">
     </el-dialog>
+ 
   </div>
 </template>
 <style lang="scss" scoped>
 :deep(.el-dialog) {
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  margin:0;
+  padding:24px;
   .el-dialog__title {
     font-size: 16px;
     font-weight: 700;
     color: var(--panel-text-color);
+  }
+
+  .cancel-icon{
+    position: absolute;
+    top: -40px;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
   }
 }
 </style>

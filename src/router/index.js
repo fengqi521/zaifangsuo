@@ -27,6 +27,10 @@ const HistoryRecord = () => import("@/views/command/index.vue");
 // 用户管理
 const UserList = () => import("@/views/users/index.vue");
 
+
+// 固件列表
+const PackageList = () => import("@/views/package/index.vue");
+
 // 报文解析
 const Parsing = () => import("@/views/message-parser/index.vue");
 
@@ -167,6 +171,22 @@ export const dynamicRoutes = [
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
+          size: "20px",
+          roles: [1],
+        },
+      },
+    ],
+  },
+  {
+    path: "/package",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: PackageList,
+        meta: {
+          title: "固件管理",
+          icon: "icon-gujianguanli",
           size: "20px",
           roles: [1],
         },

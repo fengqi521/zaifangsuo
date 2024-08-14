@@ -3,7 +3,7 @@
     <!-- 左侧内容 -->
     <Left />
     <!-- 地图 -->
-    <Map :deviceList="deviceList" />
+    <Map :deviceList="deviceList" :fetchData="fetchData" />
 
     <!-- 右侧内容 -->
     <Right />
@@ -18,44 +18,124 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import Map from "./Map.vue";
 import Left from "./Left.vue";
 import Right from "./Right.vue";
 
+import { groupBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
+import { useScreenStoreHook } from "@/store/modules/screen";
+import { getStartAndEndTime } from "@/utils";
+import { deviceMap } from "@/constants";
 import rtuApi from "@/api/rtu";
+import homeApi from "@/api/home";
+
+const screenStore = useScreenStoreHook();
 
 const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
 
-// setInterval(() => {
-//   getHourMinutes();
-//   getWeek();
-//   getCurrentDay();
-// }, 1000);
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = () => {
   rtuApi.getDeviceList({ limit: 10000, page: 1, status: 2 }).then((res) => {
     if (!res.code) {
       Object.assign(deviceList, res.data.list);
+      try {
+        const lists = res.data.list;
+        const groupByType = groupBy(lists, "device_type");
+        let onlineArr = [];
+        let offlineArr = [];
+        let values = [];
+        Object.entries(groupByType).forEach(([deviceType, devices]) => {
+          const online = devices.filter((item) => item.online === 1);
+          const offline = devices.filter((item) => item.online === 0);
+          onlineArr.push(online.length);
+          offlineArr.push(offline.length);
+          const list = deviceMap.find(
+            (item) => item.value === Number(deviceType)
+          );
+          values.push(list?.label);
+        });
+
+        screenStore.setData("deviceList", {
+          values,
+          online: onlineArr,
+          offline: offlineArr,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
 };
 
-// 获取设备运行数据
-const getStatus = () => {
-  const res = {
-    code: 0,
-    data: [
-      { name: "泥位计", online: 0, offline: 2 },
-      { name: "雨量计", online: 0, offline: 1 },
-    ],
-  };
+// 获取七天监测数据
+const getDeviceRealData = (id, type) => {
+  const times = getStartAndEndTime("month");
+  rtuApi
+    .getRainData({ id, type, start_time: times[0], end_time: times[1] })
+    .then((res) => {
+      if (!res.code) {
+        const lists = type === 1 ? [res.data.list[0]] : res.data.list;
+        screenStore.setData("monitorData", lists);
+      }
+    });
+};
+
+// 设备工况
+const getWordData = (id, type) => {
+  const times = getStartAndEndTime("week");
+  rtuApi
+    .getWorkData({ id, type, start_time: times[0], end_time: times[1] })
+    .then((res) => {
+      if (!res.code) {
+        const lists = res.data.list;
+        const flag = lists.some((item) => item.timeList.length);
+        if (!flag) {
+          screenStore.setData("workData", []);
+          return;
+        }
+        screenStore.setData("workData", lists);
+      }
+    });
+};
+
+// 设备数量
+const getDeviceCategory = () => {
+  homeApi.getDevicePercent().then((res) => {
+    if (!res.code) {
+      screenStore.setData("deviceCount", res.data.list);
+    }
+  });
 };
 
 getDeviceList();
+getDeviceCategory();
+const fetchData = (id, type) => {
+  getDeviceRealData(id, type);
+  getWordData(id, type);
+  const list = deviceList.find((item) => item.id === id);
+  const curDeviceType = deviceMap.find(
+    (item) => item.value === list.device_type
+  );
+  screenStore.setData("type", type);
+  screenStore.setData("detail", {
+    ...list,
+    type: curDeviceType.label,
+    loc: `${list.langitude},${list.latitude}`,
+    status: list.online === 1 ? "在线" : "离线",
+  });
+};
+
+onMounted(() => {
+  setInterval(() => {
+    getHourMinutes();
+    getWeek();
+    getCurrentDay();
+  }, 1000);
+});
 </script>
 <style lang="scss" scoped>
 .dashboard-container {
@@ -64,13 +144,13 @@ getDeviceList();
 
   .dashboard-left,
   .dashboard-right {
-    width: 480px;
+    width: 500px;
   }
 
   .date-container {
     position: absolute;
-    right:84px;
-    top:42px;
+    right: 84px;
+    top: 42px;
     display: flex;
     align-items: center;
     margin-bottom: 4px;

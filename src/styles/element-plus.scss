@@ -55,13 +55,17 @@
 .el-form-item.is-error .el-textarea__inner,
 .el-form-item.is-error .el-textarea__inner.is-focus,
 .el-form-item.is-error .el-textarea__inner:focus,
-.el-form-item.is-error .el-textarea__inner:hover {
+.el-form-item.is-error .el-textarea__inner:hover,.el-textarea__inner:focus ,.el-textarea__inner,.el-textarea__inner:hover{
     box-shadow: none;
 }
 
 .el-input__wrapper,
 .el-select__wrapper {
     padding: 0 11px;
+    border: 1px solid var(--select-border-color);
+}
+
+.el-textarea__inner{
     border: 1px solid var(--select-border-color);
 }
 

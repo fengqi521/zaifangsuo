@@ -17,8 +17,9 @@ import Icon from "@/components/Icon.vue";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { useInputHook } from "@/hooks/useInput";
-import rtuApi from "@/api/rtu";
+import { strToHex } from "@/utils";
 import { operateLists } from "@/constants";
+import rtuApi from "@/api/rtu";
 
 const route = useRoute();
 const { setInputValue, setInputMaxLen, setInputExactDivision } = useInputHook();
@@ -285,17 +286,29 @@ const handleClickSubmit = () => {
 
   let params = { id, code };
 
-  params.data = { ...params.data, address, pass, collect, timer };
-  console.log(timer_start,'=========')
+  params.Data = { ...params.data, address, pass };
+  // if(address){
+  //   // params.data.address = strToHex(address)
+  // }
+  // if(pass){
+  //   // params.data.pass = strToHex(pass)
+  // }
+  if (collect) {
+    params.Data.collect = strToHex(collect);
+  }
+  if (timer) {
+    params.Data.timer = strToHex(timer);
+  }
   if (timer_start) {
-    params.data.timer_start = timer_start.split(":").join(",");
+    params.Data.timer_start = strToHex(timer_start);
   }
   if (check_time && check_num) {
-    params.data.check = `${check_time},${check_num}`;
+    params.Data.check = strToHex(`${check_time}:${check_num}`);
   }
 
   if (!isEmpty(data) && data.dateTimeRange) {
-    params.data = {
+    params.Data = {
+      ...params.data,
       start_time: data.dateTimeRange[0],
       end_time: data.dateTimeRange[1],
     };

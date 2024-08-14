@@ -4,15 +4,15 @@ html.normal {
 
     /* 基础 */
     /* --el-fill-color-blank: rgb(228, 235, 249); */
-    --el-border-radius-base: 0;
-    --el-text-color-placeholder: rgb(78, 90, 113);
+    --el-border-radius-base: 3;
+    --el-text-color-placeholder: 	rgb(78, 90, 113,.6);;
     --el-text-color-regular:rgb(78, 90, 113);
 
    /* 状态 */
    /* --el-color-success:var(--online-bg-color); */
 
    --el-color-info:var(--normal-title-color);
-   --el-font-size-base:14px;
+   --el-font-size-base:12px;
 }
 
 /* button */

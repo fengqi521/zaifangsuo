@@ -1,22 +1,13 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import Chart from "@/components/Chart/index.vue";
+import Empty from "../../Empty.vue";
 import { getCommonPie } from "@/utils/chartData";
-import { color } from "echarts";
-
+import { useScreenStoreHook } from "@/store/modules/screen";
+const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据
 const option = ref(getCommonPie());
 
-var echartData = [
-  {
-    value: 2,
-    name: "泥位计",
-  },
-  {
-    value: 1,
-    name: "雨量计",
-  },
-];
 const scale = 0.8;
 var rich = {
   yellow: {
@@ -97,9 +88,17 @@ var colors = [
     ],
   },
 ];
-onMounted(async () => {
+
+watchEffect(() => {
+  const lists = screenStore.screenData.deviceCount;
+  if (!lists || !lists.length) return;
+  resetOptions(lists);
+});
+
+const resetOptions = (lists) => {
+  lists = lists.map((item) => ({ ...item, value: item.count }));
   // 更新饼图数据和样式配置
-  const sum = echartData.reduce((prev, next) => prev + next.value, 0);
+  const sum = lists.reduce((prev, next) => prev + next.value, 0);
   option.value.color = colors;
   option.value.title[0].text = sum;
   option.value.title.forEach((item) => {
@@ -114,36 +113,22 @@ onMounted(async () => {
       name: "设备总数",
       type: "pie",
       label: {
-        normal: {
-          formatter: function (params, ticket, callback) {
-            var total = 0;
-            var percent = 0;
-            echartData.forEach(function (value, index, array) {
-              total += value.value;
-            });
-            percent = ((params.value / total) * 100).toFixed(1);
-            return (
-              "{white|" +
-              params.name +
-              "}\n{yellow|" +
-              params.value +
-              "}\n{blue|" +
-              percent +
-              "%}"
-            );
-          },
-          rich: rich,
+        formatter: function (params) {
+          const { name, value, percent } = params;
+          return `{white|${name}}\n{yellow|${value}}\n{blue| ${percent}%}`;
         },
+        rich,
       },
       radius: ["40%", "90%"],
       center: ["50%", "50%"],
       roseType: "area",
-      data: echartData,
+      data: lists,
     },
   ];
-});
+};
 </script>
 
 <template>
-  <chart :options="[option]" />
+  <Empty v-if="!screenStore.screenData.deviceCount.length" />
+  <chart :options="[option]" v-else/>
 </template>

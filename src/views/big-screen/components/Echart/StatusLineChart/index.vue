@@ -1,15 +1,24 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import { getCommonBar } from "@/utils/chartData";
+import { useScreenStoreHook } from "@/store/modules/screen";
 
+const screenStore = useScreenStoreHook();
 // 初始化数据
-const option = ref(getCommonBar({seriesUnit:['个']}));
+const option = ref(getCommonBar({ seriesUnit: ["个"] }));
 
-onMounted(async () => {
-  // {name:'泥位计',online:0,offline:2},
-  // {name:'雨量计',online:0,offline:1},
-  const value = ["泥位计", "雨量计"];
+onMounted(() => {
+  watch(
+    () => screenStore.screenData.deviceList,
+    (deviceObj) => {
+      resetOptions(deviceObj);
+    },
+    {immediate:true}
+  );
+});
+const resetOptions = (deviceObj) => {
+  const { values, online, offline } = deviceObj;
   option.value.title = [];
   option.value.legend = {
     ...option.value.legend,
@@ -17,7 +26,7 @@ onMounted(async () => {
     data: ["在线", "离线"],
     show: true,
   };
-  option.value.xAxis[0].data = value;
+  option.value.xAxis[0].data = values;
   option.value.yAxis[0].name = "";
   option.value.series = [
     {
@@ -34,7 +43,7 @@ onMounted(async () => {
       },
       barGap: "35%",
       barCategoryGap: 35,
-      data: [0, 0],
+      data: online,
       barWidth: 20,
       itemStyle: {
         borderRadius: [2, 2, 0, 0],
@@ -65,7 +74,7 @@ onMounted(async () => {
       },
       barGap: "35%",
       barWidth: 20,
-      data: [2, 1],
+      data: offline,
       itemStyle: {
         borderRadius: [2, 2, 0, 0],
         color: {
@@ -84,7 +93,7 @@ onMounted(async () => {
   ];
 
   option.value.dataZoom[0].show = false;
-});
+};
 </script>
 
 <template>

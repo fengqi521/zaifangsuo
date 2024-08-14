@@ -1,11 +1,24 @@
-import { ref, watch } from "vue";
+import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
 export const useScreenStoreHook = defineStore("screenStore", () => {
   const scale = ref(1);
+  const screenData = reactive({
+    type:'',
+    detail: {}, // 设备详情
+    deviceList: { values: [], online: [], offline: [] }, // 设备数据
+    deviceCount: [], // 设备数量统计
+    statusLists: [], //
+    monitorData: [], // 监测数据
+    workData: [], // 工况数据
+  });
 
   const setScale = (value) => {
     scale.value = value;
   };
 
-  return { scale, setScale };
+  const setData = (key, data) => {
+    screenData[key] = data;
+  };
+
+  return { scale, screenData, setScale, setData };
 });

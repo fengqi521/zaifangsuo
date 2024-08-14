@@ -180,7 +180,7 @@ const handleCloseDeleteModal = () => {
 <template>
   <div class="user-container">
     <Bread :breadList="breadList">
-      <el-button type="primary" @click="handleEdit()">新建用户</el-button>
+    
     </Bread>
     <SearchForm
       :formItems="formItems"
@@ -189,6 +189,9 @@ const handleCloseDeleteModal = () => {
       @reset="handleReset"
     />
     <ElCard title="用户列表">
+      <template v-slot:actions>
+          <el-button type="primary" @click="handleEdit()">新建用户</el-button>
+      </template>
       <ElTable
         class="user-list__table"
         :loading="loading"

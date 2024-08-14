@@ -2,7 +2,6 @@
 import { ref, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
-import rtuApi from '@/api/rtu'
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import {
   BaseInfo,
@@ -48,8 +47,8 @@ const currentComponentRef = computed(() => {
 });
 // 导航
 const breadList = ref([
-  { to: "/rtu", title: "设备管理" },
-  { title: "设备详情" },
+  { to: "/device", title: "设备管理" },
+  { title: "设备详情" }
 ]);
 
 

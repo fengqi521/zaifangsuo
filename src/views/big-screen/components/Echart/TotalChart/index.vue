@@ -1,36 +1,113 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import Chart from "@/components/Chart/index.vue"
-import { getCommonPie } from "@/utils/chartData";
-// 定义 ref 引用和初始化数据
-const dataContainer = ref(null);
-const option = ref(getCommonPie());
+import { reactive, watch } from "vue";
+import Chart from "@/components/Chart/index.vue";
+import { useScreenStoreHook } from "@/store/modules/screen";
+import { getCommonBar } from "@/utils/chartData";
+import { calculatePercentages } from "@/utils";
+const screenStore = useScreenStoreHook();
+const option = reactive(getCommonBar({ seriesUnit: "%" }));
 
-// 定义 CSS 变量名
-const onlineColor = getCssVariableValue("--online-bg-color");
-const offlineColor = getCssVariableValue("--chart-pie-offline-color");
+const resetOptions = (list) => {
+  const xData = ["在线", "离线"];
+  const { online, offline } = list;
+  const onlineCount = online.reduce((prev, next) => prev + next, 0);
+  const offlineCount = offline.reduce((prev, next) => prev + next, 0);
+  const percentList = calculatePercentages([onlineCount, offlineCount]);
+  const yData = [onlineCount, offlineCount];
 
-onMounted(async () => {
-  // 更新饼图数据和样式配置
-  option.value.series[0].data = [
+  option.grid.left = "20%";
+  option.grid.right = "20%";
+  option.xAxis[0].data = xData;
+  option.xAxis[0].axisLine.show = false;
+  option.yAxis[0].splitLine.show = false;
+  option.yAxis[0].axisLabel.show = false;
+  option.tooltip = {
+    show: true,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    formatter: (params) => {
+      const { name, dataIndex } = params;
+      const str = `<div>${name}：<span>${percentList[dataIndex]}%
+        </span></div>`;
+      return str;
+    },
+    textStyle: {
+      fontSize: 12,
+      color: "#FFF",
+    },
+  };
+  option.series = [
     {
-      value: res?.data?.online,
-      name: "在线",
-      itemStyle: { color: onlineColor },
+      name: "",
+      type: "pictorialBar",
+      symbolSize: [40, 10],
+      symbolOffset: [0, -6],
+      symbolPosition: "end",
+      z: 12,
+
+      label: {
+        normal: {
+          show: true,
+          position: "top",
+          formatter: "{c}个",
+          fontSize: 15,
+          fontWeight: "bold",
+          color: "#1ABEFE",
+        },
+      },
+      color: "#1ABEFE",
+      data: yData,
     },
     {
-      value: res?.data?.offline,
-      name: "离线",
-      itemStyle: { color: offlineColor },
+      name: "",
+      type: "pictorialBar",
+      symbolSize: [40, 10],
+      symbolOffset: [0, 4],
+      z: 12,
+      color: "#323CFF",
+      data: yData,
+    },
+
+    {
+      type: "bar",
+      barWidth: "40",
+      barGap: "10%",
+      barCateGoryGap: "10%",
+      itemStyle: {
+        normal: {
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0,
+                color: "#1ABEFE", // 0% 处的颜色
+              },
+              {
+                offset: 1,
+                color: "#323CFF", // 100% 处的颜色
+              },
+            ],
+          },
+          opacity: 0.8,
+        },
+      },
+      data: yData,
     },
   ];
+  option.dataZoom[0].show = false;
+};
 
-  const values = Object.values(res?.data);
-  const sum = values.reduce((prev, val) => prev + val, 0);
-  option.value.title[0].text = sum;
-
-  option.value.series[0].radius = ["45%", "65%"];
-});
+watch(
+  () => screenStore.screenData.deviceList,
+  (lists) => {
+    // if (!lists || !lists.length) return;
+    resetOptions(lists);
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
