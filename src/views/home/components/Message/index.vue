@@ -2,7 +2,7 @@
 import { ref, nextTick, reactive, watch, onUnmounted } from "vue";
 import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import SearchForm from "@/components/SearchForm/index.vue";
-import { messageFormData, messageFormItems } from "@/constants";
+import { messageFormData, messageFormItems, allOperateType } from "@/constants";
 import { getCurrentTime } from "@/utils";
 import homeApi from "@/api/home";
 
@@ -24,10 +24,14 @@ const getCurrentCategoryList = () => {
       const data = res.data.list;
       if (data.length > 0) {
         messageSearchModel.value.time = data[data.length - 1].CreateTime;
-        const lists = data.map((item) => ({
-          ...item,
-          id: `data-id-${item.Id}-${getCurrentTime()}`,
-        }));
+        const lists = data.map((item) => {
+          const list = allOperateType.find((cur) => cur.value === item.Operate);
+          return {
+            ...item,
+            id: `data-id-${item.Id}-${getCurrentTime()}`,
+            type: list?.label,
+          };
+        });
         // 全部数据
         messages.all.push(...lists);
 
@@ -146,7 +150,7 @@ const scrollToBottom = () => {
         >
           <p class="message-item-top">{{ item.CreateTime }}</p>
           <div class="message-item-bom">
-            <p class="message-item-title">{{ item.title }}</p>
+            <p class="message-item-title">{{ item.type }}</p>
             <p class="message-item-info">{{ item.Response }}</p>
           </div>
         </DynamicScrollerItem>
@@ -174,7 +178,6 @@ const scrollToBottom = () => {
 }
 
 .message-container {
-
   .search-form {
     justify-content: center;
     padding: 0 16px 16px;

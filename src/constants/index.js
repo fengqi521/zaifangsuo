@@ -271,5 +271,6 @@ export {
   messageFormItems,
   recordFormData,
   recordFormItems,
-  recordOptions
+  recordOptions,
+  allOperateType
 };
