@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watchEffect } from "vue";
+import { reactive, ref, watchEffect, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
@@ -25,21 +25,18 @@ const searchInfo = ref({
 const rainOption = reactive(
   getCommonLine({
     seriesUnit: ["mm", "mm", "min"],
-    yAxisTitlePadding: [0, 0, 0, 10],
   })
 ); //雨量
 
-const tempOption = reactive(
-  getCommonLine({ seriesUnit: ["°C"], yAxisTitlePadding: [0, 0, 0, 10] })
-); //温度
+const tempOption = reactive(getCommonLine({ seriesUnit: ["°C"] })); //温度
 
-const windOption = reactive(
-  getCommonLine({ seriesUnit: ["°"], yAxisTitlePadding: [0, 0, 0, 10] })
-); //风向
+const humidityOption = reactive(getCommonLine({ seriesUnit: ["°"] })); //湿度
 
-const speedOption = reactive(
-  getCommonLine({ seriesUnit: ["m/s"], yAxisTitlePadding: [0, 0, 0, 10] })
-); //风速
+const windOption = reactive(getCommonLine({ seriesUnit: ["°"] })); //风向
+
+const speedOption = reactive(getCommonLine({ seriesUnit: ["m/s"] })); //风速
+
+const allOptions = ref([tempOption, humidityOption, windOption, speedOption]);
 
 const rainData = reactive({
   timeList: [],
@@ -47,6 +44,7 @@ const rainData = reactive({
   duration: [],
   total_rain: [],
   temperature: [],
+  humidity: [],
   wind: [],
   speed: [],
 });
@@ -60,8 +58,9 @@ const getRainChartData = () => {
       rainData.duration = res.data.list[1].valueList;
       rainData.total_rain = res.data.list[2].valueList;
       rainData.temperature = res.data.list[3].valueList;
-      rainData.wind = res.data.list[4].valueList;
-      rainData.speed = res.data.list[5].valueList;
+      rainData.humidity = res.data.list[4].valueList;
+      rainData.wind = res.data.list[5].valueList;
+      rainData.speed = res.data.list[6].valueList;
     }
   });
 };
@@ -70,14 +69,26 @@ const getRainChartData = () => {
 const resetOptions = (data) => {
   // 雨量
   const colors = ["#ffd285", "#ff733f"];
-  rainOption.legend.show = true;
-  rainOption.legend.x = "center";
-  rainOption.legend.data = ["降雨量", "累计降雨量", "降雨时长"];
-  //   collectOption.color = colors;
+  rainOption.legend = {
+    ...rainOption.legend,
+    show: true,
+    x: "center",
+    data: ["降雨量", "累计降雨量", "降雨时长"],
+    textStyle: {
+      rich: {
+        a: {
+          verticalAlign: "middle",
+        },
+      },
+      padding: [0, 0, -4, 0],
+    },
+  };
   rainOption.xAxis[0].data = data.timeList;
   rainOption.yAxis[0].name = "{title|降雨量(mm)}";
+  rainOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 20];
   rainOption.yAxis[1].name = "{title|累计降雨量(mm)}";
-
+  rainOption.yAxis[1].nameTextStyle.rich.title.padding = [0, 40, 0, 0];
+  rainOption.yAxis[1].alignTicks = true;
   rainOption.series[0] = {
     name: "降雨量",
     type: "line",
@@ -104,9 +115,11 @@ const resetOptions = (data) => {
   };
 
   // 温度
+  tempOption.color = ["#ff7e7e"];
   tempOption.legend.x = "center";
   tempOption.xAxis[0].data = data.timeList;
   tempOption.yAxis[0].name = "{title|温度(°C)}";
+  tempOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
 
   tempOption.series[0] = {
     name: "温度",
@@ -115,12 +128,27 @@ const resetOptions = (data) => {
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 0,
+    areaStyle: {
+      color: {
+        type: "linear",
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: ["#ff7e7e ", "#ff0000"].map((color, offset) => ({
+          color,
+          offset,
+        })),
+      },
+    },
   };
 
   // 风向
+  windOption.color = ["#00aaff"];
   windOption.legend.x = "center";
   windOption.xAxis[0].data = data.timeList;
   windOption.yAxis[0].name = "{title|风向(°)}";
+  windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
 
   windOption.series[0] = {
     name: "风向",
@@ -129,13 +157,27 @@ const resetOptions = (data) => {
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 0,
+    areaStyle: {
+      color: {
+        type: "linear",
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: ["#00aaff ", "#0033ff"].map((color, offset) => ({
+          color,
+          offset,
+        })),
+      },
+    },
   };
 
-  // 风向
+  // 风速
+  speedOption.color = ["#90ee90"];
   speedOption.legend.x = "center";
   speedOption.xAxis[0].data = data.timeList;
   speedOption.yAxis[0].name = "{title|风速(m/s)}";
-
+  speedOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
   speedOption.series[0] = {
     name: "风速",
     type: "line",
@@ -143,6 +185,46 @@ const resetOptions = (data) => {
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 0,
+    areaStyle: {
+      color: {
+        type: "linear",
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: ["#90ee90 ", "#32cd32"].map((color, offset) => ({
+          color,
+          offset,
+        })),
+      },
+    },
+  };
+
+  // 湿度
+  humidityOption.color = ["#b3e5fc  "];
+  humidityOption.xAxis[0].data = data.timeList;
+  humidityOption.yAxis[0].name = "{title|湿度(m/s)}";
+  humidityOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
+  humidityOption.series[0] = {
+    name: "湿度",
+    type: "line",
+    data: data.humidity,
+    Symbol: "circle",
+    smooth: true,
+    yAxisIndex: 0,
+    areaStyle: {
+      color: {
+        type: "linear",
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: ["#b3e5fc ", "#03a9f4"].map((color, offset) => ({
+          color,
+          offset,
+        })),
+      },
+    },
   };
 };
 
@@ -196,28 +278,41 @@ watchEffect(() => {
   resetOptions(rainData);
 });
 
-useRtuStore.handleMethod((val) => {
-  console.log(val)
-  try {
-    searchInfo.value.start_time = val[0];
-    searchInfo.value.end_time = val[1];
+const fetchData = (values) => {
+  searchInfo.value.start_time = values[0];
+  searchInfo.value.end_time = values[1];
+  getRainChartData();
+  getRainHistory();
+};
+
+fetchData(useRtuStore.dateTimeRange);
+watch(
+  () => useRtuStore.dateTimeRange,
+  (values) => {
     searchInfo.value.page = 1;
-    getRainChartData();
-    getRainHistory();
-  } catch (error) {
-    console.log(error);
+    fetchData(values);
   }
-});
+);
+
+// 计算属性，判断所有 options 的 series 是否为空
+const isAllOptionsEmpty = computed(() =>
+  allOptions.value.every((option) =>
+    option.series.every((item) => !item.data || item.data.length === 0)
+  )
+);
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
-      <div class="device-data__history">
-        <Chart
-          :options="[rainOption, tempOption, windOption, speedOption]"
-        />
+      <el-empty v-if="isAllOptionsEmpty"></el-empty>
+      <div v-else>
+        <Chart :options="[rainOption]" />
+        <div class="device-data__history">
+          <Chart :options="allOptions" />
+        </div>
       </div>
+
       <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchEffect } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
 import { getCommonPie } from "@/utils/chartData";
@@ -89,11 +89,9 @@ var colors = [
   },
 ];
 
-watchEffect(() => {
-  const lists = screenStore.screenData.deviceCount;
-  if (!lists || !lists.length) return;
-  resetOptions(lists);
-});
+watch(()=>screenStore.screenData.deviceCount,(values)=>{
+  resetOptions(values);
+})
 
 const resetOptions = (lists) => {
   lists = lists.map((item) => ({ ...item, value: item.count }));

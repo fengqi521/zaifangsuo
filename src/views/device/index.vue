@@ -6,6 +6,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import { isOnLine } from "@/utils";
 import rtuApi from "@/api/rtu";
 import systemApi from "@/api";
 
@@ -34,6 +35,7 @@ const getRtuData = async () => {
     const newTableData = res.data.list.map((item, index) => ({
       ...item,
       num: (page - 1) * limit + (index + 1),
+      online: isOnLine(item.online_last) ? 1 : 0,
     }));
     rtuData.data = [...newTableData];
     rtuData.total = res.data.total_count;
@@ -162,7 +164,7 @@ const handleCloseModal = () => {
               'rtu-table__status-text--online': scope.row.online,
             }"
           >
-            {{ scope.row.online ? "在线" : "离线" }}
+            {{ isOnLine(scope.row.online_last) ? "在线" : "离线" }}
           </span>
         </template>
         <template #action="{ row }">

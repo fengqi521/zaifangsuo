@@ -5,8 +5,9 @@ import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTag from "@/components/ElTag/index.vue";
 
-import rtuApi from '@/api/rtu'
-import {deviceMap} from '@/constants'
+import rtuApi from "@/api/rtu";
+import { isOnLine } from "@/utils";
+import { deviceMap } from "@/constants";
 
 const route = useRoute();
 const { id } = route.params;
@@ -14,20 +15,21 @@ const { id } = route.params;
 // 通过id获取详情
 const detail = ref({});
 const getDetailById = () => {
-  rtuApi.getDeviceDetail({id}).then(res=>{
+  rtuApi.getDeviceDetail({ id }).then((res) => {
     if (!res.code) {
-      const list = deviceMap.find(item=>item.value===res.data.device_type)
-      detail.value = {...res.data,deviceTypeName:list?.label}
+      const list = deviceMap.find(
+        (item) => item.value === res.data.device_type
+      );
+      detail.value = { ...res.data, deviceTypeName: list?.label };
     }
-  })
+  });
 };
 getDetailById();
-
 </script>
 <template>
   <ElCard class="device-detail">
     <h3 class="device-detail__name">{{ detail.device_name }}</h3>
-    <p class="device-detail__moditime">最新数据时间:{{ detail.update_time }}</p>
+    <p class="device-detail__moditime">最后在线时间:{{ detail.online_last }}</p>
     <div class="device-detail__info">
       <p class="device-detail__item">
         <span class="device-detail__label">设备编号:</span>
@@ -36,8 +38,8 @@ getDetailById();
       <p class="device-detail__item">
         <span class="device-detail__label">在线状态:</span>
         <ElTag
-          :title="detail.online ? '在线' : '离线'"
-          :type="detail.online ? 'online' : 'offline'"
+          :title="isOnLine(detail.online_last) ? '在线' : '离线'"
+          :type="isOnLine(detail.online_last) ? 'online' : 'offline'"
         />
       </p>
       <p class="device-detail__item">

@@ -26,7 +26,7 @@ import Right from "./Right.vue";
 import { groupBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { getStartAndEndTime } from "@/utils";
+import { getStartAndEndTime,isOnLine } from "@/utils";
 import { deviceMap } from "@/constants";
 import rtuApi from "@/api/rtu";
 import homeApi from "@/api/home";
@@ -111,9 +111,10 @@ const getDeviceCategory = () => {
   });
 };
 
-getDeviceList();
-getDeviceCategory();
-const fetchData = (id, type) => {
+const fetchData = () => {
+  const id = screenStore.screenData.id;
+  const type = screenStore.screenData.type;
+  if (!id || !type) return;
   getDeviceRealData(id, type);
   getWordData(id, type);
   const list = deviceList.find((item) => item.id === id);
@@ -125,16 +126,32 @@ const fetchData = (id, type) => {
     ...list,
     type: curDeviceType.label,
     loc: `${list.langitude},${list.latitude}`,
-    status: list.online === 1 ? "在线" : "离线",
+    status: isOnLine(list.online_last) ? "在线" : "离线",
   });
 };
 
 onMounted(() => {
-  setInterval(() => {
+  getDeviceList();
+  getDeviceCategory();
+  // 定义每秒钟执行的任务
+  const secondTasks = () => {
     getHourMinutes();
     getWeek();
     getCurrentDay();
-  }, 1000);
+  };
+
+  // 定义每分钟执行的任务
+  const minuteTasks = () => {
+    getDeviceList();
+    getDeviceCategory();
+    fetchData();
+  };
+
+  // 每秒钟执行一次 secondTasks
+  setInterval(secondTasks, 1000);
+
+  // 每分钟执行一次 minuteTasks
+  setInterval(minuteTasks, 60000);
 });
 </script>
 <style lang="scss" scoped>

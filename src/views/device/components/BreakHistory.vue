@@ -1,162 +1,62 @@
 <script setup>
-import { reactive, ref, watchEffect } from "vue";
-import TimelineImage from "../components/TimelineImage.vue";
+import { reactive, ref, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
+import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
-const collectOption = reactive(
-  getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
-);
+import rtuApi from "@/api/rtu";
+const useRtuStore = useRtuStoreHook();
+const route = useRoute();
+const { id, type } = route.params;
+const collectOption = reactive(getCommonLine({ seriesUnit: [""] }));
 // 图表
+const searchInfo = ref({
+  id,
+  type,
+  page: 1,
+  limit: 10,
+  start_time: "",
+  end_time: "",
+});
+
 const chartData = reactive({ timeList: [], valueList: [] });
-const mudLevelImages = reactive({ timeList: [], valueList: [] });
-// 获取泥水位图表数据
+// 获取断线图表数据
 const getBreakChartData = () => {
-  const res = {
-    code: 0,
-    status: true,
-    msg: null,
-    pageNo: null,
-    pageSize: null,
-    total: null,
-    data: [
-      {
-        zh_name: "泥水位",
-        en_name: "Mud level",
-        units: "m",
-        icon: "",
-        valueList: [
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909, 2.909,
-          2.909, 2.909, 2.909,
-        ],
-        timeList: [
-          "2024-07-13 00:00:00",
-          "2024-07-13 00:05:00",
-          "2024-07-13 00:10:00",
-          "2024-07-13 00:15:00",
-          "2024-07-13 00:20:00",
-          "2024-07-13 00:25:00",
-          "2024-07-13 00:30:00",
-          "2024-07-13 00:35:00",
-          "2024-07-13 00:40:00",
-          "2024-07-13 00:45:00",
-          "2024-07-13 00:50:00",
-          "2024-07-13 00:55:00",
-          "2024-07-13 01:00:00",
-          "2024-07-13 01:05:00",
-          "2024-07-13 01:10:00",
-          "2024-07-13 01:15:00",
-          "2024-07-13 01:20:00",
-          "2024-07-13 01:25:00",
-          "2024-07-13 01:30:00",
-          "2024-07-13 01:35:00",
-          "2024-07-13 01:40:00",
-          "2024-07-13 01:45:00",
-          "2024-07-13 01:50:00",
-          "2024-07-13 01:55:00",
-          "2024-07-13 02:00:00",
-          "2024-07-13 02:05:00",
-          "2024-07-13 02:10:00",
-          "2024-07-13 02:15:00",
-          "2024-07-13 02:20:00",
-          "2024-07-13 02:25:00",
-          "2024-07-13 02:30:00",
-          "2024-07-13 02:35:00",
-          "2024-07-13 02:40:00",
-          "2024-07-13 02:45:00",
-          "2024-07-13 02:50:00",
-          "2024-07-13 02:55:00",
-          "2024-07-13 03:00:00",
-          "2024-07-13 03:05:00",
-          "2024-07-13 03:10:00",
-          "2024-07-13 03:15:00",
-          "2024-07-13 03:20:00",
-          "2024-07-13 03:25:00",
-          "2024-07-13 03:30:00",
-          "2024-07-13 03:35:00",
-          "2024-07-13 03:40:00",
-          "2024-07-13 03:45:00",
-          "2024-07-13 03:50:00",
-          "2024-07-13 03:55:00",
-          "2024-07-13 04:00:00",
-          "2024-07-13 04:05:00",
-          "2024-07-13 04:10:00",
-          "2024-07-13 04:15:00",
-          "2024-07-13 04:20:00",
-          "2024-07-13 04:25:00",
-          "2024-07-13 04:30:00",
-          "2024-07-13 04:35:00",
-          "2024-07-13 04:40:00",
-          "2024-07-13 04:45:00",
-          "2024-07-13 04:50:00",
-          "2024-07-13 04:55:00",
-          "2024-07-13 05:00:00",
-          "2024-07-13 05:05:00",
-          "2024-07-13 05:10:00",
-          "2024-07-13 05:15:00",
-          "2024-07-13 05:20:00",
-          "2024-07-13 05:25:00",
-          "2024-07-13 05:30:00",
-          "2024-07-13 05:35:00",
-          "2024-07-13 05:40:00",
-          "2024-07-13 05:45:00",
-          "2024-07-13 05:50:00",
-          "2024-07-13 05:55:00",
-          "2024-07-13 06:00:00",
-        ],
-        tag: "6",
-        column: "nswval",
-        group: "泥水位",
-      },
-      {
-        zh_name: "图像",
-        en_name: "picture url",
-        units: "",
-        icon: "icon-tuxiang-01",
-        valueList: [
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382055040.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382045038.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382035033.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382025035.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382015035.jpg",
-          "http://1.119.55.14:18002/picture/show?localPath=/home/dizai/image/6600004572/2024-07-13/32382005035.jpg",
-        ],
-        timeList: [
-          "2024-07-13 05:50:40",
-          "2024-07-13 04:50:38",
-          "2024-07-13 03:50:33",
-          "2024-07-13 02:50:35",
-          "2024-07-13 01:50:35",
-          "2024-07-13 00:50:35",
-        ],
-        tag: "13",
-        column: "imageurl",
-        group: null,
-      },
-    ],
-    hasNext: false,
-    hasPrevious: false,
-  };
-  if (!res.code) {
-    Object.assign(chartData, res.data[0]);
-    Object.assign(mudLevelImages, res.data[1]);
-  }
+  const { page, limit, ...params } = searchInfo.value;
+  rtuApi.getRainData(params).then((res) => {
+    if (!res.code) {
+      Object.assign(chartData, res.data.list[0]);
+    }
+  });
 };
+// 图表数据重组
+const resetOptions = (data) => {
+  collectOption.legend.show = true;
+  collectOption.xAxis[0].data = data.timeList;
+  collectOption.yAxis[0].name = "{title|1代表断开、0代表正常}";
+  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 65];
+  collectOption.series[0] = {
+    name: "断线状态",
+    type: "line",
+    data: data.valueList,
+    Symbol: "circle",
+    // symbolSize: 6,
+    smooth: true,
+  };
+};
+watchEffect(() => {
+  resetOptions(chartData);
+});
 
 // 历史table数据
 const loading = ref(false);
 const tableColumns = [
   { prop: "num", label: "序号" },
-  { prop: "monitortime", label: "监测时间" },
-  { prop: "nswval", label: "泥水位(m)" },
+  { prop: "upload_time", label: "监测时间" },
+  { prop: "state_name", label: "断线状态" },
 ];
 const deviceData = reactive({
   page: 1,
@@ -165,46 +65,45 @@ const deviceData = reactive({
   data: [],
 });
 
-// 获取泥水位历史数据
-const getBreakLevelHistory = (page, size) => {
-  if (page) deviceData.page = page;
-  if (size) deviceData.limit = size;
-  if (!tableRes.code) {
-    deviceData.total = tableRes.total;
-    Object.assign(
-      deviceData.data,
-      tableRes.data.map((item, index) => ({ ...item, num: index + 1 }))
-    );
+// 获取断线历史数据
+const getBreakLevelHistory = () => {
+  const { page, limit } = searchInfo.value;
+  rtuApi.getRainHistory(searchInfo.value).then((res) => {
+    if (!res.code) {
+      deviceData.total = res.data.total_count;
+      deviceData.data = res.data.list.map((item, index) => ({
+        ...item,
+        state_name: item.line_state === 1 ? "断开" : "正常",
+        num: (page - 1) * limit + index + 1,
+      }));
+    }
+  });
+};
+
+const fetchData = (values) => {
+  searchInfo.value.start_time = values[0];
+  searchInfo.value.end_time = values[1];
+  getBreakChartData();
+  getBreakLevelHistory();
+};
+
+fetchData(useRtuStore.dateTimeRange);
+
+watch(
+  () => useRtuStore.dateTimeRange,
+  (values) => {
+    searchInfo.value.page = 1;
+    fetchData(values);
   }
-};
-// 图表数据重组
-const resetOptions = (data) => {
-  collectOption.legend.show = true;
-  collectOption.xAxis[0].data = data.timeList;
-  collectOption.yAxis[0].name = "{title|泥水位(m)}";
-  collectOption.series[0] = {
-    name: "泥水位",
-    type: "line",
-    data: data.valueList,
-    Symbol: "circle",
-    // symbolSize: 6,
-    smooth: true,
-    unit: "m",
-  };
-};
-watchEffect(() => {
-  resetOptions(chartData);
-});
-getBreakChartData()
-getBreakLevelHistory()
+);
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="loading">
       <div class="device-data__history">
-        <Chart :options="[collectOption]" />
-        <TimelineImage :imagesData="mudLevelImages" />
+        <el-empty v-if="!chartData.timeList.length"></el-empty>
+        <Chart :options="[collectOption]" v-else />
       </div>
       <div class="device-data__table">
         <ElTable
@@ -238,17 +137,14 @@ getBreakLevelHistory()
 
   &__history {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    // grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
 
   &__table {
     margin-top: 24px;
-    border: 1px solid var(--normal-border-color);
-
-    :deep(.el-scrollbar) {
-      height: 408px;
-    }
+    padding: 24px;
+    border: 1px solid var(--card-border-color);
   }
 }
 </style>

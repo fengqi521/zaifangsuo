@@ -149,6 +149,11 @@ export const calculatePercentages = (values) => {
   return adjustedPercentages;
 };
 
+/**
+ * 计算文件大小
+ * @param {*} bytes 字节
+ * @returns 文件大小
+ */
 export const formatSize = (bytes) => {
   if (bytes < 1024) {
     return `${bytes} bytes`;
@@ -159,4 +164,16 @@ export const formatSize = (bytes) => {
   } else {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   }
+};
+
+/**
+ * 计算设备是否在线
+ * @param {string} timeString 时间
+ * @returns {boolean} 是否在线
+ */
+export const isOnLine = (timeString) => {
+  if (!timeString) return false;
+  let currentTime = getCurrentTime();
+  const minute = moment(currentTime).diff(moment(timeString), "minute");
+  return minute < 5;
 };

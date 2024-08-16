@@ -27,7 +27,6 @@ const props = defineProps({
 }
 
 .tag-online {
-    background: var(--online-bg-color);
     color:var(--online-text-color)
 }
 </style>

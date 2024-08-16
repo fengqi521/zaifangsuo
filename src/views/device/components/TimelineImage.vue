@@ -1,17 +1,28 @@
 <script setup>
 const props = defineProps({
-  imagesData:{
-    type:Object,
-    default:()=>({timeList:[], valueList:[]})
-  }
-})
+  imagesData: {
+    type: Object,
+    default: () => ({ timeList: [], valueList: [] }),
+  },
+});
 </script>
 <template>
   <div class="timeline-container">
-    <el-timeline >
-      <el-timeline-item v-for="(item, index) in props.imagesData.timeList" :key="index" :timestamp="item" placement="top">
-        <el-image lazy style="width: 99%; height: 196px" :src="props.imagesData.valueList[index]" :preview-src-list="[props.imagesData.valueList[index]]"
-          fit="cover" />
+    <el-empty v-if="!props.imagesData.timeList.length"></el-empty>
+    <el-timeline v-else>
+      <el-timeline-item
+        v-for="(item, index) in props.imagesData.timeList"
+        :key="index"
+        :timestamp="item"
+        placement="top"
+      >
+        <el-image
+          lazy
+          style="width: 99%; height: 196px"
+          :src="props.imagesData.valueList[index]"
+          :preview-src-list="[props.imagesData.valueList[index]]"
+          fit="cover"
+        />
       </el-timeline-item>
     </el-timeline>
   </div>

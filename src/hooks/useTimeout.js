@@ -2,7 +2,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { debounce } from "lodash";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { useMessage } from "@/plugins/message";
-export const useTimeoutHook = (timeoutDuration = 15, debounceDelay = 100) => {
+export const useTimeoutHook = (timeoutDuration = 30, debounceDelay = 100) => {
   const timer = ref(null);
 
   // 清除当前定时器

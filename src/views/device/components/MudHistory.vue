@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watchEffect } from "vue";
+import { reactive, ref, watchEffect, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import TimelineImage from "./TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
@@ -46,27 +46,31 @@ const resetOptions = (data) => {
   collectOption.legend.show = true;
   collectOption.xAxis[0].data = data.timeList;
   collectOption.yAxis[0].name = "{title|泥水位(m)}";
+  collectOption.yAxis[1].show =false;
+
   collectOption.series[0] = {
     name: "泥水位",
     type: "line",
     data: data.valueList,
     Symbol: "circle",
-    // symbolSize: 6,
-    smooth: true,
-    unit: "m",
+    smooth: true
   };
 };
 
 // 监听数据变化
-watchEffect(() => {
-  resetOptions(chartData);
-});
+watch(
+  () => chartData.valueList,
+  (values) => {
+    resetOptions(chartData);
+  }
+);
+
 
 // 历史table数据
 const loading = ref(false);
 const deviceData = reactive({ total: 0, data: [] });
 const tableColumns = [
-  { prop: "num", label: "序号",width:80 },
+  { prop: "num", label: "序号", width: 80 },
   { prop: "upload_time", label: "监测时间" },
   { prop: "data", label: "泥水位(m)" },
 ];
@@ -96,17 +100,21 @@ const handleChangeSize = (size) => {
   getMudLevelHistory();
 };
 
-useRtuStore.handleMethod((val) => {
-  try {
-    searchInfo.value.start_time = val[0];
-    searchInfo.value.end_time = val[1];
+const fetchData = (values) => {
+  searchInfo.value.start_time = values[0];
+  searchInfo.value.end_time = values[1];
+  getMudChartData();
+  getMudLevelHistory();
+};
+fetchData(useRtuStore.dateTimeRange);
+
+watch(
+  () => useRtuStore.dateTimeRange,
+  (values) => {
     searchInfo.value.page = 1;
-    getMudChartData();
-    getMudLevelHistory();
-  } catch (error) {
-    console.log(error);
+    fetchData(values);
   }
-});
+);
 </script>
 
 <template>

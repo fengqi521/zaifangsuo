@@ -88,7 +88,7 @@ export const getCommonLine = function ({
       {
         name: "{title|累计降雨量(mm)}",
         type: "value",
-        alignTicks: true,
+        // alignTicks: true,
         axisLabel: {},
         nameTextStyle: {
           fontSize: 12,
@@ -105,7 +105,7 @@ export const getCommonLine = function ({
       {
         type: "value",
         // 坐标轴刻度相关设置。
-        alignTicks: true,
+        // alignTicks: true,
         axisTick: {
           show: false,
         },
@@ -318,13 +318,11 @@ export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
         type: "bar",
         stack: "总量",
         label: {
-          normal: {
-            show: false,
-            position: "insideRight",
-            textStyle: {
-              color: "#000",
-            },
-          },
+          show: false,
+          position: "insideRight",
+          // textStyle: {
+          //   color: "#000",
+          // },
         },
         barGap: "35%",
         barCategoryGap: "35%",
@@ -335,20 +333,18 @@ export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
         type: "bar",
         stack: "总量",
         label: {
-          normal: {
-            show: true,
-            // position: 'insideRight',
-            position: "right",
-            textStyle: {
-              color: "#000",
-            },
-            formatter: function (params) {
-              for (var i = 0, l = option.yAxis["data"].length; i < l; i++) {
-                if (option.yAxis["data"][i] == params.name) {
-                  return option.series[0].data[i] + params.value;
-                }
+          show: true,
+          // position: 'insideRight',
+          position: "right",
+          // textStyle: {
+          //   color: "#000",
+          // },
+          formatter: function (params) {
+            for (var i = 0, l = option.yAxis["data"].length; i < l; i++) {
+              if (option.yAxis["data"][i] == params.name) {
+                return option.series[0].data[i] + params.value;
               }
-            },
+            }
           },
         },
         barGap: "40%",

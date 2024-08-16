@@ -14,7 +14,7 @@ onMounted(() => {
     (deviceObj) => {
       resetOptions(deviceObj);
     },
-    {immediate:true}
+    { immediate: true }
   );
 });
 const resetOptions = (deviceObj) => {
@@ -33,13 +33,9 @@ const resetOptions = (deviceObj) => {
       name: "在线",
       type: "bar",
       label: {
-        normal: {
-          show: false,
-          position: "insideRight",
-          textStyle: {
-            color: "#000",
-          },
-        },
+        show: false,
+        position: "insideRight",
+        color: "#000",
       },
       barGap: "35%",
       barCategoryGap: 35,
@@ -64,13 +60,9 @@ const resetOptions = (deviceObj) => {
       name: "离线",
       type: "bar",
       label: {
-        normal: {
-          show: false,
-          position: "insideRight",
-          textStyle: {
-            color: "#000",
-          },
-        },
+        show: false,
+        position: "insideRight",
+        color: "#000",
       },
       barGap: "35%",
       barWidth: 20,

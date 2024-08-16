@@ -1,20 +1,20 @@
 <script setup>
-import { provide } from "vue";
+import { computed } from "vue";
 import Chart from "./InnerChart.vue";
 const props = defineProps({
-    options:{
-        type:Array,
-        default:()=>[]
-    }
-})
+  options: {
+    type: Array,
+    default: () => [],
+  },
+});
 
 </script>
 <template>
-  <Chart
-    v-for="(option, index) in props.options"
-    :key="index"
-    :option="option"
-  />
+    <Chart
+      v-for="(option, index) in props.options"
+      :key="index"
+      :option="option"
+    />
 </template>
 <style lang="scss" scoped>
 .chart-container {

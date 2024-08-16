@@ -22,7 +22,6 @@ import { onMounted, ref, watchEffect } from "vue";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
-window.CESIUM_BASE_URL = "/Cesium";
 let viewer;
 const prevMarker = ref(null);
 const selectList = ref("");
@@ -49,6 +48,7 @@ const getImagePath = (imageName) => {
 // 加载地图
 onMounted(async () => {
   viewer = new Cesium.Viewer("cesiumContainer", {
+    infoBox: false,
     animation: false,
     homeButton: false,
     geocoder: false,
@@ -87,8 +87,8 @@ onMounted(async () => {
   viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(116.572719, 39.833123, 500000),
   });
-  const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  handleClick(handler);
+  // const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  // handleClick(handler);
 });
 
 // 切换地图位置
@@ -105,7 +105,10 @@ const handleChangeDevice = (code) => {
   const marker = viewer.entities.getById(list.device_number);
   updateMarker(marker, 0.6);
   // 请求接口数据
-  props.fetchData(list.id, list.device_type);
+  screenStore.setData("id", list.id);
+  screenStore.setData("type", list.device_type);
+
+  props.fetchData();
 };
 
 // 添加marker
@@ -127,7 +130,7 @@ const addMarker = (item) => {
     markUrl += "d.png";
   } else if (item.online === 1) {
     item.deviceState = "报警";
-    markUrl += ".png";
+    markUrl += "d.png";
   } else {
     item.deviceState = "暂无";
   }
@@ -181,7 +184,6 @@ const updateMarker = (marker) => {
 
 // 数据
 watchEffect(() => {
-
   setTimeout(() => {
     props.deviceList.forEach((item) => {
       addMarker(item);
@@ -215,9 +217,13 @@ const handleClick = (handler) => {
   flex: 1;
   .map-select {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 24px;
+    top: 24px;
     z-index: 2;
+
+    .el-select__wrapper {
+      border-radius: 10px;
+    }
   }
 }
 </style>

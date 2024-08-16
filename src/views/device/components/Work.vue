@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watchEffect } from "vue";
+import { reactive, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import Chart from "@/components/Chart/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
@@ -33,7 +33,7 @@ const workColumns = [
   { prop: "temperature", label: "温度(°C)" },
 ];
 
-const colors = ["#ffd285", "#ff733f"];
+const colors = ["#ff0000", "#ff733f"];
 const chartData = reactive({ timeList: [], voltage: [], temperature: [] });
 // 获取图表数据
 const getWorkChartData = () => {
@@ -50,14 +50,24 @@ const getWorkChartData = () => {
 // 图表数据重组
 const resetOptions = (data) => {
   collectOption.legend.show = true;
-  collectOption.legend.x = "center";
-  collectOption.legend.data = ["电压", "温度"];
-  // collectOption.grid.top = 60
+  collectOption.legend = {
+    ...collectOption.legend,
+    x: "center",
+    data: ["电压", "温度"],
+    textStyle:{
+      rich: {
+        a: {
+          verticalAlign: "middle",
+        },
+      },
+      padding: [0, 0, -2, 0],
+    }
+  };
   collectOption.color = colors;
   collectOption.xAxis[0].data = data.timeList;
   collectOption.yAxis[0].name = "{title|电压(V)}";
   collectOption.yAxis[1].name = "{title|温度(°C)}";
-
+  collectOption.yAxis[1].alignTicks = true;
   collectOption.series[0] = {
     name: "电压",
     type: "line",
@@ -88,13 +98,13 @@ const workData = reactive({
 
 // 获取工况历史数据
 const getWorkHistory = () => {
-  const {page,limit} = searchInfo.value;
+  const { page, limit } = searchInfo.value;
   rtuApi.getWorkHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       workData.total = res.data.total_count;
       workData.data = res.data.list.map((item, index) => ({
         ...item,
-        num:(page-1)*limit + index + 1,
+        num: (page - 1) * limit + index + 1,
       }));
     }
   });
@@ -112,23 +122,27 @@ const handleChangeLimit = (size) => {
   getWorkHistory();
 };
 
-useRtuStore.handleMethod((val) => {
-  try {
-    searchInfo.value.start_time = val[0];
-    searchInfo.value.end_time = val[1];
+const fetchData = (values) => {
+  searchInfo.value.start_time = values[0];
+  searchInfo.value.end_time = values[1];
+  getWorkChartData();
+  getWorkHistory();
+};
+fetchData(useRtuStore.dateTimeRange);
+watch(
+  () => useRtuStore.dateTimeRange,
+  (values) => {
     searchInfo.value.page = 1;
-    getWorkChartData();
-    getWorkHistory();
-  } catch (error) {
-    console.log(error);
+    fetchData(values);
   }
-});
+);
 </script>
 
 <template>
   <div class="device-data">
     <ElCard title="设备工况" v-loading="loading">
-      <Chart :options="[collectOption]"/>
+      <el-empty v-if="!chartData.timeList.length"></el-empty>
+      <Chart :options="[collectOption]" v-else />
       <ElCard v-loading="loading" class="history-data-card">
         <ElTable
           :loading="loading"

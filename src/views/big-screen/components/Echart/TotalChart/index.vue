@@ -37,24 +37,31 @@ const resetOptions = (list) => {
   };
   option.series = [
     {
+      // 顶部椭圆
       name: "",
       type: "pictorialBar",
       symbolSize: [40, 10],
       symbolOffset: [0, -6],
       symbolPosition: "end",
       z: 12,
-
       label: {
-        normal: {
-          show: true,
-          position: "top",
-          formatter: "{c}个",
-          fontSize: 15,
-          fontWeight: "bold",
-          color: "#1ABEFE",
+        show: true,
+        position: "top",
+        formatter: "{c}个",
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "#1ABEFE",
+      },
+
+      itemStyle: {
+        color: function (params) {
+          const { name } = params;
+          if (name === "离线") {
+            return "#ccc";
+          }
+          return "#1ABEFE";
         },
       },
-      color: "#1ABEFE",
       data: yData,
     },
     {
@@ -63,7 +70,15 @@ const resetOptions = (list) => {
       symbolSize: [40, 10],
       symbolOffset: [0, 4],
       z: 12,
-      color: "#323CFF",
+      itemStyle: {
+        color: function (params) {
+          const { name } = params;
+          if (name === "离线") {
+            return "#666";
+          }
+          return "#323CFF";
+        },
+      },
       data: yData,
     },
 
@@ -73,8 +88,28 @@ const resetOptions = (list) => {
       barGap: "10%",
       barCateGoryGap: "10%",
       itemStyle: {
-        normal: {
-          color: {
+        color: function (params) {
+          const { name } = params;
+          if (name === "离线") {
+            return {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 1,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "#ccc", // 0% 处的颜色
+                },
+                {
+                  offset: 1,
+                  color: "#333", // 100% 处的颜色
+                },
+              ],
+            };
+          }
+          return {
             type: "linear",
             x: 0,
             y: 0,
@@ -90,9 +125,9 @@ const resetOptions = (list) => {
                 color: "#323CFF", // 100% 处的颜色
               },
             ],
-          },
-          opacity: 0.8,
+          };
         },
+        opacity: 0.8,
       },
       data: yData,
     },

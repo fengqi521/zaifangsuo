@@ -49,7 +49,22 @@ const colors = [
 ];
 // 图表数据重组
 const resetOptions = (lists) => {
-  collectOption.color = ["rgba(255,115,63,1)", "rgba(255,148,84,1)"];
+  collectOption.color = ["#ff0000", "rgba(255,148,84,1)"];
+  collectOption.legend = {
+    ...collectOption.legend,
+    data: ["电压", "温度"],
+    show: true,
+    x: "center",
+    textStyle: {
+      color: "#96b4be",
+      rich: {
+        a: {
+          verticalAlign: "middle",
+        },
+      },
+      padding: [0, 0, -2, 0],
+    },
+  };
   collectOption.grid.bottom = 0;
   collectOption.grid.top = 30;
   collectOption.xAxis[0].data = lists[0].timeList;
@@ -62,6 +77,7 @@ const resetOptions = (lists) => {
   collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 10, 0, 0];
   collectOption.yAxis[1].nameTextStyle.rich.title.padding = [-10, 0, 0, 0];
   collectOption.yAxis[1].nameTextStyle.color = "#FFF";
+  collectOption.yAxis[1].alignTicks = true;
   collectOption.yAxis[0].splitLine = {
     lineStyle: {
       color: "#2C4756",

@@ -11,7 +11,7 @@ const columns = ref([
   { prop: "device_type", label: "设备类型",width:100 },
   { prop: "location", label: "位置" },
   { prop: "online", label: "在线状态",width:80 },
-  { prop: "online_last", label: "在线时间",width:180 },
+  { prop: "online_last", label: "最后在线时间",width:180 },
   { prop: "create_time", label: "创建时间",width:180 },
 ]);
 
