@@ -4,7 +4,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import formValidators from "@/utils/formValidators";
-import userApi from "@/api/user";
+import systemApi from "@/api";
 import { userRolesMap } from "@/constants";
 const { success, error } = useMessage();
 
@@ -126,7 +126,7 @@ const handleSubmit = async () => {
       };
       if (userForm?.uid) {
         // 修改
-        userApi.updateUser(userFormParams).then((res) => {
+        systemApi.updateUser(userFormParams).then((res) => {
           if (!res.code) {
             success("修改成功");
             handleClose(false);
@@ -138,7 +138,7 @@ const handleSubmit = async () => {
         });
       } else {
         // 新增
-        userApi.createUser(userFormParams).then((res) => {
+        systemApi.createUser(userFormParams).then((res) => {
           if (!res.code) {
             success("创建成功");
             handleClose(false);

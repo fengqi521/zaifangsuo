@@ -7,7 +7,6 @@ import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import { isOnLine } from "@/utils";
-import rtuApi from "@/api/rtu";
 import systemApi from "@/api";
 
 import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
@@ -24,13 +23,13 @@ const columns = ref([
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型" },
   { prop: "online", label: "在线状态" },
-  { prop: "monitoring_station", label: "所属站" },
+  // { prop: "monitoring_station", label: "所属站" },
 ]);
 // 获取设备数据
 const getRtuData = async () => {
   loading.value = true;
   const { page, limit } = searchInfo.value;
-  const res = await rtuApi.getDeviceList(searchInfo.value);
+  const res = await systemApi.getDeviceList(searchInfo.value);
   if (!res.code) {
     const newTableData = res.data.list.map((item, index) => ({
       ...item,

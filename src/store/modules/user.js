@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 import { defineStore } from "pinia";
-import loginApi from "@/api/login";
+import systemApi from "@/api";
 import {
   setUserCookie,
   getUserCookie,
@@ -12,7 +12,7 @@ export const userInfoStoreHook = defineStore("user", () => {
   // 登录
   const login = async ({ username = "", password = "", captcha = "" }) => {
     try {
-      const result = await loginApi.login({ username, password, captcha });
+      const result = await systemApi.login({ username, password, captcha });
       if (!result?.code) {
         const info = {
           name: result.data.user_name,
@@ -36,7 +36,7 @@ export const userInfoStoreHook = defineStore("user", () => {
 
   // 退出登录
   const logout = async () => {
-    const result = await loginApi.logout();
+    const result = await systemApi.logout();
     if (!result.code) {
       removeUserCookie();
       Object.assign(userInfo, { name: "", role: "", uid: "" });

@@ -19,7 +19,7 @@ import { useMessage } from "@/plugins/message";
 import { useInputHook } from "@/hooks/useInput";
 import { strToHex } from "@/utils";
 import { operateLists } from "@/constants";
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 
 const route = useRoute();
 const { setInputValue, setInputMaxLen, setInputExactDivision } = useInputHook();
@@ -314,7 +314,7 @@ const handleClickSubmit = () => {
     };
   }
 
-  rtuApi.downControl(params).then((res) => {
+  systemApi.downControl(params).then((res) => {
     if (!res.code) {
       clearInterval(timer.value);
       commandData.push({ ...res.data, type: "down" });
@@ -334,7 +334,7 @@ const handleReset = () => {
 
 // 实时获取响应数据
 const realResponse = async (params) => {
-  const result = await rtuApi.getResponse(params);
+  const result = await systemApi.getResponse(params);
   if (!result.code && result.data.item.length > 0) {
     clearInterval(timer.value);
     const lists = result.data.item.map((item) => ({

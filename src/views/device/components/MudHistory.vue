@@ -8,7 +8,7 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 
 const useRtuStore = useRtuStoreHook();
 const route = useRoute();
@@ -33,7 +33,7 @@ const chartData = reactive({ timeList: [], valueList: [] });
 // 获取泥水位图表数据
 const getMudChartData = () => {
   const { page, limit, ...params } = searchInfo.value;
-  rtuApi.getRainData(params).then((res) => {
+  systemApi.getRainData(params).then((res) => {
     if (!res.code) {
       Object.assign(chartData, res.data.list[0]);
       Object.assign(mudLevelImages, res.data.list[1]);
@@ -77,7 +77,7 @@ const tableColumns = [
 // 获取泥水位历史数据
 const getMudLevelHistory = () => {
   const { page, limit } = searchInfo.value;
-  rtuApi.getRainHistory(searchInfo.value).then((res) => {
+  systemApi.getRainHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({

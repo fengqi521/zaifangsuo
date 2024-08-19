@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
-import homeApi from "@/api/home";
+import systemApi from "@/api";
 
 import { getCssVariableValue } from "@/utils";
 import { getCommonPie } from "@/utils/chartData";
@@ -18,7 +18,7 @@ const offlineColor = getCssVariableValue("--chart-pie-offline-color");
 
 onMounted(async () => {
   try {
-    const res = await homeApi.getDeviceNumber();
+    const res = await systemApi.getDeviceNumber();
     if (!res?.code) {
       // 更新饼图数据和样式配置
       option.value.series[0].data = [

@@ -12,7 +12,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import Author from "./components/Author/index.vue";
 
 import { userFormData, userFormItems } from "@/constants";
-import userApi from "@/api/user";
+import systemApi from "@/api";
 import { useMessage } from "@/plugins/message";
 
 const { success, warning,error } = useMessage();
@@ -48,7 +48,7 @@ const currentRow = ref({});
 //获取设备进行授权
 const deviceOptions = reactive([]);
 const getDeviceAuthList = async () => {
-  const res = await userApi.getAuthList();
+  const res = await systemApi.getAuthList();
   if (!res.code) {
     Object.assign(
       deviceOptions,
@@ -68,7 +68,7 @@ const getLists = async (page, limit) => {
   page && (searchModel.value.page = page);
   limit && (searchModel.value.limit = limit);
   try {
-    const result = await userApi.getUserList(searchModel.value);
+    const result = await systemApi.getUserList(searchModel.value);
     if (!result?.code) {
       userData.value = result.data.list;
       total.value = result.data.total_count;
@@ -134,7 +134,7 @@ const handleClickAuthor = (values) => {
     error('设备授权失败，至少授权一个设备')
     return;
   }
-  userApi
+  systemApi
     .updateUser({ uid: transferValue.value.uid, did: values.join(",") })
     .then((res) => {
       if (!res.code) {
@@ -159,7 +159,7 @@ const handleDelete = (row) => {
 
 // 确认删除
 const handleConfirmDelete = () => {
-  userApi.deleteUser({ uid: currentRow?.value?.id }).then((res) => {
+  systemApi.deleteUser({ uid: currentRow?.value?.id }).then((res) => {
     deleteModalStatus.value = false;
     if (!res.code) {
       success("删除成功");

@@ -1,5 +1,4 @@
 <script setup>
-import TagsView from "./TagsView/index.vue";
 </script>
 
 <template>

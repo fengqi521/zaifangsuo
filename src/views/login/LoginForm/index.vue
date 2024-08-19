@@ -5,7 +5,7 @@ import { usePermissionStoreHook } from "@/store/modules/permission";
 import { userInfoStoreHook } from "@/store/modules/user";
 
 import formValidators from "@/utils/formValidators";
-import loginApi from "@/api/login";
+import systemApi from "@/api";
 import { useMessage } from "@/plugins/message";
 
 const { success, error } = useMessage();
@@ -31,6 +31,7 @@ const loginInfoRules = reactive({
       message: "请输入密码",
       trigger: "blur",
     },
+    { min: 8, max: 16, message: "长度在8-16个字符", trigger: "blur" },
     // {
     //   validator: formValidators.validatePassword,
     //   trigger: "blur",
@@ -46,7 +47,7 @@ const loginInfoRules = reactive({
 
 // 获取验证码
 const handleClickGetCode = () => {
-  loginApi.getCaptcha().then((res) => {
+  systemApi.getCaptcha().then((res) => {
     if (!res.code) {
       codeImg.value = res.data.src;
     }

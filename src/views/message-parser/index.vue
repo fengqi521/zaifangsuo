@@ -8,7 +8,7 @@ import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { encodeMessage, getCRCAsHex } from "@/utils";
 import { parseFormData, parseFormItems } from "@/constants";
-import parseApi from "@/api/parse";
+import systemApi from "@/api";
 
 const { error } = useMessage();
 const breadList = ref([{ title: "报文解析" }]);
@@ -32,7 +32,7 @@ const handleSearchSubmit = (data) => {
 
 // 获取数据
 const getParse = () => {
-  parseApi.getParse(searchModel.value).then((res) => {
+  systemApi.getParse(searchModel.value).then((res) => {
     if (!res.code) {
       parseData.detail = res.data;
       return;

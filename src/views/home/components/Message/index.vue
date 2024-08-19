@@ -4,7 +4,7 @@ import { DynamicScroller, DynamicScrollerItem } from "vue-virtual-scroller";
 import SearchForm from "@/components/SearchForm/index.vue";
 import { messageFormData, messageFormItems, allOperateType } from "@/constants";
 import { getCurrentTime } from "@/utils";
-import homeApi from "@/api/home";
+import systemApi from "@/api";
 
 let timer = null;
 const drawStatus = ref(false);
@@ -19,7 +19,7 @@ const messages = reactive({
 
 // 获取当前数据
 const getCurrentCategoryList = () => {
-  homeApi.getHistory(messageSearchModel.value).then((res) => {
+  systemApi.getHistory(messageSearchModel.value).then((res) => {
     if (!res.code) {
       const data = res.data.list;
       if (data.length > 0) {

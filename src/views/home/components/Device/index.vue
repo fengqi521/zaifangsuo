@@ -3,7 +3,7 @@ import { reactive, ref } from "vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 import { deviceMap } from "@/constants";
 const columns = ref([
   { prop: "num", label: "序号",width:80 },
@@ -24,7 +24,7 @@ const getDeviceData = async () => {
   loading.value = true;
   const { page, limit } = searchInfo.value;
   try {
-    const result = await rtuApi.getDeviceList(searchInfo.value);
+    const result = await systemApi.getDeviceList(searchInfo.value);
     loading.value = false;
     deviceData.data = result?.data?.list.map((item, index) => ({
       num: (page - 1) * limit + (index + 1),

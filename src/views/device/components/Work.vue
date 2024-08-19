@@ -5,7 +5,7 @@ import Chart from "@/components/Chart/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
 
@@ -38,7 +38,7 @@ const chartData = reactive({ timeList: [], voltage: [], temperature: [] });
 // 获取图表数据
 const getWorkChartData = () => {
   const { page, limit, ...params } = searchInfo.value;
-  rtuApi.getWorkData(params).then((res) => {
+  systemApi.getWorkData(params).then((res) => {
     if (!res.code) {
       chartData.timeList = res.data.list[0]?.timeList;
       chartData.voltage = res.data.list[0]?.valueList;
@@ -99,7 +99,7 @@ const workData = reactive({
 // 获取工况历史数据
 const getWorkHistory = () => {
   const { page, limit } = searchInfo.value;
-  rtuApi.getWorkHistory(searchInfo.value).then((res) => {
+  systemApi.getWorkHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       workData.total = res.data.total_count;
       workData.data = res.data.list.map((item, index) => ({

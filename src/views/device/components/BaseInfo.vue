@@ -5,7 +5,7 @@ import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTag from "@/components/ElTag/index.vue";
 
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 import { isOnLine } from "@/utils";
 import { deviceMap } from "@/constants";
 
@@ -15,7 +15,7 @@ const { id } = route.params;
 // 通过id获取详情
 const detail = ref({});
 const getDetailById = () => {
-  rtuApi.getDeviceDetail({ id }).then((res) => {
+  systemApi.getDeviceDetail({ id }).then((res) => {
     if (!res.code) {
       const list = deviceMap.find(
         (item) => item.value === res.data.device_type

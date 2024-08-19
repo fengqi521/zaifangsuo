@@ -28,8 +28,7 @@ import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import { getStartAndEndTime,isOnLine } from "@/utils";
 import { deviceMap } from "@/constants";
-import rtuApi from "@/api/rtu";
-import homeApi from "@/api/home";
+import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
 
@@ -39,7 +38,7 @@ const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = () => {
-  rtuApi.getDeviceList({ limit: 10000, page: 1, status: 2 }).then((res) => {
+  systemApi.getDeviceList({ limit: 10000, page: 1, status: 2 }).then((res) => {
     if (!res.code) {
       Object.assign(deviceList, res.data.list);
       try {
@@ -74,7 +73,7 @@ const getDeviceList = () => {
 // 获取七天监测数据
 const getDeviceRealData = (id, type) => {
   const times = getStartAndEndTime("month");
-  rtuApi
+  systemApi
     .getRainData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {
       if (!res.code) {
@@ -87,7 +86,7 @@ const getDeviceRealData = (id, type) => {
 // 设备工况
 const getWordData = (id, type) => {
   const times = getStartAndEndTime("week");
-  rtuApi
+  systemApi
     .getWorkData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {
       if (!res.code) {
@@ -104,7 +103,7 @@ const getWordData = (id, type) => {
 
 // 设备数量
 const getDeviceCategory = () => {
-  homeApi.getDevicePercent().then((res) => {
+  systemApi.getDevicePercent().then((res) => {
     if (!res.code) {
       screenStore.setData("deviceCount", res.data.list);
     }

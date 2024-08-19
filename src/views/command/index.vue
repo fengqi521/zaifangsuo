@@ -6,7 +6,7 @@ import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 
 import { recordFormData, recordFormItems, recordOptions } from "@/constants";
 
@@ -46,7 +46,7 @@ const recordData = reactive({ lists: [], total: 0 });
 // 获取设备列表
 const getDevice = async () => {
   try {
-    const res = await rtuApi.getDeviceList({
+    const res = await systemApi.getDeviceList({
       status: 2,
       limit: 10000,
       page: 1,
@@ -70,7 +70,7 @@ const getDevice = async () => {
 const getRecord = async () => {
   loading.value = true;
   try {
-    const res = await rtuApi.getRecord(searchModel.value);
+    const res = await systemApi.getRecord(searchModel.value);
     const {page,limit} = searchModel.value;
     console.log(page)
     loading.value = false;

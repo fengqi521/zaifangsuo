@@ -7,7 +7,7 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
-import rtuApi from "@/api/rtu";
+import systemApi from "@/api";
 const useRtuStore = useRtuStoreHook();
 const route = useRoute();
 const { id, type } = route.params;
@@ -26,7 +26,7 @@ const chartData = reactive({ timeList: [], valueList: [] });
 // 获取断线图表数据
 const getBreakChartData = () => {
   const { page, limit, ...params } = searchInfo.value;
-  rtuApi.getRainData(params).then((res) => {
+  systemApi.getRainData(params).then((res) => {
     if (!res.code) {
       Object.assign(chartData, res.data.list[0]);
     }
@@ -68,7 +68,7 @@ const deviceData = reactive({
 // 获取断线历史数据
 const getBreakLevelHistory = () => {
   const { page, limit } = searchInfo.value;
-  rtuApi.getRainHistory(searchInfo.value).then((res) => {
+  systemApi.getRainHistory(searchInfo.value).then((res) => {
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
