@@ -8,7 +8,7 @@ const ScreenLayout = () => import("@/layouts/screenLayout.vue");
 const Login = () => import("@/views/login/index.vue");
 
 // 大屏
-const Dashboard = () => import("@/views/big-screen/index.vue");
+const Dashboard = () => import("@/views/dashboard/index.vue");
 
 // 首页
 const Home = () => import("@/views/home/index.vue");
@@ -25,14 +25,14 @@ const DeviceCommand = () => import("@/views/device/command/index.vue");
 const HistoryRecord = () => import("@/views/command/index.vue");
 
 // 用户管理
-const UserList = () => import("@/views/users/index.vue");
+const UserList = () => import("@/views/user/index.vue");
 
 
 // 固件列表
 const PackageList = () => import("@/views/package/index.vue");
 
 // 报文解析
-const Parsing = () => import("@/views/message-parser/index.vue");
+const Parsing = () => import("@/views/parser/index.vue");
 
 const Err404 = () => import("@/views/error-page/404.vue");
 const Err401 = () => import("@/views/error-page/401.vue");
@@ -62,7 +62,7 @@ export const constantRoutes = [
 ];
 export const dynamicRoutes = [
   {
-    path: "/screen",
+    path: "/dashboard",
     component: ScreenLayout,
     children: [
       {
