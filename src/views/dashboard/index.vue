@@ -26,7 +26,7 @@ import Right from "./Right.vue";
 import { groupBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { getStartAndEndTime,isOnLine } from "@/utils";
+import { getStartAndEndTime, isOnLine } from "@/utils";
 import { deviceMap } from "@/constants";
 import systemApi from "@/api";
 
@@ -129,6 +129,8 @@ const fetchData = () => {
   });
 };
 
+let secondIntervalId = null;
+let minuteTasksIntervalId = null;
 onMounted(() => {
   getDeviceList();
   getDeviceCategory();
@@ -147,10 +149,20 @@ onMounted(() => {
   };
 
   // 每秒钟执行一次 secondTasks
-  setInterval(secondTasks, 1000);
+  secondIntervalId = setInterval(secondTasks, 1000);
 
   // 每分钟执行一次 minuteTasks
-  setInterval(minuteTasks, 60000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 60000);
+});
+
+onUnmounted(() => {
+  if (secondIntervalId) {
+    clearInterval(secondIntervalId);
+  }
+
+  if (minuteTasksIntervalId) {
+    clearInterval(minuteTasksIntervalId);
+  }
 });
 </script>
 <style lang="scss" scoped>

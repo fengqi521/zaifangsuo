@@ -42,6 +42,11 @@ export default {
     return getRequest("/v1/device/detail", params);
   },
 
+  // 获取设备配置
+  getDeviceConfig:function(params){
+    return getRequest("/v1/device/config", params);
+  },
+
   // 获取雨量数据
   getRainData: function (params) {
     return postRequest("/v1/device/history", params);

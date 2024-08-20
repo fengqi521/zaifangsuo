@@ -22,6 +22,7 @@ DEVICE_DATA.forEach((device, index) => {
     device.bg = `var(--card-bg-${(index + 1) % 4})`;
   }
 });
+
 </script>
 <template>
   <div class="home-container">

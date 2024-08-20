@@ -84,6 +84,7 @@ const fileFormRules = reactive({
 });
 // 显示上传modal
 const handleClickShowModal = () => {
+  Object.assign(firmware, { desc: "", fileList: [] });
   dialogVisible.value = true;
 };
 

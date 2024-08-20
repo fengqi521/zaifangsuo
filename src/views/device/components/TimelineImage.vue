@@ -1,9 +1,16 @@
 <script setup>
+import { computed } from "vue";
 const props = defineProps({
   imagesData: {
     type: Object,
     default: () => ({ timeList: [], valueList: [] }),
   },
+});
+
+const valueList = computed(() => {
+  return props.imagesData.valueList.map(
+    (item) => `data:image/png;base64,${item}`
+  );
 });
 </script>
 <template>
@@ -19,8 +26,8 @@ const props = defineProps({
         <el-image
           lazy
           style="width: 99%; height: 196px"
-          :src="props.imagesData.valueList[index]"
-          :preview-src-list="[props.imagesData.valueList[index]]"
+          :src="valueList[index]"
+          :preview-src-list="[valueList[index]]"
           fit="cover"
         />
       </el-timeline-item>

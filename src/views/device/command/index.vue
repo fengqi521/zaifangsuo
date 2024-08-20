@@ -40,7 +40,7 @@ const formConfig = {
       width: "180px",
       labelWidth: "68",
       maxLen: 10,
-      placeholder: "请输入遥测站地址",
+      placeholder: "遥测站地址",
       type: "el-input",
     },
     pass: {
@@ -48,7 +48,7 @@ const formConfig = {
       width: "200px",
       maxLen: 4,
       labelWidth: "32",
-      placeholder: "请输入密码",
+      placeholder: "密码",
       type: "el-input",
     },
     collect: {
@@ -86,70 +86,96 @@ const formConfig = {
     },
   },
   type1: {
-    addr: {
-      label: "泥位计地址:",
-      labelWidth: "74",
-      minLen: 0,
-      maxLen: 255,
+    5: {
+      addr: {
+        label: "泥位计地址:",
+        labelWidth: "74",
+        minLen: 0,
+        maxLen: 255,
+        placeholder: "泥位计地址",
+      },
+      high: {
+        label: "安装高度:",
+        labelWidth: "56",
+        min: 0,
+        max: 65.535,
+        unit: "m",
+      },
+      origin: {
+        label: "初始值:",
+        labelWidth: "44",
+        min: 0,
+        max: 65.535,
+        unit: "m",
+      },
+      threshold: {
+        label: "加报阈值:",
+        labelWidth: "56",
+        min: 0.01,
+        max: 65.535,
+        unit: "m",
+      },
     },
-    high: {
-      label: "安装高度:",
-      labelWidth: "56",
-      min: 0,
-      max: 65.535,
-      unit: "m",
-    },
-    origin: {
-      label: "初始值:",
-      labelWidth: "44",
-      min: 0,
-      max: 65.535,
-      unit: "m",
-    },
-    threshold: {
-      label: "加报阈值:",
-      labelWidth: "56",
-      min: 0.01,
-      max: 65.535,
-      unit: "m",
+    7: {
+      time: {
+        label: "遥测站时钟:",
+        labelWidth: "74",
+        minLen: 0,
+        maxLen: 255,
+        type: "el-date-picker",
+        placeholder: "选择时间",
+      },
     },
   },
   type2: {
-    addr: {
-      label: "雨量地址:",
-      labelWidth: "56",
-      minLen: 0,
-      maxLen: 255,
+    5: {
+      addr: {
+        label: "雨量地址:",
+        labelWidth: "56",
+        minLen: 0,
+        maxLen: 255,
+        placeholder: "雨量地址",
+      },
+      cycle: {
+        label: "加报周期:",
+        labelWidth: "56",
+        min: 1,
+        max: 255,
+        unit: "min",
+      },
+      threshold: {
+        label: "报警阈值:",
+        labelWidth: "56",
+        min: 1,
+        max: 6553.5,
+        decimals: 0,
+        unit: "mm",
+      },
+      the_time: {
+        label: "报警阈值时长:",
+        labelWidth: "80",
+        min: 1,
+        max: 255,
+        unit: "min",
+      },
+      sum: {
+        label: "累计雨量:",
+        labelWidth: "56",
+        min: 0,
+        max: 6553.5,
+        decimals: 0,
+        unit: "mm",
+      },
     },
-    cycle: {
-      label: "加报周期:",
-      labelWidth: "56",
-      min: 1,
-      max: 255,
-      unit: "min",
-    },
-    threshold: {
-      label: "报警阈值:",
-      labelWidth: "56",
-      min: 1,
-      max: 6553.5,
-      decimals: 0,
-      unit: "mm",
-    },
-    the_time: {
-      label: "报警阈值时长:",
-      labelWidth: "80",
-      min: 1,
-      max: 255,
-      unit: "min",
-    },
-    sum: {
-      label: "累计雨量:",
-      labelWidth: "56",
-      min: 0,
-      max: 6553.5,
-      decimals: 0,
-      unit: "mm",
+    7: {
+      time: {
+        label: "遥测站时钟:",
+        type: "el-date-picker",
+        labelWidth: "74",
+        minLen: 0,
+        maxLen: 255,
+        placeholder: "选择时间",
+      },
     },
   },
 };
@@ -157,17 +183,27 @@ const formConfig = {
 // 参数
 const speForm = {
   type1: {
-    addr: "", // 地址
-    high: 0, // 安装高度
-    origin: 0, // 初始值
-    threshold: 1, // 加报阈值
+    5: {
+      addr: "", // 地址
+      high: 0, // 安装高度
+      origin: 0, // 初始值
+      threshold: 1, // 加报阈值
+    },
+    7: {
+      time: "", // 遥测站时钟
+    },
   },
   type2: {
-    addr: "", // 雨量地址
-    cycle: 1, // 加报周期
-    threshold: 1, // 报警阈值
-    the_time: 1, // 报警阈值时长
-    sum: 0, // 累计雨量
+    5: {
+      addr: "", // 雨量地址
+      cycle: 1, // 加报周期
+      threshold: 1, // 报警阈值
+      the_time: 1, // 报警阈值时长
+      sum: 0, // 累计雨量
+    },
+    7: {
+      time: "", // 遥测站时钟
+    },
   },
 };
 const baseForm = {
@@ -182,53 +218,28 @@ const baseForm = {
   check_num: "",
 };
 
+// 表单
+const commandForm = reactive({ ...baseForm, data: {} });
 const currentConfig = computed(() => {
   return {
     common: { ...formConfig.common },
-    [`type${type}`]: { ...formConfig[`type${type}`] },
+    [`type${type}`]: { ...formConfig[`type${type}`][commandForm.code] },
   };
 });
 const timerFields = ["version_length", "start", "end", "crc"];
 
 const unfold = ref(true);
-// 表单
-const commonForm = reactive({ ...baseForm, data: {} });
+
 // 下发及响应数据
 const commandData = reactive([]);
 
-watch(
-  () => commonForm.code,
-  (newVal) => {
-    commonForm.data = {};
-    if (newVal === 4) {
-      commonForm.data = { dateTimeRange: [] };
+// 获取设备配置
+const getDeviceConfig = () => {
+  systemApi.getDeviceConfig({ id }).then((res) => {
+    if (!res.code) {
+      console.log(res);
     }
-
-    if (newVal === 5) {
-      commonForm.data = { ...speForm[`type${type}`] };
-    }
-  }
-);
-
-const handleCommonInput = (value, key, decimals, min, max) => {
-  commonForm[key] = setInputValue(value, decimals, min, max);
-};
-const handleInput = (value, key, decimals, min, max) => {
-  commonForm.data[key] = setInputValue(value, decimals, min, max);
-};
-
-// 限制输入 (上报次数限制)
-const handleLimitInput = (value, key, length) => {
-  commonForm[key] = setInputMaxLen(value, length);
-};
-
-// 能被24整除的数
-const handleExactDivisionInput = (value, key) => {
-  commonForm[key] = setInputExactDivision(value);
-};
-
-// 获取设备详情
-const getDetail = () => {
+  });
   const res = {
     code: 0,
     data: {
@@ -245,15 +256,47 @@ const getDetail = () => {
     },
   };
 
-  if (!res.code) {
-    Object.assign(commonForm, { ...res.data });
-  }
+  // if (!res.code) {
+  //   Object.assign(commandForm, { ...res.data });
+  // }
 };
-getDetail();
+getDeviceConfig();
+
+watch(
+  () => commandForm.code,
+  (newVal) => {
+    commandForm.data = {};
+    if (newVal === 4) {
+      commandForm.data = { dateTimeRange: [] };
+    }
+
+    if (newVal === 5 || newVal === 7) {
+      commandForm.data = { ...speForm[`type${type}`][commandForm.code] };
+      console.log(commandForm);
+    }
+  }
+);
+
+const handleCommonInput = (value, key, decimals, min, max) => {
+  commandForm[key] = setInputValue(value, decimals, min, max);
+};
+const handleInput = (value, key, decimals, min, max) => {
+  commandForm.data[key] = setInputValue(value, decimals, min, max);
+};
+
+// 限制输入 (上报次数限制)
+const handleLimitInput = (value, key, length) => {
+  commandForm[key] = setInputMaxLen(value, length);
+};
+
+// 能被24整除的数
+const handleExactDivisionInput = (value, key) => {
+  commandForm[key] = setInputExactDivision(value);
+};
 
 // 功能码切换
 const dynamicFields = computed(() => {
-  const operate = commonForm.code;
+  const operate = commandForm.code;
   const showDateTimeRange = operate == "4";
   const showTypeData = [5].includes(operate);
 
@@ -282,33 +325,33 @@ const handleClickSubmit = () => {
     timer_start,
     check_time,
     check_num,
-  } = commonForm;
+  } = commandForm;
 
-  let params = { id, code };
-
-  params.Data = { ...params.data, address, pass };
-  // if(address){
-  //   // params.data.address = strToHex(address)
-  // }
-  // if(pass){
-  //   // params.data.pass = strToHex(pass)
-  // }
-  if (collect) {
-    params.Data.collect = strToHex(collect);
-  }
-  if (timer) {
-    params.Data.timer = strToHex(timer);
-  }
-  if (timer_start) {
-    params.Data.timer_start = strToHex(timer_start);
-  }
-  if (check_time && check_num) {
-    params.Data.check = strToHex(`${check_time}:${check_num}`);
+  let params = { id, code, Data: { ...data } };
+  if (code === 5) {
+    if (address) {
+      // params.Data.address = strToHex(address)
+    }
+    if (pass) {
+      // params.Data.pass = strToHex(pass)
+    }
+    if (collect) {
+      params.Data.collect = strToHex(collect);
+    }
+    if (timer) {
+      params.Data.timer = strToHex(timer);
+    }
+    if (timer_start) {
+      params.Data.timer_start = strToHex(timer_start);
+    }
+    if (check_time && check_num) {
+      params.Data.check = strToHex(`${check_time}:${check_num}`);
+    }
   }
 
   if (!isEmpty(data) && data.dateTimeRange) {
     params.Data = {
-      ...params.data,
+      ...params.Data,
       start_time: data.dateTimeRange[0],
       end_time: data.dateTimeRange[1],
     };
@@ -329,7 +372,7 @@ const handleClickSubmit = () => {
 
 // 重置
 const handleReset = () => {
-  commonForm.code = "";
+  commandForm.code = "";
 };
 
 // 实时获取响应数据
@@ -395,6 +438,9 @@ onMounted(() => {
 });
 // 在组件卸载前清除监听
 onUnmounted(() => {
+  if (timer.value) {
+    clearInterval(timer.value);
+  }
   if (resizeObserver.value && controlFormRef.value) {
     resizeObserver.value.unobserve(controlFormRef.value.$el);
     resizeObserver.value.disconnect();
@@ -411,11 +457,11 @@ onUnmounted(() => {
 
     <!-- 报文下发表单 -->
     <ElCard title="下发指令" class="form-card" ref="controlFormRef">
-      <el-form :model="commonForm" label-width="auto" label-position="left">
+      <el-form :model="commandForm" label-width="auto" label-position="left">
         <div class="command-form__operate">
           <el-form-item label="功能码:" label-width="44">
             <el-select
-              v-model="commonForm.code"
+              v-model="commandForm.code"
               placeholder="功能码"
               style="width: 250px"
             >
@@ -457,10 +503,13 @@ onUnmounted(() => {
             :key="index"
             :label="label"
             :label-width="labelWidth"
+            v-if="
+              !dynamicFields.showDateTimeRange && dynamicFields.showTypeData
+            "
           >
             <el-input
               class="input-text"
-              v-model="commonForm[key]"
+              v-model="commandForm[key]"
               v-if="type === 'el-input'"
               @input="handleLimitInput($event, key, maxLen)"
               :placeholder="placeholder"
@@ -470,14 +519,14 @@ onUnmounted(() => {
             <el-input
               v-else-if="type === 'num'"
               class="input-text"
-              v-model="commonForm[key]"
+              v-model="commandForm[key]"
               @input="handleExactDivisionInput($event, key)"
               :placeholder="placeholder"
             ></el-input>
 
             <el-time-picker
               v-else-if="type === 'el-time-picker'"
-              v-model="commonForm[key]"
+              v-model="commandForm[key]"
               format="HH:mm"
               value-format="HH:mm"
               :placeholder="placeholder"
@@ -485,7 +534,7 @@ onUnmounted(() => {
             />
             <el-time-select
               v-else-if="type === 'el-time-select'"
-              v-model="commonForm[key]"
+              v-model="commandForm[key]"
               start="00:00"
               step="1:00"
               end="23:00"
@@ -495,7 +544,7 @@ onUnmounted(() => {
             />
             <el-input
               v-else
-              :model-value="commonForm[key]"
+              :model-value="commandForm[key]"
               @input="handleCommonInput($event, key, decimals || 0, min, max)"
               :placeholder="placeholder"
             />
@@ -506,11 +555,11 @@ onUnmounted(() => {
             label="时间段:"
             label-width="44"
             v-if="
-              dynamicFields.showDateTimeRange && commonForm.data.dateTimeRange
+              dynamicFields.showDateTimeRange && commandForm.data.dateTimeRange
             "
           >
             <el-date-picker
-              v-model="commonForm.data.dateTimeRange"
+              v-model="commandForm.data.dateTimeRange"
               type="datetimerange"
               range-separator="至"
               style="width: 355px"
@@ -524,28 +573,46 @@ onUnmounted(() => {
           <el-form-item
             class="input-number__item"
             v-for="(
-              { label, labelWidth, decimals, min, max, unit, minLen, maxLen },
+              {
+                label,
+                labelWidth,
+                decimals,
+                min,
+                max,
+                unit,
+                minLen,
+                maxLen,
+                placeholder,
+                type,
+              },
               key,
               index
             ) in currentConfig[`type${type}`]"
             :key="index"
             :label="label"
             :label-width="labelWidth"
-            v-if="
-              !dynamicFields.showDateTimeRange && dynamicFields.showTypeData
-            "
+            v-if="!dynamicFields.showDateTimeRange"
           >
+            <el-date-picker
+              v-if="type === 'el-date-picker'"
+              v-model="commandForm.data[key]"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              type="datetime"
+              :placeholder="placeholder"
+            />
             <el-input
               class="input-text"
-              v-if="maxLen"
-              v-model="commonForm.data[key]"
+              v-else-if="maxLen"
+              v-model="commandForm.data[key]"
               :maxlength="maxLen"
               :minLength="minLen"
+              :placeholder="placeholder"
             />
             <el-input
               v-else
-              :model-value="commonForm.data[key]"
+              :model-value="commandForm.data[key]"
               @input="handleInput($event, key, decimals || 0, min, max)"
+              :placeholder="placeholder"
             />
             <div class="input-item__unit" v-if="unit">{{ unit }}</div>
           </el-form-item>
@@ -554,7 +621,7 @@ onUnmounted(() => {
         <el-form-item label="" class="command-form__btn">
           <el-button
             type="primary"
-            :disabled="!commonForm.code || responseLoading"
+            :disabled="!commandForm.code || responseLoading"
             @click="handleClickSubmit"
             >下发指令</el-button
           >
@@ -659,7 +726,7 @@ onUnmounted(() => {
       height: 32px;
       line-height: 32px;
       font-size: 12px;
-      color: #333;
+      color: var(--normal-title-color);
       text-align: center;
       background: #fff;
       border-radius: 0 3px 3px 0;
