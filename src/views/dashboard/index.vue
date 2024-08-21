@@ -18,7 +18,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted,onUnmounted } from "vue";
 import Map from "./Map.vue";
 import Left from "./Left.vue";
 import Right from "./Right.vue";

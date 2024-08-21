@@ -245,7 +245,6 @@ const recordFormItems = [
       type: "datetimerange",
       startPlaceholder: "开始日期",
       endPlaceholder: "结束日期",
-      // format: "yyyy-MM-dd HH:mm:ss", // 你可以根据需要自定义格式
       valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
     },
   },

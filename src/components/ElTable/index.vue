@@ -34,6 +34,7 @@
               v-if="scope.row[column.prop + '_showTooltip']"
               :content="scope.row[column.prop]"
               placement="top"
+              popper-class="table-tooltip"
             >
               <div
                 v-if="Array.isArray(scope.row[column.prop])"
@@ -134,7 +135,11 @@ const handleMouseOver = (event, row, prop) => {
   row[prop + "_showTooltip"] = scrollHeight > clientHeight;
 };
 </script>
-
+<style lang="scss">
+.table-tooltip{
+  max-width: 300px;
+}
+</style>
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 .table-container {

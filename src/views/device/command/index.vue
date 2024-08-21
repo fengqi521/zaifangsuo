@@ -17,7 +17,7 @@ import Icon from "@/components/Icon.vue";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { useInputHook } from "@/hooks/useInput";
-import { strToHex } from "@/utils";
+import { strToHex, hexToDecimal } from "@/utils";
 import { operateLists } from "@/constants";
 import systemApi from "@/api";
 
@@ -117,9 +117,9 @@ const formConfig = {
       },
     },
     7: {
-      time: {
+      lock: {
         label: "遥测站时钟:",
-        labelWidth: "74",
+        labelWidth: "68",
         minLen: 0,
         maxLen: 255,
         type: "el-date-picker",
@@ -168,12 +168,33 @@ const formConfig = {
       },
     },
     7: {
-      time: {
+      lock: {
         label: "遥测站时钟:",
         type: "el-date-picker",
-        labelWidth: "74",
+        labelWidth: "68",
         minLen: 0,
         maxLen: 255,
+        placeholder: "选择时间",
+      },
+    },
+  },
+  type3: {
+    5: {
+      addr: {
+        label: "断线式泥石流报警器地址:",
+        labelWidth: "140",
+        minLen: 0,
+        maxLen: 255,
+        placeholder: "断线式泥石流报警器地址",
+      },
+    },
+    7: {
+      lock: {
+        label: "遥测站时钟:",
+        labelWidth: "68",
+        minLen: 0,
+        maxLen: 255,
+        type: "el-date-picker",
         placeholder: "选择时间",
       },
     },
@@ -181,7 +202,7 @@ const formConfig = {
 };
 
 // 参数
-const speForm = {
+const speForm = reactive({
   type1: {
     5: {
       addr: "", // 地址
@@ -190,7 +211,7 @@ const speForm = {
       threshold: 1, // 加报阈值
     },
     7: {
-      time: "", // 遥测站时钟
+      lock: "", // 遥测站时钟
     },
   },
   type2: {
@@ -202,10 +223,18 @@ const speForm = {
       sum: 0, // 累计雨量
     },
     7: {
-      time: "", // 遥测站时钟
+      lock: "", // 遥测站时钟
     },
   },
-};
+  type3: {
+    5: {
+      addr: "", // 断线报警器地址
+    },
+    7: {
+      lock: "", // 遥测站时钟
+    },
+  },
+});
 const baseForm = {
   id,
   code: "",
@@ -226,8 +255,6 @@ const currentConfig = computed(() => {
     [`type${type}`]: { ...formConfig[`type${type}`][commandForm.code] },
   };
 });
-const timerFields = ["version_length", "start", "end", "crc"];
-
 const unfold = ref(true);
 
 // 下发及响应数据
@@ -235,46 +262,81 @@ const commandData = reactive([]);
 
 // 获取设备配置
 const getDeviceConfig = () => {
-  systemApi.getDeviceConfig({ id }).then((res) => {
-    if (!res.code) {
-      console.log(res);
-    }
+  return new Promise((resolve, reject) => {
+    systemApi.getDeviceConfig({ id }).then((res) => {
+      try {
+        if (!res.code) {
+          const info = res.data.info;
+          let {
+            address,
+            rtu_pass,
+            collect_cycle,
+            timer_cycle,
+            timer_start,
+            self_check,
+            element_item,
+          } = info;
+          const timer_start_hh = hexToDecimal(timer_start.slice(0, 2));
+          const timer_start_mm = hexToDecimal(timer_start.slice(2));
+          const check_time = hexToDecimal(self_check.slice(0, 2));
+          const check_num = hexToDecimal(self_check.slice(2));
+          timer_start = `${timer_start_hh}:${timer_start_mm}`;
+          Object.assign(commandForm, {
+            address: address,
+            pass: rtu_pass,
+            collect: hexToDecimal(collect_cycle),
+            timer: hexToDecimal(timer_cycle),
+            timer_start,
+            check_time,
+            check_num,
+          });
+          Object.keys(element_item).forEach((attr) => {
+            const speFormItem = speForm[`type${type}`][commandForm.code];
+            const itemArr = Object.keys(speFormItem);
+            if (itemArr.includes(attr)) {
+              const value = element_item[attr];
+              speFormItem[attr] = hexToDecimal(value);
+            }
+          });
+          resolve(speForm[`type${type}`][commandForm.code]);
+        } else {
+          reject(new Error("Request failed with code: " + res.code));
+        }
+      } catch (error) {
+        reject(error);
+        console.error("Error fetching device config:", error);
+        throw error;
+      }
+    });
   });
-  const res = {
-    code: 0,
-    data: {
-      frame_start: "7E7E",
-      address: "11009001",
-      reserve: "00",
-      pass: "2012",
-      code: "",
-      version_length: "",
-      start: "02",
-      end: "05",
-      content: "",
-      crc: "",
-    },
-  };
-
-  // if (!res.code) {
-  //   Object.assign(commandForm, { ...res.data });
-  // }
 };
-getDeviceConfig();
+
+const updateCommandFormData = async (newVal) => {
+  commandForm.data = {};
+
+  if (newVal === 4) {
+    commandForm.data = { dateTimeRange: [] };
+    return;
+  }
+
+  if (newVal === 5) {
+    try {
+      await getDeviceConfig();
+      commandForm.data = { ...speForm[`type${type}`][commandForm.code] };
+    } catch (error) {
+      console.error("Error fetching device config:", error);
+    }
+    return;
+  }
+
+  if (newVal === 7) {
+    commandForm.data = { ...speForm[`type${type}`][commandForm.code] };
+  }
+};
 
 watch(
   () => commandForm.code,
-  (newVal) => {
-    commandForm.data = {};
-    if (newVal === 4) {
-      commandForm.data = { dateTimeRange: [] };
-    }
-
-    if (newVal === 5 || newVal === 7) {
-      commandForm.data = { ...speForm[`type${type}`][commandForm.code] };
-      console.log(commandForm);
-    }
-  }
+  (newVal) => updateCommandFormData(newVal)
 );
 
 const handleCommonInput = (value, key, decimals, min, max) => {
@@ -311,10 +373,13 @@ const controlFormRef = ref(null);
 const controlListRef = ref(null);
 const resizeObserver = ref(null);
 const maxHeight = ref(0);
-let timer = ref(null);
+let commandIntervalId = ref(null);
 
 // 下发指令
 const handleClickSubmit = () => {
+  if (commandIntervalId) {
+    clearInterval(commandIntervalId);
+  }
   const {
     code,
     data,
@@ -330,16 +395,16 @@ const handleClickSubmit = () => {
   let params = { id, code, Data: { ...data } };
   if (code === 5) {
     if (address) {
-      // params.Data.address = strToHex(address)
+      params.Data.address = address;
     }
     if (pass) {
-      // params.Data.pass = strToHex(pass)
+      params.Data.pass = pass;
     }
     if (collect) {
       params.Data.collect = strToHex(collect);
     }
     if (timer) {
-      params.Data.timer = strToHex(timer);
+      params.Data.timer = strToHex(timer, 4);
     }
     if (timer_start) {
       params.Data.timer_start = strToHex(timer_start);
@@ -348,6 +413,9 @@ const handleClickSubmit = () => {
       params.Data.check = strToHex(`${check_time}:${check_num}`);
     }
   }
+  console.log(params, "=======");
+
+  // return;
 
   if (!isEmpty(data) && data.dateTimeRange) {
     params.Data = {
@@ -359,7 +427,6 @@ const handleClickSubmit = () => {
 
   systemApi.downControl(params).then((res) => {
     if (!res.code) {
-      clearInterval(timer.value);
       commandData.push({ ...res.data, type: "down" });
       responseLoading.value = true;
       setControlListScroll();
@@ -378,25 +445,42 @@ const handleReset = () => {
 // 实时获取响应数据
 const realResponse = async (params) => {
   const result = await systemApi.getResponse(params);
+  const { code } = commandForm;
   if (!result.code && result.data.item.length > 0) {
-    clearInterval(timer.value);
-    const lists = result.data.item.map((item) => ({
+    let lists = result.data.item.map((item) => ({
       type: "up",
       deadline: item.create_time,
       ...item,
     }));
+    const notConnectedItem = lists.find(
+      (item) => item.content === "Not connect"
+    );
+    if (notConnectedItem) {
+      lists = [{ ...notConnectedItem, content: "服务未连接" }];
+    }
     commandData.push(...lists);
-    return;
+    setControlListScroll();
+    if (code === 3 || code === 4) {
+      if (notConnectedItem) {
+        clearInterval(commandIntervalId);
+        responseLoading.value = false;
+        return;
+      }
+      const length = result.data.item.length;
+      params.deadline = result.data.item[length - 1].create_time;
+    } else {
+      clearInterval(commandIntervalId);
+      responseLoading.value = false;
+      return;
+    }
   }
-  timer.value = setTimeout(() => {
-    realResponse(params);
-  }, 5000);
+  commandIntervalId = setTimeout(() => realResponse(params), 5000);
 };
 
 // 取消响应数据获取
 const handleClickCancelLoading = () => {
   responseLoading.value = false;
-  clearInterval(timer.value);
+  clearInterval(commandIntervalId);
 };
 
 // 设置滚动到底部
@@ -418,7 +502,7 @@ const updateContentHeight = async () => {
   if (controlFormRef.value) {
     const ele = controlFormRef.value.$el;
     const headerHeight = ele.clientHeight;
-    maxHeight.value = `${window.innerHeight - headerHeight - 286}px`;
+    maxHeight.value = `${window.innerHeight - headerHeight - 194}px`;
   }
 };
 
@@ -438,8 +522,8 @@ onMounted(() => {
 });
 // 在组件卸载前清除监听
 onUnmounted(() => {
-  if (timer.value) {
-    clearInterval(timer.value);
+  if (commandIntervalId) {
+    clearInterval(commandIntervalId);
   }
   if (resizeObserver.value && controlFormRef.value) {
     resizeObserver.value.unobserve(controlFormRef.value.$el);
@@ -457,7 +541,7 @@ onUnmounted(() => {
 
     <!-- 报文下发表单 -->
     <ElCard title="下发指令" class="form-card" ref="controlFormRef">
-      <el-form :model="commandForm" label-width="auto" label-position="left">
+      <el-form :model="commandForm" label-position="left">
         <div class="command-form__operate">
           <el-form-item label="功能码:" label-width="44">
             <el-select
@@ -530,7 +614,7 @@ onUnmounted(() => {
               format="HH:mm"
               value-format="HH:mm"
               :placeholder="placeholder"
-              width="156px"
+              style="width: 140px"
             />
             <el-time-select
               v-else-if="type === 'el-time-select'"
@@ -562,10 +646,11 @@ onUnmounted(() => {
               v-model="commandForm.data.dateTimeRange"
               type="datetimerange"
               range-separator="至"
-              style="width: 355px"
+              style="width: 310px"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               value-format="YYYY-MM-DD HH:mm:ss"
+              :clearable="false"
             />
           </el-form-item>
 
@@ -631,14 +716,13 @@ onUnmounted(() => {
     </ElCard>
 
     <!-- 下发及反馈内容 -->
-    <ElCard title="下发内容及反馈内容" class="control-card">
+    <ElCard
+      title="下发内容及反馈内容"
+      class="control-card"
+      :style="{ height: maxHeight }"
+    >
       <el-empty v-if="!commandData.length" :image-size="80" />
-      <ul
-        v-else
-        class="control-list"
-        :style="{ maxHeight: maxHeight }"
-        ref="controlListRef"
-      >
+      <ul v-else class="control-list" ref="controlListRef">
         <li
           :class="`control-item control-${list.type}`"
           v-for="(list, index) in commandData"
@@ -740,7 +824,12 @@ onUnmounted(() => {
   margin-top: 24px;
   color: var(--command-message-color);
 
+  :deep(.card-content) {
+    height: calc(100% - 48px);
+  }
+
   .control-list {
+    height: calc(100% - 6px);
     position: relative;
     overflow-y: auto;
     @extend %scrollbar;

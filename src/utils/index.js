@@ -98,24 +98,34 @@ export const getCRCAsHex = (hexString) => {
 /**
  * 十进制转十六进制
  * @param {*} timeString 时间{时：分}
+ * @param {*} width 保留位数
  * @returns   十六进制值
  */
-export const strToHex = (str) => {
+export const strToHex = (str, width = 2) => {
   // 解析字符串
   const strArr = str.split(":").map(Number);
-  console.log(strArr);
-  if (strArr && strArr.length > 1) {
-    const str1 = strArr[0];
-    const str2 = strArr[1];
-    const hoursHex = str1.toString(16).toUpperCase().padStart(2, "0");
-    const minutesHex = str2.toString(16).toUpperCase().padStart(2, "0");
-    return hoursHex + minutesHex;
-  }
+  const hexArr = strArr.map((num) =>
+    num.toString(16).toUpperCase().padStart(width, "0")
+  ); // 转换为十六进制并确保至少两位
 
-  if (strArr && strArr.length < 2) {
-    const str1 = strArr[0];
-    return str1.toString(16).toUpperCase().padStart(2, "0");
-  }
+  // 根据数组长度返回相应的结果
+  return hexArr.length > 1 ? hexArr.join("") : hexArr[0];
+};
+
+/**
+ * 十六进制转十进制
+ * @param {*} hexStr 16进制
+ * @returns   十进制值
+ */
+export const hexToDecimal = (hexStr) => {
+  // 确保输入是大写，避免解析时的错误
+  hexStr = hexStr.toUpperCase();
+  
+  // 将十六进制字符串转换为十进制整数
+  const decimal = parseInt(hexStr, 16);
+  
+  // 返回结果
+  return decimal.toString();
 };
 
 /**
