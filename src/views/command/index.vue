@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref } from "vue";
 import Bread from "@/components/Bread/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
