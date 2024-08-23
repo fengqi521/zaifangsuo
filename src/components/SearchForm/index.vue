@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, defineEmits } from "vue";
+import { ref, watch } from "vue";
 
 // Props: 传递表单配置、数据和验证规则
 const props = defineProps({

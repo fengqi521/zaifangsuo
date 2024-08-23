@@ -36,7 +36,16 @@ const windOption = reactive(getCommonLine({ seriesUnit: ["°"] })); //风向
 
 const speedOption = reactive(getCommonLine({ seriesUnit: ["m/s"] })); //风速
 
-const allOptions = ref([tempOption, humidityOption, windOption, speedOption]);
+const atmosOption = reactive(getCommonLine({ seriesUnit: ["hPa"] })); //气压
+
+const allOptions = ref([
+  rainOption,
+  tempOption,
+  humidityOption,
+  windOption,
+  speedOption,
+  atmosOption,
+]);
 
 const rainData = reactive({
   timeList: [],
@@ -49,9 +58,12 @@ const rainData = reactive({
   speed: [],
 });
 // 获取雨量图表数据
+const chartLoading = ref(false);
 const getRainChartData = () => {
+  chartLoading.value = true;
   const { page, limit, ...params } = searchInfo.value;
   systemApi.getRainData(params).then((res) => {
+    chartLoading.value = false;
     if (!res.code) {
       rainData.timeList = res.data.list[0].timeList;
       rainData.rain = res.data.list[0].valueList;
@@ -61,6 +73,8 @@ const getRainChartData = () => {
       rainData.humidity = res.data.list[4].valueList;
       rainData.wind = res.data.list[5].valueList;
       rainData.speed = res.data.list[6].valueList;
+      rainData.atmos = res.data.list[7].valueList;
+
     }
   });
 };
@@ -124,7 +138,7 @@ const resetOptions = (data) => {
   tempOption.series[0] = {
     name: "温度",
     type: "line",
-    data: data.rain,
+    data: data.temperature,
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 0,
@@ -148,7 +162,7 @@ const resetOptions = (data) => {
   windOption.legend.x = "center";
   windOption.xAxis[0].data = data.timeList;
   windOption.yAxis[0].name = "{title|风向(°)}";
-  windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
+  windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, ];
 
   windOption.series[0] = {
     name: "风向",
@@ -177,7 +191,7 @@ const resetOptions = (data) => {
   speedOption.legend.x = "center";
   speedOption.xAxis[0].data = data.timeList;
   speedOption.yAxis[0].name = "{title|风速(m/s)}";
-  speedOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
+  speedOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, -20];
   speedOption.series[0] = {
     name: "风速",
     type: "line",
@@ -201,7 +215,7 @@ const resetOptions = (data) => {
   };
 
   // 湿度
-  humidityOption.color = ["#b3e5fc  "];
+  humidityOption.color = ["#b3e5fc"];
   humidityOption.xAxis[0].data = data.timeList;
   humidityOption.yAxis[0].name = "{title|湿度(m/s)}";
   humidityOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
@@ -226,6 +240,33 @@ const resetOptions = (data) => {
       },
     },
   };
+
+  // 气压
+  atmosOption.color = ["#ff733f"];
+  atmosOption.xAxis[0].data = data.timeList;
+  atmosOption.yAxis[0].name = "{title|气压(hPa)}";
+  atmosOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, -20];
+  atmosOption.series[0] = {
+    name:'气压',
+    type: "line",
+    data: data.atmos,
+    Symbol: "circle",
+    smooth: true,
+    yAxisIndex: 0,
+    areaStyle: {
+      color: {
+        type: "linear",
+        x: 0,
+        y: 0,
+        x2: 0,
+        y2: 1,
+        colorStops: ["#FFA07A ", "#ff733f"].map((color, offset) => ({
+          color,
+          offset,
+        })),
+      },
+    },
+  };
 };
 
 // 历史table数据
@@ -240,6 +281,7 @@ const tableColumns = [
   { prop: "humidity", label: "湿度(%RH)" },
   { prop: "wind_direction", label: "风向(°)" },
   { prop: "wind_speed", label: "风速(m/s)" },
+  { prop: "atmos", label: "气压(hPa)" },
 ];
 const deviceData = reactive({
   total: 0,
@@ -248,8 +290,10 @@ const deviceData = reactive({
 
 // 获取雨量历史数据
 const getRainHistory = () => {
+  loading.value = true;
   const { page, limit } = searchInfo.value;
   systemApi.getRainHistory(searchInfo.value).then((res) => {
+    loading.value = false;
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
@@ -281,6 +325,19 @@ watchEffect(() => {
 const fetchData = (values) => {
   searchInfo.value.start_time = values[0];
   searchInfo.value.end_time = values[1];
+  Object.assign(rainData, {
+    timeList: [],
+    rain: [],
+    duration: [],
+    total_rain: [],
+    temperature: [],
+    humidity: [],
+    wind: [],
+    speed: [],
+  });
+
+  Object.assign(deviceData, { data: [], total: 0 });
+
   getRainChartData();
   getRainHistory();
 };
@@ -304,16 +361,12 @@ const isAllOptionsEmpty = computed(() =>
 
 <template>
   <div class="device-data">
-    <ElCard title="传感器监测历史数据" v-loading="loading">
-      <el-empty v-if="isAllOptionsEmpty"></el-empty>
-      <div v-else>
-        <Chart :options="[rainOption]" />
-        <div class="device-data__history">
-          <Chart :options="allOptions" />
-        </div>
+    <ElCard title="传感器监测历史数据" v-loading="chartLoading">
+      <div class="device-data__history">
+        <Chart :options="allOptions" />
       </div>
 
-      <ElCard v-loading="loading" class="history-data-card">
+      <ElCard class="history-data-card">
         <ElTable
           :loading="loading"
           :columns="tableColumns"
@@ -335,6 +388,7 @@ const isAllOptionsEmpty = computed(() =>
 <style lang="scss" scoped>
 .device-data {
   &__history {
+    margin-top: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;

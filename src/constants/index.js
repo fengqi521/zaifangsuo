@@ -25,14 +25,12 @@ const DEVICE_DATA = [
 ];
 
 // 首页报文数据
-const MESSAGE = [
-
-];
+const MESSAGE = [];
 
 const allOperateType = [
   { label: "遥测站定时报", value: 0 },
   { label: "遥测站加报报", value: 1 },
-  { label: "心跳", value: 2 },
+  { label: "心跳包", value: 2 },
   { label: "查询遥测站实时数据", value: 3 },
   { label: "查询遥测站时段数据", value: 4 },
   { label: "修改遥测站配置", value: 5 },
@@ -51,9 +49,8 @@ const messageFormItems = [
     prop: "category",
     attrs: { placeholder: "请选择报文类型" },
     type: "el-select",
-    options: [{ label: "全部", value: 13 },...allOperateType],
+    options: [{ label: "全部", value: 13 }, ...allOperateType],
   },
-  
 ];
 
 //  ------------首页start--------------
@@ -210,7 +207,7 @@ const recordFormData = {
   Did: "",
   range: [],
 }; // transfer 1是上行报文解析
-const recordOptions = [...allOperateType,  { label: "自定义", value: 13 }]
+const recordOptions = [...allOperateType, { label: "自定义", value: 13 }];
 const recordFormItems = [
   {
     label: "操作类型",
@@ -232,7 +229,7 @@ const recordFormItems = [
   {
     label: "设备名称",
     prop: "Did",
-    attrs: { placeholder: "请选择设备" },
+    attrs: { placeholder: "请选择设备", style: { width: 200 } },
     type: "el-select",
     options: [],
   },
@@ -245,6 +242,7 @@ const recordFormItems = [
       type: "datetimerange",
       startPlaceholder: "开始日期",
       endPlaceholder: "结束日期",
+      rangeSeparator: "To",
       valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
     },
   },
@@ -271,5 +269,5 @@ export {
   recordFormData,
   recordFormItems,
   recordOptions,
-  allOperateType
+  allOperateType,
 };

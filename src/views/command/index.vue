@@ -8,7 +8,12 @@ import ElPagination from "@/components/ElPagination/index.vue";
 
 import systemApi from "@/api";
 
-import { recordFormData, recordFormItems, recordOptions } from "@/constants";
+import {
+  recordFormData,
+  recordFormItems,
+  recordOptions,
+  deviceMap,
+} from "@/constants";
 
 const breadList = ref([{ title: "下发记录" }]);
 const loading = ref(false);
@@ -25,7 +30,7 @@ const initParams = {
 const searchModel = ref({
   ...initParams,
   page: 1,
-  limit: 10,
+  limit: 100,
 });
 
 // 查询字段
@@ -33,12 +38,13 @@ const recordItems = reactive(recordFormItems);
 
 // 表格头部
 const columns = ref([
-  { prop: "num", label: "序号" ,width:80},
+  { prop: "num", label: "序号", width: 80 },
   { prop: "device_name", label: "设备名称" },
-  { prop: "operate_type", label: "操作类型",width:180 },
-  { prop: "response", label: "报文内容" },
-  { prop: "transfer_name", label: "传输类型" ,width:100},
-  { prop: "create_time", label: "创建时间" ,width:200},
+  { prop: "type_name", label: "设备类型", width: 80 },
+  { prop: "operate_type", label: "操作类型", width: 180 },
+  { prop: "transfer_name", label: "传输类型", width: 100 },
+  { prop: "response", label: "报文内容", type: "slot" },
+  { prop: "create_time", label: "上报时间", width: 200 },
 ]);
 // 表格数据
 const recordData = reactive({ lists: [], total: 0 });
@@ -71,19 +77,19 @@ const getRecord = async () => {
   loading.value = true;
   try {
     const res = await systemApi.getRecord(searchModel.value);
-    const {page,limit} = searchModel.value;
-    console.log(page)
+    const { page, limit } = searchModel.value;
     loading.value = false;
     if (!res.code) {
       recordData.lists = (res?.data?.list ?? []).map((item, index) => {
         const list = recordOptions.find((cur) => cur.value == item.operate);
+        const device_list = deviceMap.find(
+          ({ value }) => Number(item.device_type) === value
+        );
         item.operate_type = list ? list.label : "";
         item.transfer_name = item.transfer_type === 1 ? "上行" : "下行";
         item.response = item.transfer_type === 1 ? item.response : item.request;
         item.num = (page - 1) * limit + (index + 1);
-        item.device_name = device.value.find(
-          (cur) => cur.id === item.device_id
-        ).device_name;
+        item.type_name = device_list?.label;
         return item;
       });
       recordData.total = res?.data?.total_count;
@@ -148,15 +154,23 @@ const handleChangeSize = (size) => {
     </SearchForm>
 
     <!-- 列表数据 -->
-    <ElCard class="parse-list" title="数据列表">
+    <ElCard class="command-list" title="数据列表">
       <!-- 表格 -->
       <ElTable
-        class="rtu-table"
+        class="command-table"
         :loading="loading"
         :columns="columns"
         :data="recordData.lists"
         :tableProps="{ showSelection: false, border: true }"
       >
+        <template #response="scope">
+          <router-link
+            class="cell-item command-table__response"
+            :to="`/command/parser/${scope.row.id}/${scope.row.device_type}`"
+          >
+            {{ scope.row.response }}
+          </router-link>
+        </template>
       </ElTable>
 
       <!-- 分页 -->
@@ -171,7 +185,12 @@ const handleChangeSize = (size) => {
   </div>
 </template>
 <style lang="scss" scoped>
-.parse-list {
-  margin-top: 24px;
+.command-table {
+  &__response {
+    color: #1089ff;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 </style>

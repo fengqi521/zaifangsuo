@@ -15,7 +15,7 @@ import { userFormData, userFormItems } from "@/constants";
 import systemApi from "@/api";
 import { useMessage } from "@/plugins/message";
 
-const { success, warning,error } = useMessage();
+const { success, warning, error } = useMessage();
 
 const breadList = ref([{ title: "用户管理" }]);
 
@@ -27,11 +27,10 @@ const formItems = ref(userFormItems);
 const loading = ref(false);
 const userData = ref([]);
 const columns = ref([
-  { prop: "id", label: "ID",width:40 },
-  { prop: "user_name", label: "用户名",width:300 },
-  { prop: "phone", label: "手机号" ,width:150},
-  // { prop: "email", label: "邮箱" },
-  { prop: "devices", label: "已授权设备",width:300 },
+  { prop: "id", label: "ID", width: 40 },
+  { prop: "user_name", label: "用户名", width: 300 },
+  { prop: "phone", label: "手机号", width: 150 },
+  { prop: "devices", label: "已授权设备", width: 300},
   { prop: "create_time", label: "创建时间" },
 ]);
 
@@ -70,7 +69,12 @@ const getLists = async (page, limit) => {
   try {
     const result = await systemApi.getUserList(searchModel.value);
     if (!result?.code) {
-      userData.value = result.data.list;
+      const lists = result.data.list.map((item) => ({
+        ...item,
+        devices: item.devices.map(cur=>cur.device_name).join(","),
+      }));
+      console.log(lists)
+      userData.value = lists;
       total.value = result.data.total_count;
     }
   } catch (error) {
@@ -130,8 +134,8 @@ const handleClickShowAuthor = (row) => {
 
 // 授权
 const handleClickAuthor = (values) => {
-  if(!values.length) {
-    error('设备授权失败，至少授权一个设备')
+  if (!values.length) {
+    error("设备授权失败，至少授权一个设备");
     return;
   }
   systemApi
@@ -179,9 +183,7 @@ const handleCloseDeleteModal = () => {
 </script>
 <template>
   <div class="user-container">
-    <Bread :breadList="breadList">
-    
-    </Bread>
+    <Bread :breadList="breadList"> </Bread>
     <SearchForm
       :formItems="formItems"
       :initialData="initialData"
@@ -190,7 +192,7 @@ const handleCloseDeleteModal = () => {
     />
     <ElCard title="用户列表">
       <template v-slot:actions>
-          <el-button type="primary" @click="handleEdit()">新建用户</el-button>
+        <el-button type="primary" @click="handleEdit()">新建用户</el-button>
       </template>
       <ElTable
         class="user-list__table"
@@ -199,6 +201,13 @@ const handleCloseDeleteModal = () => {
         :data="userData"
         :tableProps="{ showSelection: false, border: true }"
       >
+        <!-- <template #devices="scope">
+          <ul>
+            <li v-for="(item, index) in scope.row.devices" :key="index">
+              {{ item.device_name }}
+            </li>
+          </ul>
+        </template> -->
         <template #action="{ row }">
           <span
             class="user-list__action-btn author-btn"

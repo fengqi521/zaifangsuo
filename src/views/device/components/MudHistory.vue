@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref, watchEffect, watch, onMounted } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import TimelineImage from "./TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
@@ -31,9 +31,12 @@ const collectOption = reactive(
 const chartData = reactive({ timeList: [], valueList: [] });
 
 // 获取泥水位图表数据
+const chartLoading = ref(false);
 const getMudChartData = () => {
+  chartLoading.value = true;
   const { page, limit, ...params } = searchInfo.value;
   systemApi.getRainData(params).then((res) => {
+    chartLoading.value = false;
     if (!res.code) {
       Object.assign(chartData, res.data.list[0]);
       Object.assign(mudLevelImages, res.data.list[1]);
@@ -46,14 +49,14 @@ const resetOptions = (data) => {
   collectOption.legend.show = true;
   collectOption.xAxis[0].data = data.timeList;
   collectOption.yAxis[0].name = "{title|泥水位(m)}";
-  collectOption.yAxis[1].show =false;
+  collectOption.yAxis[1].show = false;
 
   collectOption.series[0] = {
     name: "泥水位",
     type: "line",
     data: data.valueList,
     Symbol: "circle",
-    smooth: true
+    smooth: true,
   };
 };
 
@@ -65,7 +68,6 @@ watch(
   }
 );
 
-
 // 历史table数据
 const loading = ref(false);
 const deviceData = reactive({ total: 0, data: [] });
@@ -76,8 +78,10 @@ const tableColumns = [
 ];
 // 获取泥水位历史数据
 const getMudLevelHistory = () => {
+  loading.value = true;
   const { page, limit } = searchInfo.value;
   systemApi.getRainHistory(searchInfo.value).then((res) => {
+    loading.value = false;
     if (!res.code) {
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
@@ -103,6 +107,9 @@ const handleChangeSize = (size) => {
 const fetchData = (values) => {
   searchInfo.value.start_time = values[0];
   searchInfo.value.end_time = values[1];
+  Object.assign(mudLevelImages, { timeList: [], valueList: [] });
+  Object.assign(chartData, { timeList: [], valueList: [] });
+  Object.assign(deviceData, { data: [], total: 0 });
   getMudChartData();
   getMudLevelHistory();
 };
@@ -119,12 +126,13 @@ watch(
 
 <template>
   <div class="device-data">
-    <ElCard title="传感器监测历史数据" v-loading="loading">
-      <div class="device-data__history">
-        <Chart :options="[collectOption]" />
+    <ElCard title="传感器监测历史数据">
+      <div class="device-data__history" v-loading="chartLoading">
+        <el-empty v-if="!chartData.timeList.length"></el-empty>
+        <Chart :options="[collectOption]" v-else />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
-      <ElCard v-loading="loading" class="history-data-card">
+      <ElCard class="history-data-card">
         <ElTable
           :loading="loading"
           :columns="tableColumns"

@@ -43,7 +43,7 @@ export default {
   },
 
   // 获取设备配置
-  getDeviceConfig:function(params){
+  getDeviceConfig: function (params) {
     return getRequest("/v1/device/config", params);
   },
 
@@ -76,14 +76,18 @@ export default {
   getResponse: function (params) {
     return getRequest("/v1/device/response", params);
   },
-  // 解析报文
-  getParse: function (params) {
-    return getRequest("/v1/decode/parse", params);
-  },
 
   // 下发记录
   getRecord: function (params) {
     return getRequest("/v1/history/lists", params);
+  },
+  // 下发报文信息
+  getReportInfo: function (params) {
+    return getRequest("/v1/history/info", params);
+  },
+  // 解析报文
+  getReportParse: function (params) {
+    return getRequest("/v1/decode/parse", params);
   },
 
   // 用户列表

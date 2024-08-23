@@ -8,9 +8,9 @@ import { deviceMap } from "@/constants";
 const columns = ref([
   { prop: "num", label: "序号",width:80 },
   { prop: "device_name", label: "设备名称" },
-  { prop: "device_type", label: "设备类型",width:100 },
+  { prop: "device_type", label: "设备类型",width:100,type:'slot' },
   { prop: "location", label: "位置" },
-  { prop: "online", label: "在线状态",width:80 },
+  { prop: "online", label: "在线状态",width:80,type:'slot' },
   { prop: "online_last", label: "最后在线时间",width:180 },
   { prop: "create_time", label: "创建时间",width:180 },
 ]);

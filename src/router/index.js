@@ -23,16 +23,14 @@ const DeviceCommand = () => import("@/views/device/command/index.vue");
 
 // 下发记录
 const HistoryRecord = () => import("@/views/command/index.vue");
+const HistoryParser = () => import("@/views/command/parser/index.vue");
 
 // 用户管理
 const UserList = () => import("@/views/user/index.vue");
 
-
 // 固件列表
 const PackageList = () => import("@/views/package/index.vue");
 
-// 报文解析
-const Parsing = () => import("@/views/parser/index.vue");
 
 const Err404 = () => import("@/views/error-page/404.vue");
 const Err401 = () => import("@/views/error-page/401.vue");
@@ -108,7 +106,7 @@ export const dynamicRoutes = [
           icon: "icon-a-RTUguanliweixuan",
           size: "18px",
           affix: true,
-          roles: [1,4],
+          roles: [1, 4],
         },
       },
       {
@@ -140,27 +138,35 @@ export const dynamicRoutes = [
           title: "下发记录",
           icon: "icon-xiafajilu",
           size: "18px",
-          roles: [1,4],
+          roles: [1, 4],
         },
       },
-    ],
-  },
-  {
-    path: "/parser",
-    component: Layout,
-    children: [
       {
-        path: "",
-        component: Parsing,
+        path: "parser/:id/:type",
+        component: HistoryParser,
         meta: {
-          title: "报文解析",
-          icon: "icon-baowenjiexi",
-          size: "18px",
-          roles: [1,4],
+          hidden: true,
+          activeMenu: "/command",
         },
       },
     ],
   },
+  // {
+  //   path: "/parser",
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: "",
+  //       component: Parsing,
+  //       meta: {
+  //         title: "报文解析",
+  //         icon: "icon-baowenjiexi",
+  //         size: "18px",
+  //         roles: [1, 4],
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: "/user",
     component: Layout,

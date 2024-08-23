@@ -9,7 +9,7 @@ import Empty from "../../Empty.vue";
 import { getCommonLine } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
-const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C"] }));
+const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C",''] }));
 
 const colors = [
   {
@@ -49,12 +49,12 @@ const colors = [
 ];
 // 图表数据重组
 const resetOptions = (lists) => {
-  collectOption.color = ["#ff0000", "rgba(255,148,84,1)"];
+  collectOption.color = ["#ff0000", "rgba(255,148,84,1)",'#FFFF00'];
   collectOption.legend = {
     ...collectOption.legend,
-    data: ["电压", "温度"],
+    data: ["电压", "温度",'信号强度'],
     show: true,
-    x: "center",
+    x: 80,
     textStyle: {
       color: "#96b4be",
       rich: {
@@ -67,17 +67,18 @@ const resetOptions = (lists) => {
   };
   collectOption.grid.bottom = 0;
   collectOption.grid.top = 30;
+  collectOption.grid.right = 50
   collectOption.xAxis[0].data = lists[0].timeList;
   collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
   collectOption.xAxis[0].axisLabel.color = "#96B4BE";
+
+  console.log(collectOption.yAxis)
   collectOption.yAxis[0].name = "{title|电压(V)}";
   collectOption.yAxis[1].name = "{title|温度(V)}";
   collectOption.yAxis[0].nameTextStyle.fontSize = 14;
   collectOption.yAxis[0].nameTextStyle.color = "#FFF";
   collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 10, 0, 0];
-  collectOption.yAxis[1].nameTextStyle.rich.title.padding = [-10, 0, 0, 0];
-  collectOption.yAxis[1].nameTextStyle.color = "#FFF";
-  collectOption.yAxis[1].alignTicks = true;
+
   collectOption.yAxis[0].splitLine = {
     lineStyle: {
       color: "#2C4756",
@@ -89,6 +90,11 @@ const resetOptions = (lists) => {
     fontSize: 14,
   };
 
+
+  collectOption.yAxis[1].nameTextStyle.rich.title.padding = [-10, 0, 0, 0];
+  collectOption.yAxis[1].nameTextStyle.color = "#FFF";
+  collectOption.yAxis[1].alignTicks = true;
+
   collectOption.yAxis[1].splitLine = {
     lineStyle: {
       color: "#2C4756",
@@ -99,6 +105,20 @@ const resetOptions = (lists) => {
     color: "#96B4BE",
     fontSize: 14,
   };
+
+  collectOption.yAxis[2] = {
+    ...collectOption.yAxis[1],
+    name: "{title|信号强度}",
+    nameTextStyle:{
+      rich:{
+        title:{
+          padding : [0, 0, 0, 0]
+        }
+      },
+      color:"#FFF"
+    },
+    offset:60
+  }
 
   collectOption.series = lists.map((item, index) => {
     return {

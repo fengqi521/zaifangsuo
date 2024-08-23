@@ -21,9 +21,10 @@ const columns = ref([
   { prop: "num", label: "序号", width: 80 },
   { prop: "device_number", label: "设备编号" },
   { prop: "device_name", label: "设备名称" },
-  { prop: "device_type", label: "设备类型" },
-  { prop: "online", label: "在线状态" },
-  // { prop: "monitoring_station", label: "所属站" },
+  { prop: "device_type", label: "设备类型" ,type:'slot'},
+  { prop: "online", label: "在线状态" ,type:'slot'},
+  { prop: "create_time", label: "最后在线时间" }
+
 ]);
 // 获取设备数据
 const getRtuData = async () => {
@@ -34,7 +35,6 @@ const getRtuData = async () => {
     const newTableData = res.data.list.map((item, index) => ({
       ...item,
       num: (page - 1) * limit + (index + 1),
-      online: isOnLine(item.online_last) ? 1 : 0,
     }));
     rtuData.data = [...newTableData];
     rtuData.total = res.data.total_count;
@@ -46,6 +46,7 @@ getRtuData();
 
 // 查询数据
 const handleSearchSubmit = (data) => {
+  Object.assign(rtuData,{data:[],total:0})
   searchInfo.value = { ...searchInfo.value, ...data };
   getRtuData();
 };
@@ -113,7 +114,6 @@ const searchPackage = () => {
 
 // 确认提交
 const handleConfirmSelect = () => {
-  console.log(selectedId.value, "提交");
   show.value = false;
 };
 
