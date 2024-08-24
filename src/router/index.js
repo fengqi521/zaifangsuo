@@ -13,9 +13,6 @@ const Dashboard = () => import("@/views/dashboard/index.vue");
 // 首页
 const Home = () => import("@/views/home/index.vue");
 
-// 设备数据
-// const DeviceData = () => import("@/views/device/index.vue");
-
 // 设备管理
 const DeviceData = () => import("@/views/device/index.vue");
 const DeviceDetail = () => import("@/views/device/detail/index.vue");
@@ -151,22 +148,7 @@ export const dynamicRoutes = [
       },
     ],
   },
-  // {
-  //   path: "/parser",
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: "",
-  //       component: Parsing,
-  //       meta: {
-  //         title: "报文解析",
-  //         icon: "icon-baowenjiexi",
-  //         size: "18px",
-  //         roles: [1, 4],
-  //       },
-  //     },
-  //   ],
-  // },
+ 
   {
     path: "/user",
     component: Layout,
