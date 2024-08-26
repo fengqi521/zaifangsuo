@@ -3,10 +3,7 @@ import { ref, reactive, nextTick, onMounted, onUnmounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import Icon from "@/components/Icon.vue";
 
-import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
-import { useInputHook } from "@/hooks/useInput";
-import { strToHex, hexToDecimal } from "@/utils";
 import systemApi from "@/api";
 
 const {
@@ -16,7 +13,7 @@ const { success, error } = useMessage();
 
 const baseForm = {
   id,
-  code: "14",
+  code: "15",
   count: 1,
 };
 
@@ -212,7 +209,7 @@ onUnmounted(() => {
 
 .alarm-command {
   display: grid;
-  grid-template-columns: 366px 1fr;
+  grid-template-columns: 378px 1fr;
   padding-inline: 24px;
   border: 1px solid var(--card-border-color);
   background: var(--background-color);

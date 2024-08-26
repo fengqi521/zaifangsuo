@@ -677,7 +677,7 @@ onUnmounted(() => {
 
 .func-command {
     display: grid;
-    grid-template-columns: 366px 1fr;
+    grid-template-columns: 378px 1fr;
     padding-inline: 24px;
     border: 1px solid var(--card-border-color);
     background: var(--background-color);

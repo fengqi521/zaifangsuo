@@ -21,10 +21,9 @@ const columns = ref([
   { prop: "num", label: "序号", width: 80 },
   { prop: "device_number", label: "设备编号" },
   { prop: "device_name", label: "设备名称" },
-  { prop: "device_type", label: "设备类型" ,type:'slot'},
-  { prop: "online", label: "在线状态" ,type:'slot'},
-  { prop: "create_time", label: "最后在线时间" }
-
+  { prop: "device_type", label: "设备类型", type: "slot" },
+  { prop: "online", label: "在线状态", type: "slot" },
+  { prop: "create_time", label: "最后在线时间" },
 ]);
 // 获取设备数据
 const getRtuData = async () => {
@@ -46,7 +45,7 @@ getRtuData();
 
 // 查询数据
 const handleSearchSubmit = (data) => {
-  Object.assign(rtuData,{data:[],total:0})
+  Object.assign(rtuData, { data: [], total: 0 });
   searchInfo.value = { ...searchInfo.value, ...data };
   getRtuData();
 };
@@ -86,7 +85,7 @@ const packageData = ref([]);
 const selectedId = ref(null);
 const searchQuery = ref("");
 let all = [];
-// 获取固件包
+// 获取固件包   //功能码16
 const getPackageList = async () => {
   const result = await systemApi.getPackageList();
   if (!result?.code) {
