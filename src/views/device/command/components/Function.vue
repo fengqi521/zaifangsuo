@@ -577,7 +577,7 @@ onUnmounted(() => {
                     </el-form-item>
                 </div>
                 <!-- 泥位计 -->
-                <div class="func-command__rain" v-if="type == 1">
+                <template class="func-command__rain" v-if="type == 1">
                     <el-form-item label="泥位计地址">
                         <el-input v-model="commandForm.data.addr" maxlength="255" placeholder="泥位计地址" />
                     </el-form-item>
@@ -598,33 +598,33 @@ onUnmounted(() => {
                             placeholder="加报阈值" />
                         <div class="func-command__unit">m</div>
                     </el-form-item>
-                </div>
+                </template>
                 <!-- 雨量计 -->
-                <div class="func-command__rain" v-if="type == 2">
+                <template class="func-command__rain" v-if="type == 2">
                     <el-form-item label="雨量地址">
-                        <el-input v-model="commandForm.data.addr" maxlength="255" />
+                        <el-input v-model="commandForm.data.addr" maxlength="255" placeholder="雨量地址"/>
                     </el-form-item>
                     <el-form-item label="加报周期" class="func-command__group">
-                        <el-input v-model="commandForm.data.cycle" @input="handleInput($event, 'cycle', 0, 1, 255)" />
+                        <el-input v-model="commandForm.data.cycle" @input="handleInput($event, 'cycle', 0, 1, 255)" placeholder="加报周期"/>
                         <div class="func-command__unit">min</div>
                     </el-form-item>
 
                     <el-form-item label="报警阈值" class="func-command__group">
                         <el-input v-model="commandForm.data.threshold"
-                            @input="handleInput($event, 'threshold', 0, 1, 1440)" />
+                            @input="handleInput($event, 'threshold', 0, 1, 1440)"  placeholder="报警阈值"/>
                         <div class="func-command__unit">mm</div>
                     </el-form-item>
 
                     <el-form-item label="报警阈值时长" class="func-command__group">
-                        <el-input v-model="commandForm.data.the_time" @input="handleInput($event, 'the_time', 0, 1, 255)" />
+                        <el-input v-model="commandForm.data.the_time" @input="handleInput($event, 'the_time', 0, 1, 255)"  placeholder="报警阈值时长"/>
                         <div class="func-command__unit">min</div>
                     </el-form-item>
 
                     <el-form-item label="累计雨量" class="func-command__group">
-                        <el-input :model-value="commandForm.data.sum" @input="handleInput($event, 'sum', 0, 0, 6553)" />
+                        <el-input :model-value="commandForm.data.sum" @input="handleInput($event, 'sum', 0, 0, 6553)" placeholder="累计雨量"/>
                         <div class="func-command__unit">mm</div>
                     </el-form-item>
-                </div>
+                </template>
                 <!-- 断线 -->
                 <div class="func-command__rain" v-if="type == 3">
                     <el-form-item label="断线传感器地址">
@@ -643,7 +643,7 @@ onUnmounted(() => {
                 <el-date-picker v-model="commandForm.data.lock" value-format="YYYY-MM-DD HH:mm:ss" type="datetime"
                     placeholder="设置遥测站时钟" />
             </el-form-item>
-            <el-form-item label="" class="command-form__btn">
+            <el-form-item label=" " class="command-form__btn">
                 <el-button type="primary" :disabled="!commandForm.code || responseLoading"
                     @click="handleClickSubmit">下发指令</el-button>
                 <!-- <el-button @click="handleReset">重置</el-button> -->
@@ -678,10 +678,10 @@ onUnmounted(() => {
 .func-command {
     display: grid;
     grid-template-columns: 366px 1fr;
-    padding: 0 24px 24px;
+    padding-inline: 24px;
     border: 1px solid var(--card-border-color);
     background: var(--background-color);
-    height:100%;
+    height: calc(100vh - 239px);
 }
 
 .func-command__form {

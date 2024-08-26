@@ -1,17 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
-import Function from './components/Function.vue'
-const { params: { name, type } } = useRoute();
+import ElCard from "@/components/ElCard/index.vue";
+import Function from "./components/Function.vue";
+import Alarm from "./components/Alarm.vue";
+const {
+  params: { name, type },
+} = useRoute();
 // 导航
-const breadList = [
-  { to: "/device", title: "设备管理" },
-  { title: "指令下发" },
-];
+const breadList = [{ to: "/device", title: "设备管理" }, { title: "指令下发" }];
 
-const activeTab = ref('data')
-
+const activeTab = ref("data");
 </script>
 
 <template>
@@ -21,16 +21,16 @@ const activeTab = ref('data')
 
     <!-- 设备名称 -->
     <p class="command-name">{{ name }}</p>
-
-    <el-tabs type="border-card" class="command-tabs" v-model="activeTab">
-      <el-tab-pane label="下发功能指令" name="data">
-        <Function />
-      </el-tab-pane>
-      <el-tab-pane label="下发报警指令" name="work" v-if="type == 3">
-      </el-tab-pane>
-    </el-tabs>
-
-
+    <ElCard>
+      <el-tabs type="border-card" class="command-tabs" v-model="activeTab">
+        <el-tab-pane label="下发功能指令" name="data">
+          <Function />
+        </el-tab-pane>
+        <el-tab-pane label="下发报警指令" name="alarm">
+          <Alarm />
+        </el-tab-pane>
+      </el-tabs>
+    </ElCard>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -43,15 +43,6 @@ const activeTab = ref('data')
 }
 
 .command-tabs {
-
-  :deep(.el-tabs__content) {
-    height: calc(100vh - 197px);
-
-    .el-tab-pane {
-      height: 100%;
-    }
-  }
-
   :deep(.el-tabs__item) {
     height: 32px;
     font-size: 12px;
