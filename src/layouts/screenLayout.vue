@@ -5,7 +5,7 @@
       :style="getViewStyle"
     >
       <div class="screen-head">
-        <span class="screen-title">地质监测数据统计中心</span>
+        <span class="screen-title">北京市突发地质灾害监测预警提升工程运维管理平台</span>
       </div>
       <App-main />
     </div>
@@ -87,7 +87,7 @@ const getScreenSize = () => {
       top: 0;
       height: 102px;
       text-align: center;
-      background: url("@/assets/images/screen-head-1.png") no-repeat;
+      // background: url("@/assets/images/screen-head-1.png") no-repeat;
       background-size: cover;
     }
 

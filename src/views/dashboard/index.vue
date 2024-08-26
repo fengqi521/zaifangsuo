@@ -18,7 +18,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted,onUnmounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
 import Map from "./Map.vue";
 import Left from "./Left.vue";
 import Right from "./Right.vue";
@@ -38,6 +38,11 @@ const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = () => {
+  screenStore.setData("deviceList", {
+    values: [],
+    online: [],
+    offline: [],
+  });
   systemApi.getDeviceList({ limit: 10000, page: 1, status: 2 }).then((res) => {
     if (!res.code) {
       Object.assign(deviceList, res.data.list);
@@ -103,6 +108,7 @@ const getWordData = (id, type) => {
 
 // 设备数量
 const getDeviceCategory = () => {
+  // screenStore.setData("deviceCount", []);
   systemApi.getDevicePercent().then((res) => {
     if (!res.code) {
       screenStore.setData("deviceCount", res.data.list);
@@ -152,7 +158,7 @@ onMounted(() => {
   secondIntervalId = setInterval(secondTasks, 1000);
 
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 60000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
 });
 
 onUnmounted(() => {

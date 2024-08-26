@@ -89,7 +89,7 @@ const content = computed(() => {
       ambient_temperature,
       battery_voltage,
       signal_strength,
-      atmos
+      atmos,
     } = data;
     const parts = [
       serial ? `流水号：${serial}` : "",
@@ -108,7 +108,7 @@ const content = computed(() => {
       atmos ? `气压：${atmos}hPa` : "",
       ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
       battery_voltage ? `设备电压：${battery_voltage}V` : "",
-      signal_strength?`设备信号强度：${signal_strength}` : "",
+      signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
     ];
 
     // 过滤掉空字符串并使用逗号连接
@@ -209,7 +209,7 @@ const content = computed(() => {
         </p>
         <p class="parse-detail__item parse-detail__data" v-if="content">
           <span class="parse-detail__label">数据内容：</span>
-          {{ content }}
+          <span>{{ content }}</span>
         </p>
       </div>
     </ElCard>
@@ -269,7 +269,7 @@ const content = computed(() => {
 
   &__item {
     line-height: 24px;
-    padding:10px;
+    padding: 10px;
     width: 32%;
     color: var(--normal-title-color);
     font-weight: 700;

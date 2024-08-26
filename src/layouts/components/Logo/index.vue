@@ -14,7 +14,7 @@ const props = {
     <transition name="layout-logo-fade">
       <router-link v-if="props.collapse" key="collapse" to="/">
         <!-- <img :src="logo" class="layout-logo" /> -->
-        地质监测系统
+        北京市突发地质灾害监测预警提升工程运维管理平台
       </router-link>
       <router-link v-else key="expand" to="/">
         <img :src="logoText1" class="layout-logo-text" />

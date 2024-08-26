@@ -8,6 +8,7 @@ import Chart from "@/components/Chart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
 import systemApi from "@/api";
+import { spaceProps } from "element-plus";
 
 const useRtuStore = useRtuStoreHook();
 const route = useRoute();
@@ -56,6 +57,7 @@ const rainData = reactive({
   humidity: [],
   wind: [],
   speed: [],
+  atmos:[]
 });
 // 获取雨量图表数据
 const chartLoading = ref(false);
@@ -74,7 +76,6 @@ const getRainChartData = () => {
       rainData.wind = res.data.list[5].valueList;
       rainData.speed = res.data.list[6].valueList;
       rainData.atmos = res.data.list[7].valueList;
-
     }
   });
 };
@@ -82,7 +83,6 @@ const getRainChartData = () => {
 // 图表数据重组
 const resetOptions = (data) => {
   // 雨量
-  const colors = ["#ffd285", "#ff733f"];
   rainOption.legend = {
     ...rainOption.legend,
     show: true,
@@ -97,12 +97,20 @@ const resetOptions = (data) => {
       padding: [0, 0, -4, 0],
     },
   };
+  const rainMin = Math.min(...data.rain);
+
   rainOption.xAxis[0].data = data.timeList;
   rainOption.yAxis[0].name = "{title|降雨量(mm)}";
   rainOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 20];
-  rainOption.yAxis[1].name = "{title|累计降雨量(mm)}";
+  rainOption.yAxis[0].min = rainMin;
+
+  rainOption.yAxis[1].name = "{title|降雨时长(min)}";
   rainOption.yAxis[1].nameTextStyle.rich.title.padding = [0, 40, 0, 0];
   rainOption.yAxis[1].alignTicks = true;
+
+  const durationMin = Math.min(...data.duration);
+  rainOption.yAxis[1].min = durationMin;
+
   rainOption.series[0] = {
     name: "降雨量",
     type: "line",
@@ -129,11 +137,13 @@ const resetOptions = (data) => {
   };
 
   // 温度
+  const temperatureMin = Math.min(...data.temperature);
   tempOption.color = ["#ff7e7e"];
   tempOption.legend.x = "center";
   tempOption.xAxis[0].data = data.timeList;
   tempOption.yAxis[0].name = "{title|温度(°C)}";
   tempOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
+  tempOption.yAxis[0].min = temperatureMin;
 
   tempOption.series[0] = {
     name: "温度",
@@ -158,11 +168,13 @@ const resetOptions = (data) => {
   };
 
   // 风向
+  const windMin = Math.min(...data.wind);
   windOption.color = ["#00aaff"];
   windOption.legend.x = "center";
   windOption.xAxis[0].data = data.timeList;
   windOption.yAxis[0].name = "{title|风向(°)}";
-  windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, ];
+  windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0];
+  windOption.yAxis[0].min = windMin;
 
   windOption.series[0] = {
     name: "风向",
@@ -187,11 +199,13 @@ const resetOptions = (data) => {
   };
 
   // 风速
+  const speedMin = Math.min(...data.speed);
   speedOption.color = ["#90ee90"];
   speedOption.legend.x = "center";
   speedOption.xAxis[0].data = data.timeList;
   speedOption.yAxis[0].name = "{title|风速(m/s)}";
   speedOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, -20];
+  speedOption.yAxis[0].min = speedMin;
   speedOption.series[0] = {
     name: "风速",
     type: "line",
@@ -215,10 +229,12 @@ const resetOptions = (data) => {
   };
 
   // 湿度
+  const humidityMin = Math.min(...data.humidity);
   humidityOption.color = ["#b3e5fc"];
   humidityOption.xAxis[0].data = data.timeList;
   humidityOption.yAxis[0].name = "{title|湿度(m/s)}";
   humidityOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
+  humidityOption.yAxis[0].min = humidityMin;
   humidityOption.series[0] = {
     name: "湿度",
     type: "line",
@@ -242,15 +258,16 @@ const resetOptions = (data) => {
   };
 
   // 气压
+  const atmosMin = Math.min(...data.atmos);
   atmosOption.color = ["#ff733f"];
   atmosOption.xAxis[0].data = data.timeList;
   atmosOption.yAxis[0].name = "{title|气压(hPa)}";
   atmosOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, -20];
+  atmosOption.yAxis[0].min = atmosMin;
   atmosOption.series[0] = {
-    name:'气压',
+    name: "气压",
     type: "line",
     data: data.atmos,
-    Symbol: "circle",
     smooth: true,
     yAxisIndex: 0,
     areaStyle: {

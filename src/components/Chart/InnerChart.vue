@@ -15,23 +15,10 @@ const props = defineProps({
   },
 });
 onMounted(() => {
-  // 初始化echarts
   initEchart(chartContainer.value);
-  //   const end = setChartItemZoom();
-  //   const option = {
-  //     ...props.option,
-  //     dataZoom: [{ ...props.option.dataZoom[0], end },{ ...props.option.dataZoom[1], end }],
-  //   }
   setEchartOption(props.option);
 });
 
-// 动态设置加载
-const setChartItemZoom = () => {
-  const _width = chartContainer.value.getBoundingClientRect().width - 32;
-  const isShowCount = Math.floor(_width / (Number() + Number(barGap)));
-  const total = props.option.series[0].data.length;
-  return isShowCount > total ? 100 : (isShowCount / total) * 100;
-};
 watch(
   () => props.option,
   (newOption, oldOption) => {

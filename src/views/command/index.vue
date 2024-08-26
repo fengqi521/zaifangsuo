@@ -164,7 +164,9 @@ const handleChangeSize = (size) => {
         :tableProps="{ showSelection: false, border: true }"
       >
         <template #response="scope">
+          <span v-if="scope.row.operate === 13">{{ scope.row.response }}</span>
           <router-link
+            v-else
             class="cell-item command-table__response"
             :to="`/command/parser/${scope.row.id}/${scope.row.device_type}`"
           >

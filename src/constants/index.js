@@ -242,7 +242,7 @@ const recordFormItems = [
       type: "datetimerange",
       startPlaceholder: "开始日期",
       endPlaceholder: "结束日期",
-      rangeSeparator: "To",
+      rangeSeparator: "至",
       valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
     },
   },

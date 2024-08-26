@@ -8,13 +8,17 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import systemApi from "@/api";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 import { getCommonLine } from "@/utils/chartData";
+import { getTopNum } from "@/utils";
 
 const route = useRoute();
 
 const { id, type } = route.params;
 const useRtuStore = useRtuStoreHook();
 const collectOption = reactive(
-  getCommonLine({ seriesUnit: ["V", "°C",''], yAxisTitlePadding: [0, 0, 0, 10] })
+  getCommonLine({
+    seriesUnit: ["V", "°C", "dBm"],
+    yAxisTitlePadding: [0, 0, 0, 10],
+  })
 );
 
 const searchInfo = ref({
@@ -31,11 +35,16 @@ const workColumns = [
   { prop: "upload_time", label: "监测时间" },
   { prop: "voltage", label: "电压(V)" },
   { prop: "temperature", label: "温度(°C)" },
-  { prop: "signal_strength", label: "信号强度" },
+  { prop: "signal_strength", label: "信号强度(dBm)" },
 ];
 
 const colors = ["#ff0000", "#ff733f", "#FFFF00"];
-const chartData = reactive({ timeList: [], voltage: [], temperature: [] });
+const chartData = reactive({
+  timeList: [],
+  voltage: [],
+  temperature: [],
+  strength: [],
+});
 // 获取图表数据
 const chartLoading = ref(false);
 const getWorkChartData = () => {
@@ -54,8 +63,10 @@ const getWorkChartData = () => {
 
 // 图表数据重组
 const resetOptions = (data) => {
+  const { timeList,voltage, temperature, strength } = data;
+ 
   collectOption.legend.show = true;
-  collectOption.grid.right = 50
+  collectOption.grid.right = 50;
   collectOption.legend = {
     ...collectOption.legend,
     x: "center",
@@ -70,24 +81,55 @@ const resetOptions = (data) => {
     },
   };
   collectOption.color = colors;
-  collectOption.xAxis[0].data = data.timeList;
-  collectOption.yAxis[0].name = "{title|电压(V)}";
+  collectOption.xAxis[0].data = timeList
+
+
+  const spliceNumber = 5
+  const voltageMin = Math.min(...voltage);
+  const voltageMax = Math.max(...voltage);
+  const voltageInterval  = (voltageMax - voltageMin) / spliceNumber
+  
+  const temperatureMin = Math.min(...temperature);
+  const temperatureMax = Math.max(...temperature);
+  const temperatureInterval  = (temperatureMax - temperatureMin) / spliceNumber
+
+  const strengthMin = Math.min(...strength);
+  const strengthMax = Math.max(...strength)
+  const strengthInterval  = (strengthMax - strengthMin) / spliceNumber
+  collectOption.yAxis[0] = {
+    ...collectOption.yAxis[0],
+    name :"{title|电压(V)}",
+    min:voltageMin,
+    interval:voltageInterval,
+    max:voltageMax
+  }
+
+
+
   collectOption.yAxis[1] = {
     ...collectOption.yAxis[1],
     name: "{title|温度(°C)}",
-    // offset: -20,
+    axisLabel: {
+      formatter: (value) => Math.ceil(value),
+    },
+    min:temperatureMin,
+    max:temperatureMax,
+    interval:temperatureInterval
   };
+
   collectOption.yAxis[2] = {
     ...collectOption.yAxis[1],
-    name: "{title|信号强度}",
+    name: "{title|信号强度(dBm)}",
     offset: 60,
-  
+    min:strengthMin,
+    max:strengthMax,
+    interval:strengthInterval
   };
-  collectOption.yAxis[1].alignTicks = true;
+
   collectOption.series[0] = {
     name: "电压",
     type: "line",
-    data: data.voltage,
+    data:voltage,
     Symbol: "circle",
     smooth: true,
     position: "left",
@@ -95,20 +137,18 @@ const resetOptions = (data) => {
   collectOption.series[1] = {
     name: "温度",
     type: "line",
-    data: data.temperature,
+    data: temperature,
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 1,
-   
   };
   collectOption.series[2] = {
     name: "信号强度",
     type: "line",
-    data: data.strength,
+    data:strength,
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 2,
-
   };
 };
 

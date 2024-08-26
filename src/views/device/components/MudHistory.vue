@@ -50,6 +50,11 @@ const resetOptions = (data) => {
   collectOption.xAxis[0].data = data.timeList;
   collectOption.yAxis[0].name = "{title|泥水位(m)}";
   collectOption.yAxis[1].show = false;
+  const min = Math.min(...data.valueList);
+  const max = Math.max(...data.valueList);
+
+  collectOption.yAxis[0].min = min;
+  // collectOption.yAxis[0].max = max;
 
   collectOption.series[0] = {
     name: "泥水位",

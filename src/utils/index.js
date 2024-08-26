@@ -187,3 +187,7 @@ export const isOnLine = (timeString) => {
   const minute = moment(currentTime).diff(moment(timeString), "minute");
   return minute < 5;
 };
+
+export function getTopNum(maxNum, splitNumber) {
+  return (parseInt(parseInt(maxNum/splitNumber)/10)+1)*splitNumber*10
+}

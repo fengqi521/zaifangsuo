@@ -23,7 +23,7 @@ const columns = ref([
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型", type: "slot" },
   { prop: "online", label: "在线状态", type: "slot" },
-  { prop: "create_time", label: "最后在线时间" },
+  { prop: "online_last", label: "最后在线时间" },
 ]);
 // 获取设备数据
 const getRtuData = async () => {
