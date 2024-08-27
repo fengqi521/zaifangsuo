@@ -22,12 +22,14 @@ const DeviceCommand = () => import("@/views/device/command/index.vue");
 const HistoryRecord = () => import("@/views/command/index.vue");
 const HistoryParser = () => import("@/views/command/parser/index.vue");
 
+// 综合分析
+const Analysis = () => import("@/views/analysis/index.vue");
+
 // 用户管理
 const UserList = () => import("@/views/user/index.vue");
 
 // 固件列表
 const PackageList = () => import("@/views/package/index.vue");
-
 
 const Err404 = () => import("@/views/error-page/404.vue");
 const Err401 = () => import("@/views/error-page/401.vue");
@@ -148,7 +150,22 @@ export const dynamicRoutes = [
       },
     ],
   },
- 
+  {
+    path: "/analysis",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: Analysis,
+        meta: {
+          title: "综合分析",
+          icon: "icon-xiafajilu",
+          size: "18px",
+          roles: [1, 4],
+        },
+      },
+    ],
+  },
   {
     path: "/user",
     component: Layout,

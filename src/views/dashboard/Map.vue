@@ -25,6 +25,12 @@ const screenStore = useScreenStoreHook();
 let viewer;
 const prevMarker = ref(null);
 const selectList = ref("");
+Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
+  90,
+  -20,
+  110,
+  90
+);
 Cesium.Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlNTVmZTY5OS02NTU5LTRjOGQtYWExZS04OTdhYzM4OWM5OGEiLCJpZCI6MjMyNzM1LCJpYXQiOjE3MjI4NTY5NDJ9.j5avjfYqPsXLfJrCzdsnV-XmhawsCYaEih7o2N-K4y8";
 
@@ -84,24 +90,27 @@ onMounted(async () => {
     })`;
     div.style.transformOrigin = "center";
   });
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(116.572719, 39.833123, 500000),
-  });
-  // const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  // handleClick(handler);
 });
 
 // 切换地图位置
 const handleChangeDevice = (code) => {
   const list = props.deviceList.find((item) => item.device_number === code);
   const { langitude, latitude } = list;
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(
-      Number(langitude),
-      Number(latitude),
-      10000
-    ),
-  });
+
+  const long = Number(langitude);
+  const lat = Number(latitude);
+  setTimeout(() => {
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(long, lat, 10000), // 目标位置的经纬度和高度
+      orientation: {
+        heading: Cesium.Math.toRadians(0), // 设置方向，0度表示朝向北
+        pitch: Cesium.Math.toRadians(-90), // 设置倾角，-90度表示垂直向下
+        roll: 0.0, // 设置滚动，0度表示没有滚动
+      },
+      duration: 3, // 动画持续时间（秒）
+    });
+  }, 1000);
+
   const marker = viewer.entities.getById(list.device_number);
   updateMarker(marker, 0.6);
   // 请求接口数据
@@ -189,6 +198,7 @@ watchEffect(() => {
       addMarker(item);
     });
     selectList.value = props.deviceList[2].device_number;
+
     handleChangeDevice(selectList.value);
   }, 3000);
 });

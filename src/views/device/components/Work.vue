@@ -66,7 +66,7 @@ const resetOptions = (data) => {
   const { timeList,voltage, temperature, strength } = data;
  
   collectOption.legend.show = true;
-  collectOption.grid.right = 50;
+  collectOption.grid.right = 70;
   collectOption.legend = {
     ...collectOption.legend,
     x: "center",
@@ -96,9 +96,13 @@ const resetOptions = (data) => {
   const strengthMin = Math.min(...strength);
   const strengthMax = Math.max(...strength)
   const strengthInterval  = (strengthMax - strengthMin) / spliceNumber
+  console.log(strengthMax,strengthMin)
   collectOption.yAxis[0] = {
     ...collectOption.yAxis[0],
     name :"{title|电压(V)}",
+    axisLabel: {
+      formatter: (value) => value.toFixed(2),
+    },
     min:voltageMin,
     interval:voltageInterval,
     max:voltageMax
@@ -110,7 +114,7 @@ const resetOptions = (data) => {
     ...collectOption.yAxis[1],
     name: "{title|温度(°C)}",
     axisLabel: {
-      formatter: (value) => Math.ceil(value),
+      formatter: (value) => value.toFixed(2),
     },
     min:temperatureMin,
     max:temperatureMax,
@@ -120,7 +124,10 @@ const resetOptions = (data) => {
   collectOption.yAxis[2] = {
     ...collectOption.yAxis[1],
     name: "{title|信号强度(dBm)}",
-    offset: 60,
+    axisLabel: {
+      formatter: (value) => value.toFixed(2),
+    },
+    offset: 100,
     min:strengthMin,
     max:strengthMax,
     interval:strengthInterval

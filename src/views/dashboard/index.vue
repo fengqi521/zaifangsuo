@@ -77,7 +77,7 @@ const getDeviceList = () => {
 
 // 获取七天监测数据
 const getDeviceRealData = (id, type) => {
-  const times = getStartAndEndTime("month");
+  const times = getStartAndEndTime("week");
   systemApi
     .getRainData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {

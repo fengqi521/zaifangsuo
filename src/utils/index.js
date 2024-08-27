@@ -20,6 +20,18 @@ export const getStartAndEndTime = (type) => {
   return [start, end];
 };
 
+export const getDatePeriod = () => {
+  const now = moment();
+  const endOfToday = now.endOf("day").format("YYYY-MM-DD HH:mm:ss");
+
+  // 当前天的前 15 天的开始时间（即 15 天前的 00:00:00）
+  const startOf15DaysAgo = now
+    .subtract(15, "days")
+    .startOf("day")
+    .format("YYYY-MM-DD HH:mm:ss");
+  return [startOf15DaysAgo,endOfToday]
+};
+
 /** 用 JS 获取全局 css 变量 */
 export const getCssVariableValue = (cssVariableName) => {
   let cssVariableValue = "";
@@ -120,10 +132,10 @@ export const strToHex = (str, width = 2) => {
 export const hexToDecimal = (hexStr) => {
   // 确保输入是大写，避免解析时的错误
   hexStr = hexStr.toUpperCase();
-  
+
   // 将十六进制字符串转换为十进制整数
   const decimal = parseInt(hexStr, 16);
-  
+
   // 返回结果
   return decimal.toString();
 };
@@ -189,5 +201,5 @@ export const isOnLine = (timeString) => {
 };
 
 export function getTopNum(maxNum, splitNumber) {
-  return (parseInt(parseInt(maxNum/splitNumber)/10)+1)*splitNumber*10
+  return (parseInt(parseInt(maxNum / splitNumber) / 10) + 1) * splitNumber * 10;
 }
