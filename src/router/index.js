@@ -49,8 +49,15 @@ export const constantRoutes = [
     },
   },
   {
-    path: "/:pathMatch(.*)*",
+    path: "/404",
     component: Err404,
+    meta: {
+      hidden: true,
+    },
+  },
+  {
+    path: "/:pathMatch(.*)",
+    redirect: "/404",
     meta: {
       hidden: true,
     },
@@ -128,6 +135,7 @@ export const dynamicRoutes = [
         meta: {
           hidden: true,
           activeMenu: "/device",
+          roles: [1],
         },
       },
     ],
