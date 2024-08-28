@@ -23,6 +23,20 @@ const commandForm = reactive({
   data: { content: "", start_time: "", way: "1" },
 });
 
+// 获取播放内容
+const voiceList = ref([]);
+const getVoiceList = () => {
+  systemApi.getTemplate().then((res) => {
+    if (!res.code) {
+      voiceList.value = res.data.tmp.map((item) => ({
+        label: item.Content,
+        value: item.Content,
+        title:item.Content
+      }));
+    }
+  });
+};
+getVoiceList();
 // 下发及响应数据
 const commandData = reactive([]);
 const responseLoading = ref(false);
@@ -127,11 +141,18 @@ onUnmounted(() => {
       label-width="auto"
     >
       <el-form-item label="播放内容">
+        <el-select-v2
+          v-model="commandForm.data.content"
+          :options="voiceList"
+          placeholder="选择播放内容"
+          filterable
+        />
         <el-input
           class="textarea"
           v-model="commandForm.data.content"
-          placeholder="播放内容，不多于400字符"
+          placeholder="播放内容"
           :maxlength="400"
+          disabled
           type="textarea"
         ></el-input>
       </el-form-item>
@@ -221,6 +242,7 @@ onUnmounted(() => {
   border-right: 1px solid var(--card-border-color);
 
   .textarea {
+    margin-top: 10px;
     :deep(.el-textarea__inner) {
       height: 160px;
       @extend %scrollbar;

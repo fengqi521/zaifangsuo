@@ -218,9 +218,9 @@ watch(
 <template>
   <div class="device-data">
     <ElCard title="设备工况">
-      <div v-loading="chartLoading">
+      <div v-loading="chartLoading" class="device-data__history">
         <el-empty v-if="!chartData.timeList.length"></el-empty>
-        <Chart :options="[collectOption]" v-else />
+        <Chart :option="collectOption" v-else />
       </div>
       <ElCard v-loading="loading" class="history-data-card">
         <ElTable
@@ -243,6 +243,10 @@ watch(
 
 <style lang="scss" scoped>
 .device-data {
+  &__history{
+    display: grid;
+    grid-template-rows:382px;
+  }
   .history-data-card {
     margin-top: 24px;
   }

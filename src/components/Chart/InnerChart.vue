@@ -1,11 +1,9 @@
 <script setup>
 import { onMounted, ref, watch, inject, onUnmounted } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
-import eventBus from "@/utils/eventBus";
-const { initEchart, resizeChart, setEchartOption, updateEchartOption } =
+const { initEchart, setEchartOption, updateEchartOption } =
   useEchartsHook();
 import { getCssVariableValue } from "@/utils";
-const barGap = getCssVariableValue("--bar-gap");
 // 定义变量
 const chartContainer = ref(null);
 const props = defineProps({

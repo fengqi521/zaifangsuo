@@ -1,6 +1,6 @@
 <template>
   <Empty v-if="!screenStore.screenData.monitorData.length" />
-  <Chart :options="[collectOption]" v-else />
+  <Chart :option="collectOption" v-else />
 </template>
 
 <script setup>

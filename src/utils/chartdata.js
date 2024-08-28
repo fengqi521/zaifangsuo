@@ -21,7 +21,7 @@ export const getCommonLine = function ({
       top: 36,
       left: 10,
       right: 16,
-      bottom: 50,
+      bottom: 25,
       containLabel: true,
     },
     // 显示提示框组件，包括提示框浮层和 axisPointer。
@@ -141,8 +141,8 @@ export const getCommonLine = function ({
       {
         type: "slider",
         show: true,
-        height: 24,
-        bottom: 16,
+        height: 16,
+        bottom: 8,
         borderColor: "#EFF2F6",
         handleStyle: {
           backgroundColor: "#D6DFF1",

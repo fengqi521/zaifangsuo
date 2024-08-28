@@ -124,4 +124,27 @@ export default {
   deletePackage: (params) => {
     return postRequest("/v1/upgrade/remove", params);
   },
+
+  // 播放内容
+  getAlarmContentList: (params) => {
+    return getRequest("/v1/alarm/list", params);
+  },
+  createAlarm: (params) => {
+    return postRequest("/v1/alarm/create", params);
+  },
+  removeAlarm: (params) => {
+    return postRequest("/v1/alarm/remove", params);
+  },
+
+  getTemplate: (params) => {
+    return getRequest("/v1/alarm/template", params);
+  },
+
+  // 报警
+  getDownList: (params) => {
+    return getRequest("/v1/alarm/down", params);
+  },
+  getUpList: (params) => {
+    return getRequest("/v1/alarm/up", params);
+  },
 };

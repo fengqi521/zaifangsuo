@@ -23,11 +23,12 @@ const dataSource = reactive([
 // 获取设备列表
 const getDeviceList = async () => {
   loading.value = true;
-  const res = await systemApi.getDeviceList({
+  let res = await systemApi.getDeviceList({
     device_type: 0,
     status: 2,
     limit: 10000,
   });
+
   if (!res.code) {
     const list = res.data.list;
     dataSource.forEach((item) => {
@@ -37,6 +38,7 @@ const getDeviceList = async () => {
         label: list.device_name,
         _id: list.id,
         type: list.device_type,
+        name: list.device_name,
       }));
     });
   }
@@ -56,18 +58,17 @@ watch(filterText, (val) => {
 
 const emit = defineEmits(["update:modelValue"]);
 
-// 设置节点类名
-const treeNodeClass = (data, node) => {
-  return node.isLeaf ? "child-node" : "parent-node";
-};
-
 // 选择tree
 const handleChangeTree = (nodeObj, data) => {
   const { checkedNodes } = data;
   //   const nodes = checkedNodes.filter((item) => item.children);
   //   const selectNodes = nodes.flatMap((item) => item.children);
-
-  emit("update:modelValue", { id: nodeObj._id, type: nodeObj.type });
+  //   console.log(nodeObj)
+  emit("update:modelValue", {
+    id: nodeObj._id,
+    type: nodeObj.type,
+    name: nodeObj.name,
+  });
 };
 </script>
 <template>
@@ -78,14 +79,17 @@ const handleChangeTree = (nodeObj, data) => {
     <el-tree
       ref="treeRef"
       class="panel-tree"
-      :props="{ class: treeNodeClass }"
       :data="dataSource"
       node-key="id"
-      show-checkbox
       default-expand-all
       :filter-node-method="filterNode"
+      @node-click="handleChangeTree"
       @check="handleChangeTree"
-    />
+    >
+      <template #default="{ node, data }">
+        <div class="span-ellipsis" :title="data.label">{{ data.label }}</div>
+      </template>
+    </el-tree>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -94,6 +98,7 @@ const handleChangeTree = (nodeObj, data) => {
   padding: 16px;
   border-radius: 3px;
   background: var(--background-color);
+  height: 100%;
   .panel-title {
     font-weight: 700;
     font-size: 14px;
@@ -103,19 +108,21 @@ const handleChangeTree = (nodeObj, data) => {
 .panel-input {
   margin: 16px 0;
 }
-.panel-tree {
+
+.el-tree {
   height: calc(100% - 88px);
   overflow-y: auto;
-}
+  font-size: 12px;
+  @extend %scrollbar;
 
-// .parent-node {
-//   font-weight: bold;
-//   color: blue;
-// }
-
-.child-node {
-  .el-tree-node__label {
-    color: green;
+  .span-ellipsis {
+    @extend %ellipsis;
   }
+}
+:deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+  font-weight: bold;
+}
+:deep(.el-tree > .el-tree-node > .el-tree-node__content .el-checkbox) {
+  display: none;
 }
 </style>

@@ -25,6 +25,12 @@ const HistoryParser = () => import("@/views/command/parser/index.vue");
 // 综合分析
 const Analysis = () => import("@/views/analysis/index.vue");
 
+// 播放内容管理
+const PlayContent = () => import("@/views/play/index.vue");
+
+// 报警管理
+const Alarm = () => import("@/views/alarm/index.vue");
+
 // 用户管理
 const UserList = () => import("@/views/user/index.vue");
 
@@ -126,6 +132,7 @@ export const dynamicRoutes = [
       },
     ],
   },
+
   {
     path: "/command",
     component: Layout,
@@ -151,6 +158,22 @@ export const dynamicRoutes = [
     ],
   },
   {
+    path: "/alarm",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: Alarm,
+        meta: {
+          title: "报警管理",
+          icon: "icon-nav_icon_bjgl_spe",
+          size: "22px",
+          roles: [1, 4],
+        },
+      },
+    ],
+  },
+  {
     path: "/analysis",
     component: Layout,
     children: [
@@ -159,25 +182,25 @@ export const dynamicRoutes = [
         component: Analysis,
         meta: {
           title: "综合分析",
-          icon: "icon-xiafajilu",
-          size: "18px",
+          icon: "icon-tongjifenxi2",
+          size: "20px",
           roles: [1, 4],
         },
       },
     ],
   },
   {
-    path: "/user",
+    path: "/play",
     component: Layout,
     children: [
       {
         path: "",
-        component: UserList,
+        component: PlayContent,
         meta: {
-          title: "用户管理",
-          icon: "icon-yonghuguanli",
-          size: "20px",
-          roles: [1],
+          title: "播放内容管理",
+          icon: "icon-guzhangyuyinguanli",
+          size: "18px",
+          roles: [1, 4],
         },
       },
     ],
@@ -192,6 +215,22 @@ export const dynamicRoutes = [
         meta: {
           title: "固件管理",
           icon: "icon-gujianguanli",
+          size: "20px",
+          roles: [1],
+        },
+      },
+    ],
+  },
+  {
+    path: "/user",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: UserList,
+        meta: {
+          title: "用户管理",
+          icon: "icon-yonghuguanli",
           size: "20px",
           roles: [1],
         },

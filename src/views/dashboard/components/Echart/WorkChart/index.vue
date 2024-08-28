@@ -1,6 +1,6 @@
 <template>
   <Empty v-if="!screenStore.screenData.workData.length" />
-  <Chart :options="[collectOption]" v-else />
+  <Chart :option="collectOption" v-else />
 </template>
 <script setup>
 import { ref, reactive, watchEffect } from "vue";
@@ -72,7 +72,6 @@ const resetOptions = (lists) => {
   collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
   collectOption.xAxis[0].axisLabel.color = "#96B4BE";
 
-  console.log(collectOption.yAxis)
   collectOption.yAxis[0].name = "{title|电压(V)}";
   collectOption.yAxis[1].name = "{title|温度(V)}";
   collectOption.yAxis[0].nameTextStyle.fontSize = 14;

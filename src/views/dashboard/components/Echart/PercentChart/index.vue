@@ -128,5 +128,5 @@ const resetOptions = (lists) => {
 
 <template>
   <Empty v-if="!screenStore.screenData.deviceCount.length" />
-  <chart :options="[option]" v-else/>
+  <chart :option="option" v-else/>
 </template>

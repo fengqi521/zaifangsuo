@@ -146,5 +146,5 @@ watch(
 </script>
 
 <template>
-  <chart :options="[option]" />
+  <chart :option="option" />
 </template>

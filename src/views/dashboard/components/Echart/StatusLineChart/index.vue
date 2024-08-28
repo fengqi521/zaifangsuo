@@ -89,7 +89,7 @@ const resetOptions = (deviceObj) => {
 </script>
 
 <template>
-  <chart :options="[option]" />
+  <chart :option="option" />
 </template>
 
 <style lang="scss" scoped></style>

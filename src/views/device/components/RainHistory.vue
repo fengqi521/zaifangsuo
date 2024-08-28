@@ -380,7 +380,7 @@ const isAllOptionsEmpty = computed(() =>
   <div class="device-data">
     <ElCard title="传感器监测历史数据" v-loading="chartLoading">
       <div class="device-data__history">
-        <Chart :options="allOptions" />
+        <Chart v-for="(option,index) in allOptions" :key="index" :option="option" />
       </div>
 
       <ElCard class="history-data-card">
@@ -408,6 +408,7 @@ const isAllOptionsEmpty = computed(() =>
     margin-top: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3,382px);
     gap: 16px;
   }
 

@@ -1,51 +1,105 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { reactive, ref, watch, watchEffect } from "vue";
 import Bread from "@/components/Bread/index.vue";
 import CompareChart from "./components/CompareChart.vue";
-import DevicePanel from "./components/DevicePanel/index.vue";
+import DevicePanel from "./components/DevicePanel.vue";
 import systemApi from "@/api";
 import { getDatePeriod } from "@/utils";
-const deviceInfo = ref([]);
+const deviceInfo = ref({});
+
+const allOptions = reactive([]);
 const range = ref(getDatePeriod());
+const loading = ref(false);
 
 // 获取设备数据
-const getDeviceDetail = (params) => {
-  params.tart_time = range.value[0];
+const getDeviceDetail = async (arg) => {
+  loading.value = true;
+  const params = { ...arg };
+  params.start_time = range.value[0];
   params.end_time = range.value[1];
-  return systemApi.getRainData(params);
-};
-
-// 将请求方法汇总
-const collectAction = async () => {
-  try {
-    const actions = deviceInfo.value.map((item) => getDeviceDetail(item));
-    const results = await Promise.all(actions); // 等待所有 Promise 完成
-    const isFlag = results.some((item) => item.code !== 0);
-    if (!isFlag) {
-      const allData = results.flatMap((item) => item?.data?.list);
-      console.log(allData)
+  const result = await systemApi.getRainData(params);
+  loading.value = false;
+  if (!result.code) {
+    const { type, id, name } = params;
+    const data = result.data.list;
+    const list = allOptions.find((item) => item.id === id);
+    switch (type) {
+      case 1:
+        list
+          ? (list.data = data[0])
+          : allOptions.push({ id, type, name, data: data[0] });
+        break;
+      case 2:
+        const findData = data.slice(0, 3);
+        const rain = findData.find((item) => item.column === "rain");
+        const duration = findData.find((item) => item.column === "rain_min");
+        const total_rain = findData.find((item) => item.column === "rainfall");
+        const datas = {
+          timeList: rain?.timeList,
+          rain: rain?.valueList,
+          total_rain: total_rain?.valueList,
+          duration: duration?.valueList,
+        };
+        list
+          ? (list.data = datas)
+          : allOptions.push({
+              id,
+              type,
+              name,
+              data: datas,
+            });
+        break;
+      case 3:
+        list
+          ? (list.data = data[0])
+          : allOptions.push({
+              id,
+              type,
+              name,
+              data: data[0],
+            });
+        break;
+      default:
+        break;
     }
-
-  } catch (error) {
-    console.error("Error occurred:", error); // 处理可能的错误
   }
 };
 
+// 点击查询
+const handleSearch = () => {
+  allOptions.map((item) => {
+    getDeviceDetail({ id: item.id, type: item.type });
+  });
+};
+
+// 清除
+const handleClear = () => {
+  allOptions.length = 0;
+};
+
 // 监听设备变化获取数据
-watchEffect(() => {
-  if (!deviceInfo.value.length) return;
-  collectAction();
-});
+watch(
+  () => deviceInfo.value,
+  (info) => {
+    const index = allOptions.findIndex((item) => item.id === info.id);
+    if (index > -1) {
+      allOptions.splice(index, 1);
+      return;
+    }
+    getDeviceDetail(info);
+  },
+  { deep: true }
+);
 </script>
 <template>
-  <div>
+  <div >
     <Bread :breadList="[{ title: '综合分析' }]" />
     <div class="analysis-container">
       <!-- 左侧-设备列表 -->
       <DevicePanel v-model="deviceInfo" />
 
       <!-- 右侧-图表 -->
-      <div class="compare-container">
+      <div class="compare-container" v-loading="loading">
         <el-form class="compare-head">
           <el-form-item label="时间段">
             <el-date-picker
@@ -56,30 +110,37 @@ watchEffect(() => {
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               style="width: 314px"
+              value-format="YYYY-MM-DD HH:mm:ss"
             />
           </el-form-item>
           <el-form-item>
-            <el-button
-              class="search-btn"
-              type="primary"
-              @click="collectAction()"
-            >
+            <el-button class="search-btn" type="primary" @click="handleSearch">
               查询
             </el-button>
-            <el-button type="primary"> 清除图表 </el-button>
+            <el-button type="primary" @click="handleClear">
+              清除图表
+            </el-button>
           </el-form-item>
         </el-form>
-        <CompareChart />
+        <el-empty v-if="!allOptions.length" style="height: 80%"></el-empty>
+        <div class="compare-chart" v-else>
+          <CompareChart
+            v-for="(option, index) in allOptions"
+            :key="option.id"
+            :option="option"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
+@import "@/styles/tools.scss";
 .analysis-container {
   display: grid;
   grid-template-columns: 300px 1fr;
+  grid-template-rows: calc(100vh - 138px);
   column-gap: 12px;
-  height: calc(100vh - 138px);
 
   .compare-container {
     padding: 16px;
@@ -90,7 +151,15 @@ watchEffect(() => {
       display: flex;
       align-items: center;
     }
-
+    .compare-chart {
+      display: grid;
+      grid-template-rows: repeat(2, 1fr);
+      // grid-template-rows: repeat(auto-fill, minmax(100px, 1fr));
+      row-gap: 10px;
+      height: calc(100% - 50px);
+      overflow-y: auto;
+      @extend %scrollbar;
+    }
     .search-btn {
       margin-left: 24px;
     }

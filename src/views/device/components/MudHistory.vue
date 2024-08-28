@@ -134,7 +134,7 @@ watch(
     <ElCard title="传感器监测历史数据">
       <div class="device-data__history" v-loading="chartLoading">
         <el-empty v-if="!chartData.timeList.length"></el-empty>
-        <Chart :options="[collectOption]" v-else />
+        <Chart :option="collectOption" v-else />
         <TimelineImage :imagesData="mudLevelImages" />
       </div>
       <ElCard class="history-data-card">
@@ -161,6 +161,7 @@ watch(
   &__history {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows:382px;
     gap: 16px;
   }
 

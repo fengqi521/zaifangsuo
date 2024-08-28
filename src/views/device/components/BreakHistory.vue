@@ -138,6 +138,7 @@ watch(
   &__history {
     display: grid;
     // grid-template-columns: 1fr 1fr;
+    grid-template-rows:382px;
     gap: 16px;
   }
 
