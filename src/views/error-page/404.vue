@@ -1,4 +1,5 @@
 <template>
+  <Nav />
   <div class="error-page">
     <img src="@/assets/images/404-page.png" class="error-img" />
     <div class="error-text">
@@ -7,6 +8,9 @@
     </div>
   </div>
 </template>
+<script setup>
+import Nav from "@/layouts/Nav.vue";
+</script>
 <style lang="scss" scoped>
 .error-page {
   position: absolute;
@@ -20,7 +24,7 @@
 
 .error-text {
   position: absolute;
-  bottom:100px;
+  bottom: 100px;
   left: calc((100% - 265px) / 2);
   width: 265px;
   text-align: left;

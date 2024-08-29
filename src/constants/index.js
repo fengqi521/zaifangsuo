@@ -248,6 +248,25 @@ const recordFormItems = [
   },
 ];
 //---------------功能码对应关系 start--------------------
+const area = [
+  { code: 110101000000, label: "东城区" },
+  { code: 110101000000, label: "东城区" },
+  { code: 110102000000, label: "西城区" },
+  { code: 110105000000, label: "朝阳区" },
+  { code: 110106000000, label: "丰台区" },
+  { code: 110107000000, label: "石景山区" },
+  { code: 110108000000, label: "海淀区" },
+  { code: 110109000000, label: "门头沟区" },
+  { code: 110111000000, label: "房山区" },
+  { code: 110112000000, label: "通州区" },
+  { code: 110113000000, label: "顺义区" },
+  { code: 110114000000, label: "昌平区" },
+  { code: 110115000000, label: "大兴区" },
+  { code: 110116000000, label: "怀柔区" },
+  { code: 110117000000, label: "平谷区" },
+  { code: 110118000000, label: "密云区" },
+  { code: 110119000000, label: "延庆区" },
+];
 
 export {
   userRolesMap,
@@ -270,4 +289,5 @@ export {
   recordFormItems,
   recordOptions,
   allOperateType,
+  area,
 };

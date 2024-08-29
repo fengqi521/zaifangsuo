@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 const isWhiteList = (path) => {
-  return ["/login", "/404", "/401"].indexOf(path) > -1;
+  return ["/login"].indexOf(path) > -1;
 };
 let flag = true;
 NProgress.configure({ showSpinner: false });
@@ -33,7 +33,12 @@ router.beforeEach(async (to, from, next) => {
     usePermissionStoreHook().dynamicRealRoutes.forEach((route) =>
       router.addRoute(route)
     );
-    next({ ...to, replace: true });
+    // 限制刷新一直显示404页面
+    if (to.path === "/404" && to.redirectedFrom) {
+      next({ path: to.redirectedFrom.fullPath, replace: true });
+    } else {
+      next({ ...to, replace: true });
+    }
   } catch (err) {
     //   userStore.resetToken()
     console.log(err, "有错误");

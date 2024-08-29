@@ -224,7 +224,7 @@ export const dynamicRoutes = [
           title: "固件管理",
           icon: "icon-gujianguanli",
           size: "20px",
-          roles: [1],
+          roles: [1, 4],
         },
       },
     ],

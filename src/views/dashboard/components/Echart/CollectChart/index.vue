@@ -77,7 +77,6 @@ const updateYAxis = (type) => {
     3: "1代表断开、0代表正常",
   };
   collectOption.yAxis[1].show = false;
-  console.log(collectOption,'vvvvvvvvvv')
   const yAxisOptions = {
     name: `{title|${titles[type] || ""}}`,
     nameTextStyle: {

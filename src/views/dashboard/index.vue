@@ -23,11 +23,11 @@ import Map from "./Map.vue";
 import Left from "./Left.vue";
 import Right from "./Right.vue";
 
-import { groupBy } from "lodash";
+import { groupBy, orderBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import { getStartAndEndTime, isOnLine } from "@/utils";
-import { deviceMap } from "@/constants";
+import { deviceMap, area } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
@@ -37,42 +37,60 @@ const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
 
 // 获取设备列表数据
 const deviceList = reactive([]);
-const getDeviceList = () => {
-  screenStore.setData("deviceList", {
-    values: [],
-    online: [],
-    offline: [],
-  });
-  systemApi.getDeviceList({ limit: 10000, page: 1, status: 2 }).then((res) => {
-    if (!res.code) {
-      Object.assign(deviceList, res.data.list);
-      try {
-        const lists = res.data.list;
-        const groupByType = groupBy(lists, "device_type");
-        let onlineArr = [];
-        let offlineArr = [];
-        let values = [];
-        Object.entries(groupByType).forEach(([deviceType, devices]) => {
-          const online = devices.filter((item) => item.online === 1);
-          const offline = devices.filter((item) => item.online === 0);
-          onlineArr.push(online.length);
-          offlineArr.push(offline.length);
-          const list = deviceMap.find(
-            (item) => item.value === Number(deviceType)
-          );
-          values.push(list?.label);
-        });
+const getDeviceList = async () => {
+  screenStore.setData("deviceList", { values: [], online: [], offline: [] });
 
-        screenStore.setData("deviceList", {
-          values,
-          online: onlineArr,
-          offline: offlineArr,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  });
+  try {
+    const res = await systemApi.getDeviceList({
+      limit: 10000,
+      page: 1,
+      status: 2,
+    });
+
+    if (res.code) return;
+
+    const lists = res.data.list;
+    const groupArea = groupBy(lists, "zone");
+    let areaList = [...area].map((item,index) => ({
+      ...item,
+      data:[[index,0,0],[index,1,0]]
+    }));
+    Object.entries(groupArea).forEach(([zone, devices]) => {
+      const onlineCount = devices.filter((item) => item.online === 1).length;
+      const offlineCount = devices.filter((item) => item.online === 0).length;
+      const list = areaList.find((cur) => cur.code == zone);
+      list.data[0][2] = onlineCount;
+      list.data[1][2] = offlineCount;
+    });
+    console.log(JSON.stringify(areaList.map(item=>item.data)))
+    screenStore.setData("area", {
+      values: areaList.map((item) => item.label),
+      data: areaList.map(item=>item.data).flat(1),
+    });
+
+    const groupByType = groupBy(lists, "device_type");
+    const values = [];
+    const onlineArr = [];
+    const offlineArr = [];
+
+    Object.entries(groupByType).forEach(([deviceType, devices]) => {
+      const onlineCount = devices.filter((item) => item.online === 1).length;
+      const offlineCount = devices.filter((item) => item.online === 0).length;
+      onlineArr.push(onlineCount);
+      offlineArr.push(offlineCount);
+      const list = deviceMap.find((item) => item.value === Number(deviceType));
+      values.push(list?.label || "Unknown");
+    });
+
+    screenStore.setData("deviceList", {
+      values,
+      online: onlineArr,
+      offline: offlineArr,
+    });
+    // screenStore.setData("area", areaList); // Uncomment if needed
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // 获取七天监测数据
