@@ -147,4 +147,9 @@ export default {
   getUpList: (params) => {
     return getRequest("/v1/alarm/up", params);
   },
+
+  // 获取天气
+  getWeather:(params)=>{
+    return getRequest('/v1/weather/info',params)
+  }
 };

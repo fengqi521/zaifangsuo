@@ -8,7 +8,7 @@ import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { encodeMessage } from "@/utils";
 
-import { recordOptions, deviceMap } from "@/constants";
+import { recordOptions, deviceMap ,alarm} from "@/constants";
 import systemApi from "@/api";
 
 const {
@@ -74,7 +74,7 @@ const content = computed(() => {
   const { content } = parseData.detail;
   if (!content) return;
   try {
-    const { collect_time, data = {}, sensor_name, serial } = content;
+    const { collect_time, data = {}, sensor_name, serial,alarm_content,alarm_time,alarm_level,alarm_sound } = content;
     const {
       collect,
       muddy_addr,
@@ -109,6 +109,14 @@ const content = computed(() => {
       ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
       battery_voltage ? `设备电压：${battery_voltage}V` : "",
       signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
+      alarm_time ? `设备报警时间：${alarm_time}` : "",
+      alarm_content ? `报警内容：${alarm_content}` : "",
+      alarm_level>-1 ? `报警等级：${alarm['level'][alarm_level]}` : "",
+      alarm_sound>-1 ? `音量大小：${alarm['sound'][alarm_sound]}` : "",
+
+
+
+
     ];
 
     // 过滤掉空字符串并使用逗号连接

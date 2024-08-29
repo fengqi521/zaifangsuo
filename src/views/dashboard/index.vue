@@ -8,11 +8,17 @@
     <!-- 右侧内容 -->
     <Right />
 
-    <div class="date-container">
-      <span class="time-info">{{ hourMinutes }}</span>
-      <div class="date-info">
-        <p class="week">{{ weekday }}</p>
-        <p class="day">{{ day }}</p>
+    <div class="weather-widget">
+      <div class="date-section">
+        <span class="time-info">{{ hourMinutes }}</span>
+        <p class="day-info">{{ day }}</p>
+      </div>
+      <div class="weather-section">
+        <img :src="weatherInfo.path" alt="" class="weather-icon" />
+        <div class="weather-details">
+          <p class="weather-desc">{{ weatherInfo.weather }}</p>
+          <p>{{ weatherInfo.temp }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -27,7 +33,7 @@ import { groupBy, orderBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import { getStartAndEndTime, isOnLine } from "@/utils";
-import { deviceMap, area } from "@/constants";
+import { deviceMap, area, weather } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
@@ -35,11 +41,41 @@ const screenStore = useScreenStoreHook();
 const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
 
+// 获取天气信息
+const weatherInfo = ref({
+  path: "",
+  temp: "",
+  weather: "",
+});
+const getWeather = async () => {
+  const res = await systemApi.getWeather({ city: "北京市", extensions: "all" });
+  if (!res.code) {
+    const {
+      info: { forecasts },
+    } = res.data;
+    const { daytemp, nighttemp, dayweather, nightweather } =
+      forecasts[0].casts[0];
+
+    if (daytemp > nighttemp) {
+      weatherInfo.value.temp = `${nighttemp}~${daytemp}°C`;
+    } else if (daytemp < nighttemp) {
+      weatherInfo.value.temp = `${daytemp}~${nighttemp}°C`;
+    } else {
+      weatherInfo.value.temp = `${daytemp}°C`;
+    }
+
+    if (dayweather === nightweather) {
+      weatherInfo.value.weather = nightweather;
+    } else {
+      weatherInfo.value.weather = `${dayweather}转${nightweather}`;
+    }
+    weatherInfo.value.path = weather[nightweather];
+  }
+};
+getWeather();
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = async () => {
-  screenStore.setData("deviceList", { values: [], online: [], offline: [] });
-
   try {
     const res = await systemApi.getDeviceList({
       limit: 10000,
@@ -50,22 +86,28 @@ const getDeviceList = async () => {
     if (res.code) return;
 
     const lists = res.data.list;
+    Object.assign(deviceList, lists);
     const groupArea = groupBy(lists, "zone");
-    let areaList = [...area].map((item,index) => ({
+    let areaList = [...area].map((item) => ({
       ...item,
-      data:[[index,0,0],[index,1,0]]
+      online: 0,
+      offline: 0,
+      total: 0,
     }));
     Object.entries(groupArea).forEach(([zone, devices]) => {
       const onlineCount = devices.filter((item) => item.online === 1).length;
       const offlineCount = devices.filter((item) => item.online === 0).length;
       const list = areaList.find((cur) => cur.code == zone);
-      list.data[0][2] = onlineCount;
-      list.data[1][2] = offlineCount;
+      list.online = onlineCount;
+      list.offline = offlineCount;
+      list.total = onlineCount + offlineCount;
     });
-    console.log(JSON.stringify(areaList.map(item=>item.data)))
+
+    areaList = orderBy(areaList, "total", "desc");
     screenStore.setData("area", {
       values: areaList.map((item) => item.label),
-      data: areaList.map(item=>item.data).flat(1),
+      online: areaList.map((item) => item.online),
+      offline: areaList.map((item) => item.offline),
     });
 
     const groupByType = groupBy(lists, "device_type");
@@ -79,7 +121,7 @@ const getDeviceList = async () => {
       onlineArr.push(onlineCount);
       offlineArr.push(offlineCount);
       const list = deviceMap.find((item) => item.value === Number(deviceType));
-      values.push(list?.label || "Unknown");
+      values.push(list?.label);
     });
 
     screenStore.setData("deviceList", {
@@ -196,31 +238,50 @@ onUnmounted(() => {
 
   .dashboard-left,
   .dashboard-right {
-    width: 500px;
+    width:3rem;
   }
 
-  .date-container {
-    position: absolute;
-    right: 84px;
-    top: 42px;
+  .weather-widget {
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
+    position: absolute;
+    left: 16px;
+    top: 32px;
     font-weight: bold;
-    font-size: 16px;
     color: #00fff6;
+    text-align: right;
   }
 
-  .time-info {
-    line-height: 38px;
-    font-size: 24px;
-    padding-right: 16px;
+  .date-section {
+    padding-right: 20px;
+    width: 117px;
     border-right: 1px solid rgba(0, 237, 231, 0.5);
+    .time-info {
+      font-size: 24px;
+    }
+
+    .day-info {
+      font-size: 14px;
+    }
   }
 
-  .date-info {
+  .weather-section {
+    display: flex;
     padding-left: 16px;
-    line-height: 21px;
+
+    .weather-details {
+      margin-left: 10px;
+      font-size: 16px;
+    }
+
+    .weather-desc {
+      font-size: 14px;
+      font-weight: normal;
+    }
+
+    .weather-icon {
+      width: 38px;
+    }
   }
 }
 </style>

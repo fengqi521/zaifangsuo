@@ -5,6 +5,16 @@ import { getCssVariableValue } from "@/utils";
 import legend1 from "@/assets/images/legend-1.png";
 import legend2 from "@/assets/images/legend-2.png";
 import legend3 from "@/assets/images/legend-3.png";
+import w0 from "@/assets/images/w0.png";
+import w1 from "@/assets/images/w1.png";
+import w2 from "@/assets/images/w2.png";
+import w3 from "@/assets/images/w3.png";
+import w4 from "@/assets/images/w4.png";
+// import w5 from "@/assets/images/w5.png";
+// import w6 from "@/assets/images/w6.png";
+import w7 from "@/assets/images/w7.png";
+import w8 from "@/assets/images/w8.png";
+
 const legendColor1 = getCssVariableValue("--legend-bg-color-1");
 const legendColor2 = getCssVariableValue("--legend-bg-color-2");
 const legendColor3 = getCssVariableValue("--legend-bg-color-3");
@@ -249,24 +259,49 @@ const recordFormItems = [
 ];
 //---------------功能码对应关系 start--------------------
 const area = [
-  { code: 110101000000, label: "东城区" },
-  { code: 110101000000, label: "东城区" },
-  { code: 110102000000, label: "西城区" },
-  { code: 110105000000, label: "朝阳区" },
-  { code: 110106000000, label: "丰台区" },
-  { code: 110107000000, label: "石景山区" },
-  { code: 110108000000, label: "海淀区" },
-  { code: 110109000000, label: "门头沟区" },
-  { code: 110111000000, label: "房山区" },
-  { code: 110112000000, label: "通州区" },
-  { code: 110113000000, label: "顺义区" },
-  { code: 110114000000, label: "昌平区" },
-  { code: 110115000000, label: "大兴区" },
-  { code: 110116000000, label: "怀柔区" },
-  { code: 110117000000, label: "平谷区" },
-  { code: 110118000000, label: "密云区" },
-  { code: 110119000000, label: "延庆区" },
+  { code: 110101000000, label: "东城" },
+  { code: 110102000000, label: "西城" },
+  { code: 110105000000, label: "朝阳" },
+  { code: 110106000000, label: "丰台" },
+  { code: 110107000000, label: "石景山" },
+  { code: 110108000000, label: "海淀" },
+  { code: 110109000000, label: "门头沟" },
+  { code: 110111000000, label: "房山" },
+  { code: 110112000000, label: "通州" },
+  { code: 110113000000, label: "顺义" },
+  { code: 110114000000, label: "昌平" },
+  { code: 110115000000, label: "大兴" },
+  { code: 110116000000, label: "怀柔" },
+  { code: 110117000000, label: "平谷" },
+  { code: 110118000000, label: "密云" },
+  { code: 110119000000, label: "延庆" },
 ];
+
+const weather = {
+  晴: w0,
+  多云: w1,
+  阴: w2,
+  阵雨: w3,
+  雷阵雨: w4,
+  小雨: w7,
+  中雨: w8,
+};
+
+const alarm = {
+  sound:{
+   0:'关闭',
+   1:'低',
+   2:'中',
+   3:'高'
+  },
+  level: {
+    0: "提示",
+    1: "蓝色警报",
+    2: "黄色警报",
+    3: "橙色警报",
+    4: "红色警报",
+  },
+};
 
 export {
   userRolesMap,
@@ -290,4 +325,6 @@ export {
   recordOptions,
   allOperateType,
   area,
+  weather,
+  alarm,
 };

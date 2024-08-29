@@ -301,7 +301,7 @@ export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
         // 坐标轴刻度标签的相关设置
         axisLabel: {
           color: "#96B4BE",
-          fontSize: 16,
+          fontSize: 14,
         },
         splitLine: {
           show: true,

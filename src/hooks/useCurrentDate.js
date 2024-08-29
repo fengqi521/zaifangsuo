@@ -37,9 +37,9 @@ export function useCurrentDate(interval = 1000) {
     weekday.value = getCurrentTime("dddd");
   };
 
-  // 获取星期
+  // 获取日期
   const getCurrentDay = () => {
-    day.value = getCurrentTime("LL");
+    day.value = getCurrentTime("YYYY.MM.DD");
   };
 
   return {

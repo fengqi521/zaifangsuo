@@ -5,6 +5,7 @@ import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import systemApi from "@/api";
+import { alarm } from "@/constants";
 
 // 查询数据
 const initialData = { did: "" };
@@ -48,11 +49,11 @@ const loading = ref(false);
 const rtuData = reactive({ data: [], total: 0 });
 const columns = ref([
   { prop: "num", label: "序号", width: 80 },
-  { prop: "request", label: "下发报文" },
+  { prop: "alarm_content", label: "上报报文" },
   { prop: "device_name", label: "设备名称" },
-  { prop: "content", label: "播放内容" },
-  { prop: "way", label: "播放方式", type: "slot" },
-  { prop: "create_time", label: "下发时间" },
+  { prop: "alarm_level", label: "报警等级", type: "slot" },
+  { prop: "alarm_sound", label: "音量大小", type: "slot" },
+  { prop: "create_time", label: "上报时间" },
   { prop: "alarm_time", label: "报警时间" },
 ]);
 
@@ -63,11 +64,9 @@ const getList = async () => {
   const res = await systemApi.getUpList(searchInfo.value);
   if (!res.code) {
     const newTableData = res.data.list.map((item, index) => {
-      const list = deviceList.value.find((cur) => cur.value === item.device_id);
       return {
         ...item,
         num: (page - 1) * limit + (index + 1),
-        device_name: list?.label,
       };
     });
     rtuData.data = [...newTableData];
@@ -80,17 +79,6 @@ onMounted(async () => {
   await getDevice();
   await getList();
 });
-
-// 播放方式
-const getWay = (way) => {
-  if (way < 17) {
-    return `单曲播放${way}次`;
-  }
-  if (way < 18) {
-    return `循环播放`;
-  }
-  return "停止循环";
-};
 
 // 查询数据
 const handleSearchSubmit = (data) => {
@@ -137,10 +125,15 @@ const handleChangeSize = (size) => {
         :data="rtuData.data"
         :tableProps="{ showSelection: false, border: true }"
       >
-        <template #way="scope">
-          <span class="rtu-table__device-type">{{
-            getWay(scope.row.way)
-          }}</span>
+        <template #alarm_level="scope">
+          <span class="rtu-table__device-type">
+            {{ alarm.level[scope.row.alarm_level] || "--" }}
+          </span>
+        </template>
+        <template #alarm_sound="scope">
+          <span class="rtu-table__device-type">
+            {{ alarm.sound[scope.row.alarm_sound] || "--" }}
+          </span>
         </template>
       </ElTable>
 

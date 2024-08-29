@@ -2,42 +2,79 @@
 import { reactive, watch } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { getCommon3dBar } from "@/utils/chartData";
+import { getCommonBar } from "@/utils/chartData";
 import { calculatePercentages } from "@/utils";
 const screenStore = useScreenStoreHook();
-const option = reactive(getCommon3dBar({ seriesUnit: "%" }));
+const option = reactive(getCommonBar({ seriesUnit: "个" }));
 
 const resetOptions = (list) => {
+  const { values, online, offline } = list;
+  option.legend.data = ["在线", "离线"];
+  option.grid.top = 0;
+  option.xAxis[0].type = "value";
+  option.xAxis[0].axisLabel.show = false;
+  option.xAxis[0].axisLine.show = false;
 
-  const { values, data } = list;
-  // option.grid.left = "20%";
-  // option.grid.right = "20%";
-  option.xAxis3D.data = values;
-  option.yAxis3D.data = ["在线", "离线"];
-  console.log(JSON.stringify(data))
-  option.series[0].data = data.map(function (item) {
-    return {
-      value: item,
-    };
-  });
+  option.yAxis[0].type = "category";
+  option.yAxis[0].data = values;
+  option.yAxis[0].splitLine.show = false;
+  option.yAxis[0].axisLabel.interval = 0;
+  option.yAxis[0].inverse = true;
+  option.tooltip.axisPointer = {
+    type: "shadow",
+  };
 
-  console.log(option)
-  // option.tooltip = {
-  //   show: true,
-  //   backgroundColor: "rgba(0,0,0,0.8)",
-  //   formatter: (params) => {
-  //     const { name, dataIndex } = params;
-  //     const str = `<div>${name}：<span>${percentList[dataIndex]}%
-  //       </span></div>`;
-  //     return str;
-  //   },
-  //   textStyle: {
-  //     fontSize: 12,
-  //     color: "#FFF",
-  //   },
-  // };
-  // option.series[0].data =
-  // option.dataZoom[0].show = false;
+  option.series = [
+    {
+      type: "bar",
+      name: "在线",
+      barWidth: 12,
+      stack: "总量",
+      zlevel: 2,
+      itemStyle: {
+        barBorderRadius: 10,
+        color: {
+          colorStops: [
+            {
+              offset: 0,
+              color: "#abe7ab", // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#68d568", // 100% 处的颜色
+            },
+          ],
+        },
+        opacity: 0.8,
+      },
+      data: online,
+    },
+    {
+      type: "bar",
+      barWidth: 12,
+      zlevel: 2,
+      name: "离线",
+      stack: "总量",
+      itemStyle: {
+        barBorderRadius:10,
+        color: {
+          colorStops: [
+            {
+              offset: 0,
+              color: "#ff9ca2", // 0% 处的颜色
+            },
+            {
+              offset: 1,
+              color: "#ff4b55", // 100% 处的颜色
+            },
+          ],
+          opacity: 0.8,
+        },
+      },
+      data: offline,
+    },
+  ];
+  option.dataZoom = [];
 };
 
 watch(
@@ -51,5 +88,22 @@ watch(
 </script>
 
 <template>
-  <chart :option="option" />
+  <div class="total-chart">
+    <chart :option="option" />
+  </div>
 </template>
+<style lang="scss" scoped>
+@import "@/styles/tools.scss";
+.total-chart {
+  height: calc(100% - 38px);
+  overflow-y: hidden;
+  overflow-x: hidden;
+  &:hover {
+    overflow-y: auto;
+  }
+  @extend %scrollbar;
+  :deep(.chart-container) {
+    height: 600px !important;
+  }
+}
+</style>
