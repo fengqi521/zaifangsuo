@@ -29,7 +29,7 @@ export const getDatePeriod = () => {
     .subtract(15, "days")
     .startOf("day")
     .format("YYYY-MM-DD HH:mm:ss");
-  return [startOf15DaysAgo,endOfToday]
+  return [startOf15DaysAgo, endOfToday];
 };
 
 /** 用 JS 获取全局 css 变量 */

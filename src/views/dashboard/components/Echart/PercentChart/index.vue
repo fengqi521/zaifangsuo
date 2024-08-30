@@ -1,39 +1,12 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { watch, reactive } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
 import { getCommonPie } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据
-const option = ref(getCommonPie());
-
-const scale = 0.8;
-var rich = {
-  yellow: {
-    color: "#FF9454",
-    fontSize: 30 * scale,
-    // padding: [2, 2],
-    align: "center",
-  },
-  white: {
-    color: "#fff",
-    align: "center",
-    fontSize: 14 * scale,
-    padding: [12, 0],
-  },
-  blue: {
-    color: "#49dff0",
-    fontSize: 16 * scale,
-    align: "center",
-  },
-  hr: {
-    borderColor: "#0b5263",
-    width: "100%",
-    borderWidth: 1,
-    height: 0,
-  },
-};
+const option = reactive(getCommonPie());
 
 var colors = [
   {
@@ -62,11 +35,11 @@ var colors = [
     colorStops: [
       {
         offset: 0,
-        color: "#5CFFCD", // 0% 处的颜色
+        color: "#8a42ff", // 0% 处的颜色
       },
       {
         offset: 1,
-        color: "#00ABD5", // 100% 处的颜色
+        color: "rgba(138,66,255,0.6)", // 100% 处的颜色
       },
     ],
   },
@@ -79,47 +52,52 @@ var colors = [
     colorStops: [
       {
         offset: 0,
-        color: "#FF9454", // 0% 处的颜色
+        color: "#24FEB4", // 0% 处的颜色
       },
       {
         offset: 1,
-        color: "#fcc204", // 100% 处的颜色
+        color: "rgba(36,254,180,0.6)", // 100% 处的颜色
       },
     ],
   },
 ];
 
-watch(()=>screenStore.screenData.deviceCount,(values)=>{
-  resetOptions(values);
-})
+watch(
+  () => screenStore.screenData.deviceCount,
+  (values) => {
+    resetOptions(values);
+  }
+);
 
 const resetOptions = (lists) => {
-  lists = lists.map((item) => ({ ...item, value: item.count }));
+  lists = lists.map((item, index) => ({ ...item, value: item.count }));
   // 更新饼图数据和样式配置
   const sum = lists.reduce((prev, next) => prev + next.value, 0);
-  option.value.color = colors;
-  option.value.title[0].text = sum;
-  option.value.title.forEach((item) => {
+  option.color = colors;
+  option.tooltip = {
+    ...option.tooltip,
+    show:true,
+    trigger: "item",
+    backgroundColor: "rgba(0,0,0,0.8)",
+    // formatter: "{a} <br/>{b}: {c} ({d}%)",
+  };
+  option.title[0].text = sum;
+  option.title.forEach((item) => {
     item.textStyle.color = "#00FFF6";
   });
-  option.value.title[0].top = "40%";
-  option.value.title[1].top = "52%";
-  option.value.legend.orient = "vertical";
-  option.value.legend.textStyle.color = "#FFF";
-  option.value.series = [
+  option.title[0].top = "40%";
+  option.title[1].top = "52%";
+  option.legend.orient = "vertical";
+  option.legend.textStyle.color = "#FFF";
+  option.series = [
     {
-      name: "设备总数",
+      name: "设备数量",
       type: "pie",
       label: {
-        formatter: function (params) {
-          const { name, value, percent } = params;
-          return `{white|${name}}\n{yellow|${value}}\n{blue| ${percent}%}`;
-        },
-        rich,
+        show: false,
       },
       radius: ["40%", "90%"],
       center: ["50%", "50%"],
-      roseType: "area",
       data: lists,
     },
   ];
@@ -128,5 +106,5 @@ const resetOptions = (lists) => {
 
 <template>
   <Empty v-if="!screenStore.screenData.deviceCount.length" />
-  <chart :option="option" v-else/>
+  <chart :option="option" v-else />
 </template>

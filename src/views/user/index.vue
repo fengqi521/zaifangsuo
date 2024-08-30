@@ -30,7 +30,7 @@ const columns = ref([
   { prop: "id", label: "ID", width: 40 },
   { prop: "user_name", label: "用户名", width: 300 },
   { prop: "phone", label: "手机号", width: 150 },
-  { prop: "devices", label: "已授权设备", width: 300},
+  { prop: "devices", label: "已授权设备", width: 300, type: "slot" },
   { prop: "create_time", label: "创建时间" },
 ]);
 
@@ -71,9 +71,8 @@ const getLists = async (page, limit) => {
     if (!result?.code) {
       const lists = result.data.list.map((item) => ({
         ...item,
-        devices: item.devices.map(cur=>cur.device_name).join(","),
+        // devices: item.devices.map(cur=>cur.device_name).join(","),
       }));
-      console.log(lists)
       userData.value = lists;
       total.value = result.data.total_count;
     }
@@ -103,6 +102,7 @@ const title = ref("");
 
 // 添加、修改
 const handleEdit = (row) => {
+  console.log(row);
   currentRow.value = {};
   dialogVisible.value = true;
   if (!row) {
@@ -125,6 +125,7 @@ const transferValue = ref({ uid: "", did: [] });
 const authorVisible = ref(false);
 // 显示授权
 const handleClickShowAuthor = (row) => {
+  console.log(row);
   transferValue.value.did = [];
   transferValue.value.uid = row.id;
   authorVisible.value = true;
@@ -201,13 +202,11 @@ const handleCloseDeleteModal = () => {
         :data="userData"
         :tableProps="{ showSelection: false, border: true }"
       >
-        <!-- <template #devices="scope">
-          <ul>
-            <li v-for="(item, index) in scope.row.devices" :key="index">
-              {{ item.device_name }}
-            </li>
-          </ul>
-        </template> -->
+        <template #devices="scope">
+          <p v-for="(item, index) in scope.row.devices" :key="index">
+            {{ item.device_name }}
+          </p>
+        </template>
         <template #action="{ row }">
           <span
             class="user-list__action-btn author-btn"

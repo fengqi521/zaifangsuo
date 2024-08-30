@@ -136,7 +136,7 @@ const addMarker = (item) => {
 
   if (item.online === 0) {
     item.deviceState = "正常";
-    markUrl += "d.png";
+    markUrl += ".png";
   } else if (item.online === 1) {
     item.deviceState = "报警";
     markUrl += "d.png";
@@ -218,7 +218,7 @@ const handleClick = (handler) => {
 <style>
 @import "cesium/Build/Cesium/Widgets/widgets.css";
 #cesiumContainer {
-  height: 100%;
+  height: 93%;
   overflow: hidden;
 }
 

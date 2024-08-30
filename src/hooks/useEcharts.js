@@ -1,4 +1,4 @@
-import { ref, markRaw, onUnmounted, nextTick } from "vue";
+import { ref, markRaw, nextTick } from "vue";
 import * as echarts from "echarts";
 // import 'echarts-gl'
 export function useEchartsHook() {

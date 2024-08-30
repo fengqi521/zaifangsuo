@@ -3,7 +3,6 @@ import { onMounted, ref, watch, inject, onUnmounted } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
 const { initEchart, setEchartOption, updateEchartOption } =
   useEchartsHook();
-import { getCssVariableValue } from "@/utils";
 // 定义变量
 const chartContainer = ref(null);
 const props = defineProps({

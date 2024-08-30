@@ -135,7 +135,7 @@ export const dynamicRoutes = [
         meta: {
           hidden: true,
           activeMenu: "/device",
-          roles: [1],
+          roles: [1,4],
         },
       },
     ],
@@ -240,7 +240,7 @@ export const dynamicRoutes = [
           title: "用户管理",
           icon: "icon-yonghuguanli",
           size: "20px",
-          roles: [1],
+          roles: [1,4],
         },
       },
     ],

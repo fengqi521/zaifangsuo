@@ -1,56 +1,110 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
 import systemApi from "@/api";
-
+import Chart from "@/components/Chart/index.vue";
 import { getCssVariableValue } from "@/utils";
 import { getCommonPie } from "@/utils/chartData";
-// 引入 ECharts 相关方法和函数
-const { initEchart, setEchartOption } = useEchartsHook();
 
 // 定义 ref 引用和初始化数据
-const dataContainer = ref(null);
-const option = ref(getCommonPie());
+const option = reactive({ ...getCommonPie() });
 
-// 定义 CSS 变量名
-const onlineColor = getCssVariableValue("--online-bg-color");
-const offlineColor = getCssVariableValue("--chart-pie-offline-color");
+const resetOptions = (values, sum) => {
+  option.legend.data = ["在线", "离线"];
+  values = values.flatMap((item) => [item, { name: "", value: sum * 0.02 }]);
+  option.title[0].text = sum;
+  option.series = [
+    {
+      animation: false,
+      type: "pie",
+      radius: ["55%", "68%"],
+      data: [0],
+      color: ["gray"],
+      label: {
+        show: false,
+      },
+      labelLine: {
+        show: false,
+      },
+    },
+    {
+      name: "设备状态",
+      type: "pie",
+      radius: ["48%", "70%"],
+      label: {
+        formatter: (params) => {
+          const { name, value } = params;
+          if (!name) return;
+          return `{b|${name}}数(个)\n{c|${value}}`;
+        },
+        lineHeight: 16,
+        rich: {
+          c: {
+            fontSize: 18,
+            fontWeight: "bold",
+            color: getCssVariableValue("--chart-pie-value-color"),
+          },
+        },
+      },
+      data: values,
+      itemStyle: {
+        color: function (params) {
+          var colorList = ["#01ff2b", "#ffa300"];
+          return params.dataIndex % 2
+            ? "rgba(0,0,0,0)"
+            : colorList[params.dataIndex / 2];
+        },
+        labelLine: {
+          length: 40,
+          length2: 40,
+        },
+      },
+    },
+    {
+      animation: false,
+      type: "pie",
+      radius: ["48%", "55%"],
+      data: values,
+      label: {
+        show: false,
+      },
+      labelLine: {
+        show: false,
+      },
+      itemStyle: {
+        color: function (params) {
+          return params.dataIndex % 2 ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.3)";
+        },
+      },
+    },
+  ];
+};
 
 onMounted(async () => {
   try {
     const res = await systemApi.getDeviceNumber();
     if (!res?.code) {
-      // 更新饼图数据和样式配置
-      option.value.series[0].data = [
+      const values = [
         {
           value: res?.data?.online,
           name: "在线",
-          itemStyle: { color: onlineColor },
         },
         {
           value: res?.data?.offline,
           name: "离线",
-          itemStyle: { color: offlineColor },
         },
       ];
-
-      const values = Object.values(res?.data);
-      const sum = values.reduce((prev, val) => prev + val, 0);
-      option.value.title[0].text = sum;
+      const sum = values.reduce((prev, val) => prev + val.value, 0);
+      resetOptions(values, sum);
     }
   } catch (error) {}
-
-  option.value.series[0].radius = ["45%", "65%"];
-  // 初始化和设置 echarts 实例
-  initEchart(dataContainer.value);
-  setEchartOption(option.value);
 });
 </script>
 
 <template>
   <div class="device-status">
     <p class="device-status__title">设备状态分析</p>
-    <div ref="dataContainer" class="device-status__container"></div>
+    <Chart class="device-status__container" :option="option" />
   </div>
 </template>
 
@@ -62,13 +116,15 @@ onMounted(async () => {
     line-height: 16px;
     padding-bottom: 16px;
     font-size: 14px;
-    color:var(--normal-title-color);
-    border-bottom:1px solid var(--card-border-color)
+    color: var(--normal-title-color);
+    border-bottom: 1px solid var(--card-border-color);
   }
 
   &__container {
     width: 100%;
     height: calc(100% - 34px);
+    border: none;
+    padding: 0;
   }
 }
 </style>

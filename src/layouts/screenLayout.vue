@@ -1,11 +1,14 @@
 <template>
   <div class="geo-app">
-    <div class="screen-head">
-      <span class="screen-title"
-        >北京市突发地质灾害监测预警提升工程运维管理平台</span
-      >
+    <div
+      :class="[`geo-box`,  'geo-box-config' ]"
+      :style="getViewStyle"
+    >
+      <div class="screen-head">
+        <span class="screen-title">北京市突发地质灾害监测预警提升工程运维管理平台</span>
+      </div>
+      <App-main />
     </div>
-    <App-main />
   </div>
 </template>
 
@@ -24,22 +27,9 @@ const screenStyle = ref({
   height: 0,
 });
 onMounted(() => {
-  // getScreenSize();
-  // window.addEventListener("resize", getScreenSize);
-  setRootFontSize(1080); // 设置根字体大小
-  window.addEventListener("resize", () => setRootFontSize(1080)); // 监听窗口调整
+  getScreenSize();
+  window.addEventListener("resize", getScreenSize);
 });
-
-const setRootFontSize = (designWidth) => {
-  const clientWidth =
-    window.innerWidth ||
-    document.documentElement.clientWidth ||
-    document.body.clientWidth;
-  if (!clientWidth) return;
-  console.log(clientWidth)
-  const fontSize = (clientWidth * 100 )/designWidth
-  document.documentElement.style.fontSize = fontSize + "px";
-};
 
 // 计算页面缩放
 const getViewStyle = computed(() => {
@@ -76,35 +66,49 @@ const getScreenSize = () => {
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
+  width: 100%;
+  height: -moz-calc(100vh);
+  height: -webkit-calc(100vh);
+  height: calc(100vh);
+  background: #00040f;
   overflow: hidden;
-  background: url("@/assets/images/screen-bg.png") no-repeat;
-  background-size: cover;
-  .screen-head {
+  .geo-box {
+    overflow: hidden;
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 0.8rem;
-    text-align: center;
-  }
+    padding-top: 102px;
+    transform-origin: 0 0;
+    background: url("@/assets/images/screen-bg.png") no-repeat;
+    background-size: cover;
 
-  .screen-title {
-    font-size: 40px;
-    line-height: 102px;
-    font-weight: bold;
-    background: linear-gradient(to bottom, #f7fdff, #2ac0f9);
-    -webkit-background-clip: text;
-    letter-spacing: 6px;
-    -webkit-text-fill-color: transparent; /* 使文字填充透明 */
-  }
+    .screen-head {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 102px;
+      text-align: center;
+      // background: url("@/assets/images/screen-head-1.png") no-repeat;
+      background-size: cover;
+    }
 
-  .app-main {
-    position: absolute;
-    top: 0.8rem;
-    bottom:0;
-    height: calc(100% - 0.8rem);
+    .screen-title {
+      font-size: 40px;
+      line-height: 102px;
+      font-weight: bold;
+      background: linear-gradient(to bottom, #f7fdff, #2ac0f9);
+      -webkit-background-clip: text;
+      letter-spacing: 6px;
+      -webkit-text-fill-color: transparent; /* 使文字填充透明 */
+      // text-shadow:
+      //           1px 1px 2px rgba(0, 0, 0, 0.3), /* 主阴影 */
+      //           0 0 5px rgba(0, 0, 0, 0.5), /* 辅助阴影 */
+      //           0 0 10px rgba(0, 0, 0, 0.4), /* 辅助阴影 */
+      //           0 0 15px rgba(0, 0, 0, 0.3); /* 辅助阴影 */
+    }
+
+    .app-main {
+      height: 100%;
+    }
   }
 }
 </style>

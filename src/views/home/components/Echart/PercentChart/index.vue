@@ -1,8 +1,7 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useEchartsHook } from "@/hooks/useEcharts";
 import systemApi from "@/api";
-import { getCssVariableValue } from "@/utils";
 import { getCommonPie } from "@/utils/chartData";
 
 // 引入 ECharts 相关方法和函数
@@ -10,81 +9,127 @@ const { initEchart, setEchartOption } = useEchartsHook();
 
 // 定义 ref 引用和初始化数据
 const percentContainer = ref(null);
-const option = ref(getCommonPie());
-
-// 定义 CSS 变量名
-const nameColor = getCssVariableValue("--panel-active-color");
-const totalColor = getCssVariableValue("--chart-total-color");
-const percentColor = getCssVariableValue("--chart-percent-color");
+const option = reactive({ ...getCommonPie() });
 
 onMounted(async () => {
   // 更新饼图数据和样式配置
+  var color1 = ["rgb(61, 186, 45)", "rgb(43,166,254)", "rgb(255, 176, 63)"];
+
+  var colorList = ["rgb(61, 186, 45)", "rgb(43,166,254)", "rgb(255, 176, 63)"];
+  var colorListSub = [
+    "rgba(35,143,56,.7)",
+    "rgb(43, 166, 254,.88)",
+    "rgb(255, 176, 63,.8)",
+  ];
+  let data = [];
   try {
     const result = await systemApi.getDevicePercent();
     if (!result?.code) {
-      option.value.series[0].data = result?.data?.list.map(
-        ({ name, count }) => ({ name, value: count })
-      );
+      data = result?.data?.list.map(({ name, count }, index) => ({
+        name,
+        value: count,
+        itemStyle: {
+          borderWidth: 4,
+          borderColor: color1[index],
+          shadowColor: color1[index],
+          color: color1[index],
+          opacity: 0.8,
+        },
+      }));
     }
   } catch (error) {}
-
-  option.value.title = [];
-  option.value.tooltip.show = false;
-  option.value.legend = {
-    ...option.value.legend,
+  option.title = [];
+  option.tooltip.show = false;
+  option.legend = {
+    ...option.legend,
     orient: "vertical",
     type: "scroll",
     pageIconSize: 8,
   };
-  const series = option.value.series[0];
-  series.center = ["43%", "49%"];
-  series.itemStyle.borderRadius = 0;
-  series.itemStyle.borderWidth = 0;
-  series.radius = [0, "62%"];
-  series.label = {
-    show: true,
-    formatter: function (params) {
-      const { name, value, percent } = params;
-      return `{name|${name}}\n{hr|}\n{value|数量: ${value}个}\n{rate|占比: ${percent}%}`;
+
+  option.series[0] = {
+    ...option.series[0],
+    center: ["43%", "49%"],
+    radius: [0, "62%"],
+    data,
+    label: {
+      formatter: function (params) {
+        const { name, value, percent } = params;
+        switch (name) {
+          case "泥位计":
+            return `{a|${name}}\n\n{pera| ${value}个 (${percent}%)}`;
+          case "雨量计":
+            return `{b|${name}}\n\n{perb| ${value}个 (${percent}%)}`;
+          case "断线传感器":
+            return `{c|${name}}\n\n{perc| ${value}个 (${percent}%) }`;
+        }
+      },
+      color: "#FFF",
+      rich: {
+        a: {
+          backgroundColor: colorList[0],
+          fontSize: 12,
+          padding: [2, 20],
+          height: 24,
+          lineHeight: 24,
+          align: "center",
+          borderRadius: 10,
+        },
+        pera: {
+          backgroundColor: colorListSub[0],
+          padding: [2, 5],
+          lineHeight: 24,
+          fontSize: 12,
+          height: 24,
+          borderRadius: 10,
+        },
+
+        b: {
+          backgroundColor: colorList[1],
+          fontSize: 12,
+          padding: [2, 20],
+          height: 24,
+          lineHeight: 24,
+          align: "center",
+          borderRadius: 10,
+        },
+        perb: {
+          backgroundColor: colorListSub[1],
+          fontSize: 12,
+          padding: [2, 20],
+          height: 24,
+          lineHeight: 24,
+          align: "center",
+          borderRadius: 10,
+        },
+        c: {
+          backgroundColor: colorList[2],
+          fontSize: 12,
+          padding: [2, 20],
+          height: 24,
+          lineHeight: 24,
+          align: "center",
+          borderRadius: 10,
+        },
+        perc: {
+          backgroundColor: colorListSub[2],
+          fontSize: 12,
+          padding: [2, 20],
+          height: 24,
+          lineHeight: 24,
+          align: "center",
+          borderRadius: 10,
+        },
+      },
     },
-    backgroundColor: "#F6F8FC",
-    borderColor: "#8C8D8E",
-    borderWidth: 1,
-    borderRadius: 4,
-    rich: {
-      name: {
-        color: nameColor,
-        fontSize: 12,
-        lineHeight: 20,
-        padding: 4,
-        align: "center",
-        fontWeight: "bold",
-      },
-      hr: {
-        borderColor: "#8C8D8E",
-        width: "100%",
-        borderWidth: 1,
-        height: 0,
-      },
-      value: {
-        padding: 4,
-        fontSize: 12,
-        color: totalColor,
-        lineHeight: 28,
-        align: "left",
-      },
-      rate: {
-        padding: 4,
-        fontSize: 12,
-        color: percentColor,
-        lineHeight: 18,
-        align: "left",
-      },
-    },
+    labelLine:{
+      length2:30
+    }
   };
+
   // 初始化和设置 echarts 实例
   initEchart(percentContainer.value);
-  setEchartOption(option.value);
+  setEchartOption(option);
 });
 </script>
 
@@ -102,8 +147,8 @@ onMounted(async () => {
     line-height: 16px;
     padding-bottom: 16px;
     font-size: 14px;
-    color:var(--normal-title-color);
-    border-bottom:1px solid var(--card-border-color)
+    color: var(--normal-title-color);
+    border-bottom: 1px solid var(--card-border-color);
   }
 
   &__container {

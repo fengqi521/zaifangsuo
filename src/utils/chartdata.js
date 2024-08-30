@@ -395,7 +395,7 @@ export const getCommonPie = function () {
       {
         text: "Title 1", // 第一个标题的文本内容
         left: "center",
-        top: "36%",
+        top: "40%",
         textStyle: {
           fontSize: 24,
           fontWeight: "bold",
@@ -405,7 +405,7 @@ export const getCommonPie = function () {
       {
         text: "设备总数(个)", // 第二个标题的文本内容
         left: "center",
-        top: "48%",
+        top: "52%",
         textStyle: {
           fontSize: 12,
           fontWeight: "normal",
@@ -416,6 +416,29 @@ export const getCommonPie = function () {
     tooltip: {
       trigger: "none",
       show: false,
+      backgroundColor: "rgba(0,0,0,0.8)",
+      borderRadius: 2,
+      formatter: (params) => {
+        return
+        let res = "";
+        let formatterName = "";
+        params.forEach((current) => {
+          let { name, color, value, seriesName, seriesIndex } = current;
+          if (seriesUnit && seriesUnit.length === 1) seriesIndex = 0;
+          formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
+          res +=
+            `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
+            `width:6px;height:6px;background-color:${color};"></span>${seriesName}:</div><span>${value}${
+              seriesUnit ? seriesUnit[seriesIndex] : "mm"
+            }</span></div>`;
+        });
+        return formatterName + res;
+      },
+      extraCssText: "padding:12px",
+      textStyle: {
+        fontSize: 12,
+        color: getCssVariableValue("--text-color"),
+      },
     },
     legend: {
       bottom: 6,
@@ -561,37 +584,37 @@ export const getCommonStackBar = function () {
   };
 };
 
-export const getCommon3dBar = function(){
+export const getCommon3dBar = function () {
   return {
     tooltip: {},
     visualMap: {
       max: 20,
       inRange: {
         color: [
-          '#313695',
-          '#4575b4',
-          '#74add1',
-          '#abd9e9',
-          '#e0f3f8',
-          '#ffffbf',
-          '#fee090',
-          '#fdae61',
-          '#f46d43',
-          '#d73027',
-          '#a50026'
-        ]
-      }
+          "#313695",
+          "#4575b4",
+          "#74add1",
+          "#abd9e9",
+          "#e0f3f8",
+          "#ffffbf",
+          "#fee090",
+          "#fdae61",
+          "#f46d43",
+          "#d73027",
+          "#a50026",
+        ],
+      },
     },
     xAxis3D: {
-      type: 'category',
-      data: []
+      type: "category",
+      data: [],
     },
     yAxis3D: {
-      type: 'category',
-      data: []
+      type: "category",
+      data: [],
     },
     zAxis3D: {
-      type: 'value'
+      type: "value",
     },
     grid3D: {
       boxWidth: 200,
@@ -602,32 +625,32 @@ export const getCommon3dBar = function(){
       light: {
         main: {
           intensity: 1.2,
-          shadow: true
+          shadow: true,
         },
         ambient: {
-          intensity: 0.3
-        }
-      }
+          intensity: 0.3,
+        },
+      },
     },
     series: [
       {
-        type: 'bar3D',
+        type: "bar3D",
         data: [],
-        shading: 'lambert',
+        shading: "lambert",
         label: {
           fontSize: 16,
-          borderWidth: 1
+          borderWidth: 1,
         },
         emphasis: {
           label: {
             fontSize: 20,
-            color: '#900'
+            color: "#900",
           },
           itemStyle: {
-            color: '#900'
-          }
-        }
-      }
-    ]
-  }
-}
+            color: "#900",
+          },
+        },
+      },
+    ],
+  };
+};

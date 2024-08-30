@@ -217,7 +217,7 @@ const recordFormData = {
   Did: "",
   range: [],
 }; // transfer 1是上行报文解析
-const recordOptions = [...allOperateType, { label: "自定义", value: 13 }];
+const recordOptions = [...allOperateType, { label: "自定义", value: 13 },{label:"下发报警及响应",value:15},{label:'设备自动触发报警上报',value:17}];
 const recordFormItems = [
   {
     label: "操作类型",
@@ -303,6 +303,16 @@ const alarm = {
   },
 };
 
+const weeks = {
+  1:'星期一',
+  2:'星期二',
+  3:'星期三',
+  4:'星期四',
+  5:'星期五',
+  6:'星期六',
+  7:'星期日'
+}
+
 export {
   userRolesMap,
   DEVICE_DATA,
@@ -327,4 +337,5 @@ export {
   area,
   weather,
   alarm,
+  weeks
 };

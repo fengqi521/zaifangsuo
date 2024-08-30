@@ -8,6 +8,7 @@
     <!-- 右侧内容 -->
     <Right />
 
+    <!-- 左侧时间和天气 -->
     <div class="weather-widget">
       <div class="date-section">
         <span class="time-info">{{ hourMinutes }}</span>
@@ -15,9 +16,22 @@
       </div>
       <div class="weather-section">
         <img :src="weatherInfo.path" alt="" class="weather-icon" />
-        <div class="weather-details">
-          <p class="weather-desc">{{ weatherInfo.weather }}</p>
-          <p>{{ weatherInfo.temp }}</p>
+        {{ weatherInfo.weather }}
+        {{ weatherInfo.temp }}
+      </div>
+    </div>
+    <!-- 天气预报广告 -->
+    <div class="forecast-container">
+      <div class="weather-forecast">
+        <div
+          v-for="(item, index) in forecast"
+          :key="index"
+          class="forecast-item"
+        >
+          <span>{{ item.date }}</span>
+          <span>{{ item.week }}</span>
+          <span>{{ item.weather }}</span>
+          <span>{{ item.temperature }}</span>
         </div>
       </div>
     </div>
@@ -33,7 +47,7 @@ import { groupBy, orderBy } from "lodash";
 import { useCurrentDate } from "@/hooks/useCurrentDate";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import { getStartAndEndTime, isOnLine } from "@/utils";
-import { deviceMap, area, weather } from "@/constants";
+import { deviceMap, area, weather, weeks } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
@@ -47,32 +61,54 @@ const weatherInfo = ref({
   temp: "",
   weather: "",
 });
+
+// 获取实时天气
 const getWeather = async () => {
-  const res = await systemApi.getWeather({ city: "北京市", extensions: "all" });
+  const res = await systemApi.getWeather({
+    city: "北京市",
+    extensions: "base",
+  });
   if (!res.code) {
-    const {
-      info: { forecasts },
-    } = res.data;
-    const { daytemp, nighttemp, dayweather, nightweather } =
-      forecasts[0].casts[0];
-
-    if (daytemp > nighttemp) {
-      weatherInfo.value.temp = `${nighttemp}~${daytemp}°C`;
-    } else if (daytemp < nighttemp) {
-      weatherInfo.value.temp = `${daytemp}~${nighttemp}°C`;
-    } else {
-      weatherInfo.value.temp = `${daytemp}°C`;
-    }
-
-    if (dayweather === nightweather) {
-      weatherInfo.value.weather = nightweather;
-    } else {
-      weatherInfo.value.weather = `${dayweather}转${nightweather}`;
-    }
-    weatherInfo.value.path = weather[nightweather];
+    const info = res?.data?.info?.lives[0];
+    weatherInfo.value.temp = `${info.temperature}°C`;
+    weatherInfo.value.path = weather[info.weather];
+    weatherInfo.value.weather = info.weather;
   }
 };
-getWeather();
+
+// 获取天气预报
+const forecast = ref([]);
+const getWeatherForecast = async () => {
+  const res = await systemApi.getWeather({
+    city: "北京市",
+    extensions: "all",
+  });
+
+  if (!res.code) {
+    const lists = res.data.info.forecasts[0].casts;
+    console.log(lists);
+    forecast.value = lists.map((item) => {
+      const { daytemp, nighttemp, dayweather, nightweather, week } = item;
+      if (daytemp > nighttemp) {
+        item.temperature = `${nighttemp}~${daytemp}°C`;
+      } else if (daytemp < nighttemp) {
+        item.temperature = `${daytemp}~${nighttemp}°C`;
+      } else {
+        item.temperature = `${daytemp}°C`;
+      }
+
+      if (dayweather === nightweather) {
+        item.weather = nightweather;
+      } else {
+        item.weather = `${dayweather}转${nightweather}`;
+      }
+
+      item.week = weeks[week];
+      return item;
+    });
+    console.log(forecast.value);
+  }
+};
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = async () => {
@@ -197,6 +233,7 @@ const fetchData = () => {
 
 let secondIntervalId = null;
 let minuteTasksIntervalId = null;
+let weatherIntervalId = null;
 onMounted(() => {
   getDeviceList();
   getDeviceCategory();
@@ -213,12 +250,18 @@ onMounted(() => {
     getDeviceCategory();
     fetchData();
   };
+  secondTasks();
+  minuteTasks();
+  getWeather();
+  getWeatherForecast();
 
   // 每秒钟执行一次 secondTasks
   secondIntervalId = setInterval(secondTasks, 1000);
 
+  weatherIntervalId = setInterval(getWeather, 60 * 60 * 1000);
+
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 30000);
 });
 
 onUnmounted(() => {
@@ -238,7 +281,7 @@ onUnmounted(() => {
 
   .dashboard-left,
   .dashboard-right {
-    width:3rem;
+    width: 450px;
   }
 
   .weather-widget {
@@ -250,37 +293,64 @@ onUnmounted(() => {
     font-weight: bold;
     color: #00fff6;
     text-align: right;
-  }
 
-  .date-section {
-    padding-right: 20px;
-    width: 117px;
-    border-right: 1px solid rgba(0, 237, 231, 0.5);
-    .time-info {
-      font-size: 24px;
+    .date-section {
+      padding-right: 20px;
+      width: 117px;
+      border-right: 1px solid rgba(0, 237, 231, 0.5);
+      .time-info {
+        font-size: 24px;
+      }
+
+      .day-info {
+        font-size: 14px;
+      }
     }
 
-    .day-info {
-      font-size: 14px;
+    .weather-section {
+      display: flex;
+      align-items: center;
+      padding-left: 16px;
+      font-size: 18px;
+      .weather-icon {
+        margin-right: 8px;
+        width: 38px;
+      }
     }
   }
 
-  .weather-section {
+  .forecast-container{
+    position: absolute;
+    white-space: nowrap;
+    right: 16px;
+    top: 40px;
+    width: 350px;
+    overflow: hidden
+  }
+
+  .weather-forecast {
     display: flex;
-    padding-left: 16px;
+    align-items: center;
+    font-size: 16px;
+    color: #00fff6;
+    font-weight: bold;
+    padding-right: 100%;
+    animation: marquee 15s linear infinite;
+    .forecast-item {
+      margin-right: 18px;
 
-    .weather-details {
-      margin-left: 10px;
-      font-size: 16px;
+      span {
+        margin-right: 8px;
+      }
     }
+  }
 
-    .weather-desc {
-      font-size: 14px;
-      font-weight: normal;
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
     }
-
-    .weather-icon {
-      width: 38px;
+    100% {
+      transform: translateX(-330%);
     }
   }
 }
