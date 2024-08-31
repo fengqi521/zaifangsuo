@@ -195,7 +195,6 @@ const resetOptions = (lists) => {
       data: lists,
     },
   ];
-  console.log(option)
   handleChartInstance(lists)
 };
 </script>

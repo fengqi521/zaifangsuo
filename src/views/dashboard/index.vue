@@ -3,7 +3,16 @@
     <!-- 左侧内容 -->
     <Left />
     <!-- 地图 -->
-    <Map :deviceList="deviceList" :fetchData="fetchData" />
+    <div class="map-section">
+      <Map :deviceList="deviceList" :fetchData="fetchData" />
+      <ul class="map-controls">
+        <li v-for="(item) in devices" :key="item.value"
+          :class="['map-controls__item', { 'map-controls__item--action': active !== item.value }]"
+          @click="handleActive(item.value)">
+          {{ item.label }}
+        </li>
+      </ul>
+    </div>
 
     <!-- 右侧内容 -->
     <Right />
@@ -23,11 +32,7 @@
     <!-- 天气预报广告 -->
     <div class="forecast-container">
       <div class="weather-forecast">
-        <div
-          v-for="(item, index) in forecast"
-          :key="index"
-          class="forecast-item"
-        >
+        <div v-for="(item, index) in forecast" :key="index" class="forecast-item">
           <span>{{ item.date }}</span>
           <span>{{ item.week }}</span>
           <span>{{ item.weather }}</span>
@@ -51,11 +56,16 @@ import { deviceMap, area, weather, weeks } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
-
-const { hourMinutes, weekday, day, getHourMinutes, getWeek, getCurrentDay } =
+const devices = ref([{ label: '全部', value: 0 }, ...deviceMap])
+const active = ref(0)
+const { hourMinutes, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
-
-// 获取天气信息
+// 切换显示设备
+const handleActive = (value) => {
+  active.value = value;
+  getDeviceList()
+}
+// 天气信息
 const weatherInfo = ref({
   path: "",
   temp: "",
@@ -110,6 +120,7 @@ const getWeatherForecast = async () => {
 // 获取设备列表数据
 const deviceList = reactive([]);
 const getDeviceList = async () => {
+  deviceList.length = 0;
   try {
     const res = await systemApi.getDeviceList({
       limit: 10000,
@@ -118,8 +129,12 @@ const getDeviceList = async () => {
     });
 
     if (res.code) return;
-
-    const lists = res.data.list;
+    let lists = []
+    if (active.value) {
+      lists = res.data.list.filter(item => item.device_type == active.value)
+    } else {
+      lists = res.data.list;
+    }
     Object.assign(deviceList, lists);
     const groupArea = groupBy(lists, "zone");
     let areaList = [...area].map((item) => ({
@@ -163,7 +178,6 @@ const getDeviceList = async () => {
       online: onlineArr,
       offline: offlineArr,
     });
-    // screenStore.setData("area", areaList); // Uncomment if needed
   } catch (error) {
     console.log(error);
   }
@@ -277,6 +291,43 @@ onUnmounted(() => {
   display: flex;
   height: 100%;
 
+  .map-section {
+    flex: 1;
+
+    @keyframes jump {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .map-controls {
+      display: flex;
+      align-items: center;
+      height: 100px;
+
+
+
+
+      &__item {
+        font-size: 18px;
+        color: #FFF;
+        padding-inline: 24px;
+        cursor: pointer;
+
+      }
+
+      &__item--action {
+        animation: jump 1s infinite;
+      }
+    }
+  }
+
   .dashboard-left,
   .dashboard-right {
     width: 450px;
@@ -296,6 +347,7 @@ onUnmounted(() => {
       padding-right: 20px;
       width: 117px;
       border-right: 1px solid rgba(0, 237, 231, 0.5);
+
       .time-info {
         font-size: 24px;
       }
@@ -310,6 +362,7 @@ onUnmounted(() => {
       align-items: center;
       padding-left: 16px;
       font-size: 18px;
+
       .weather-icon {
         margin-right: 8px;
         width: 38px;
@@ -317,7 +370,7 @@ onUnmounted(() => {
     }
   }
 
-  .forecast-container{
+  .forecast-container {
     position: absolute;
     white-space: nowrap;
     right: 16px;
@@ -334,6 +387,7 @@ onUnmounted(() => {
     font-weight: bold;
     padding-right: 100%;
     animation: marquee 15s linear infinite;
+
     .forecast-item {
       margin-right: 18px;
 
@@ -347,6 +401,7 @@ onUnmounted(() => {
     0% {
       transform: translateX(100%);
     }
+
     100% {
       transform: translateX(-330%);
     }

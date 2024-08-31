@@ -1,24 +1,15 @@
 <template>
   <div class="map-container">
-    <el-select
-      v-model="selectList"
-      class="map-select"
-      style="width: 240px"
-      @change="handleChangeDevice"
-    >
-      <el-option
-        v-for="(item, index) in deviceList"
-        :key="index"
-        :label="item.device_name"
-        :value="item.device_number"
-      />
+    <el-select v-model="selectList" class="map-select" style="width: 240px" @change="handleChangeDevice">
+      <el-option v-for="(item, index) in deviceList" :key="index" :label="item.device_name" :value="item.device_number" />
     </el-select>
     <div class="map" id="cesiumContainer" ref="cesiumRef"></div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
+import { isEqual } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
@@ -41,7 +32,7 @@ const props = defineProps({
   },
   fetchData: {
     type: Function,
-    default: () => {},
+    default: () => { },
   },
 });
 
@@ -85,9 +76,8 @@ onMounted(async () => {
   watchEffect(() => {
     const div = document.querySelector(".cesium-viewer");
     if (!div) return;
-    div.style.transform = `scale(${1 / screenStore.scale},${
-      1 / screenStore.scale
-    })`;
+    div.style.transform = `scale(${1 / screenStore.scale},${1 / screenStore.scale
+      })`;
     div.style.transformOrigin = "center";
   });
 });
@@ -192,16 +182,22 @@ const updateMarker = (marker) => {
 };
 
 // 数据
-watchEffect(() => {
-  setTimeout(() => {
-    props.deviceList.forEach((item) => {
-      addMarker(item);
-    });
-    selectList.value = props.deviceList[2].device_number;
+watch(() => props.deviceList, (values, oldValues) => {
+  console.log(isEqual(values, oldValues),values, oldValues)
+  if (!isEqual(values, oldValues)) {
+    viewer.entities.removeAll();
+    // setTimeout(() => {
 
-    handleChangeDevice(selectList.value);
-  }, 3000);
-});
+    //   values.forEach((item) => {
+    //     addMarker(item);
+    //   });
+    //   selectList.value = values[0].device_number;
+
+    //   handleChangeDevice(selectList.value);
+    // }, 2000);
+  }
+
+}, { deep: true });
 
 // marker点击事件
 const handleClick = (handler) => {
@@ -217,14 +213,16 @@ const handleClick = (handler) => {
 
 <style>
 @import "cesium/Build/Cesium/Widgets/widgets.css";
+
 #cesiumContainer {
-  height: 93%;
+  height: 100%;
   overflow: hidden;
 }
 
 .map-container {
   position: relative;
-  flex: 1;
+  height: calc(100% - 100px);
+
   .map-select {
     position: absolute;
     left: 24px;

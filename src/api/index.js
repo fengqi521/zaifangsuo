@@ -37,6 +37,11 @@ export default {
     return getRequest("/v1/device/lists", params);
   },
 
+  // 获取全部设备
+  getAllDevice:function (params){
+    return getRequest('/v1/device/option',params)
+  },
+
   // 获取设备详情
   getDeviceDetail: function (params) {
     return getRequest("/v1/device/detail", params);
