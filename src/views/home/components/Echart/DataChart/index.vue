@@ -11,7 +11,7 @@ const option = reactive({ ...getCommonPie() });
 
 const resetOptions = (values, sum) => {
   option.legend.data = ["在线", "离线"];
-  values = values.flatMap((item) => [item, { name: "", value: sum * 0.02 }]);
+  values = values.flatMap((item) => [item, { name: "", value: 0 }]);
   option.title[0].text = sum;
   option.series = [
     {

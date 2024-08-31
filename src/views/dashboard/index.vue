@@ -86,7 +86,6 @@ const getWeatherForecast = async () => {
 
   if (!res.code) {
     const lists = res.data.info.forecasts[0].casts;
-    console.log(lists);
     forecast.value = lists.map((item) => {
       const { daytemp, nighttemp, dayweather, nightweather, week } = item;
       if (daytemp > nighttemp) {
@@ -106,7 +105,6 @@ const getWeatherForecast = async () => {
       item.week = weeks[week];
       return item;
     });
-    console.log(forecast.value);
   }
 };
 // 获取设备列表数据

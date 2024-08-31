@@ -1,13 +1,14 @@
 <script setup>
-import { watch, reactive } from "vue";
+import { ref, watch, reactive, nextTick } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
 import { getCommonPie } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
+import { isEqual } from "lodash";
 const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据
-const option = reactive(getCommonPie());
-
+const option = reactive({ ...getCommonPie() });
+const chartComponent = ref(null)
 var colors = [
   {
     type: "linear",
@@ -64,10 +65,92 @@ var colors = [
 
 watch(
   () => screenStore.screenData.deviceCount,
-  (values) => {
-    resetOptions(values);
+  (values, oldValue) => {
+    if (!isEqual(values, oldValue)) {
+      resetOptions(values);
+    }
   }
 );
+
+// 操作实例
+let dataIndex = 0;
+let intervalId = null
+let mouseOverListener = null;
+let mouseOutListener = null;
+const positions = [[300, 20], [150, 200], [20, 20]]
+const intervalAction = (chartInstance, data) => {
+  intervalId = setInterval(() => {
+    chartInstance.dispatchAction({
+      type: 'downplay',
+      seriesIndex: 0
+    })
+
+    chartInstance.dispatchAction({
+      type: 'showTip',
+      seriesIndex: 0,
+      position: positions[dataIndex],
+      dataIndex
+    })
+    chartInstance.dispatchAction({
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex
+    })
+    dataIndex = dataIndex >= data.length - 1 ? 0 : (dataIndex + 1)
+  }, 2000)
+}
+const handleChartInstance = (data) => {
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = null;
+  }
+  nextTick(() => {
+    const chartInstance = chartComponent.value?.chart
+    if (!chartInstance) return;
+
+    // 清理旧的事件监听器
+    if (mouseOverListener) {
+      chartInstance.off('mouseover', mouseOverListener);
+    }
+    if (mouseOutListener) {
+      chartInstance.off('mouseout', mouseOutListener);
+    }
+    intervalAction(chartInstance, data)
+
+    // 鼠标移入时暂停定时器并恢复高亮
+    mouseOverListener = (params) => {
+      clearInterval(intervalId);
+      intervalId = null;
+      chartInstance.dispatchAction({
+        type: 'downplay',
+        seriesIndex: 0
+      })
+      chartInstance.dispatchAction({
+        type: 'highlight',
+        seriesIndex: 0,
+        dataIndex: params.dataIndex
+      });
+      chartInstance.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex: params.dataIndex
+      });
+    };
+    chartInstance.on('mouseover', mouseOverListener);
+
+    // 鼠标移出时重新启动定时器
+    mouseOutListener = () => {
+      if (intervalId === null) {
+        chartInstance.dispatchAction({
+          type: 'downplay',
+          seriesIndex: 0
+        })
+        intervalAction(chartInstance, data);
+      }
+    };
+    chartInstance.on('mouseout', mouseOutListener);
+  })
+}
 
 const resetOptions = (lists) => {
   lists = lists.map((item, index) => ({ ...item, value: item.count }));
@@ -76,35 +159,48 @@ const resetOptions = (lists) => {
   option.color = colors;
   option.tooltip = {
     ...option.tooltip,
-    show:true,
+    show: true,
     trigger: "item",
-    backgroundColor: "rgba(0,0,0,0.8)",
-    // formatter: "{a} <br/>{b}: {c} ({d}%)",
+    formatter: (params) => {
+      return `
+        <div>
+          <span style="font-weight: bold;">${params.seriesName}</span><br/>
+          ${params.name}: ${params.value}个 (${params.percent}%)
+        </div>
+      `;
+    }
   };
   option.title[0].text = sum;
   option.title.forEach((item) => {
     item.textStyle.color = "#00FFF6";
   });
-  option.title[0].top = "40%";
-  option.title[1].top = "52%";
+
   option.legend.orient = "vertical";
   option.legend.textStyle.color = "#FFF";
   option.series = [
     {
       name: "设备数量",
       type: "pie",
+      emphasis: { scale: true, scaleSize: 12 },
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: '#FFF',
+        borderWidth: 6
+      },
       label: {
         show: false,
       },
-      radius: ["40%", "90%"],
+      radius: ["50%", "88%"],
       center: ["50%", "50%"],
       data: lists,
     },
   ];
+  console.log(option)
+  handleChartInstance(lists)
 };
 </script>
 
 <template>
   <Empty v-if="!screenStore.screenData.deviceCount.length" />
-  <chart :option="option" v-else />
+  <chart ref="chartComponent" :option="option" v-else />
 </template>

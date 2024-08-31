@@ -268,25 +268,6 @@ export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
       },
     ],
     yAxis: [
-      // {
-      //   name: "{title|日降雨量(mm)}",
-      //   type: "value",
-      //   // show:false,
-      //   interval:1,
-      //   nameTextStyle: {
-      //     fontSize: 12,
-      //     color: getCssVariableValue("--normal-title-color"),
-      //     fontWeight: "normal",
-      //     rich: {
-      //       title: {
-      //         // padding: [0, 0, 0, 50], // 通过负的右边距将标题向左移动
-      //         align: "left", // 左对齐
-      //       },
-      //     },
-      //   },
-
-      //   // max: 500
-      // },
       {
         type: "value",
         interval: 1,
@@ -339,13 +320,13 @@ export const getCommonBar = function ({ seriesUnit = ["mm"] }) {
           // textStyle: {
           //   color: "#000",
           // },
-          formatter: function (params) {
-            for (var i = 0, l = option.yAxis["data"].length; i < l; i++) {
-              if (option.yAxis["data"][i] == params.name) {
-                return option.series[0].data[i] + params.value;
-              }
-            }
-          },
+          // formatter: function (params) {
+          //   for (var i = 0, l = option.yAxis["data"].length; i < l; i++) {
+          //     if (option.yAxis["data"][i] == params.name) {
+          //       return option.series[0].data[i] + params.value;
+          //     }
+          //   }
+          // },
         },
         barGap: "40%",
         barCategoryGap: "40%",
@@ -418,22 +399,6 @@ export const getCommonPie = function () {
       show: false,
       backgroundColor: "rgba(0,0,0,0.8)",
       borderRadius: 2,
-      formatter: (params) => {
-        return
-        let res = "";
-        let formatterName = "";
-        params.forEach((current) => {
-          let { name, color, value, seriesName, seriesIndex } = current;
-          if (seriesUnit && seriesUnit.length === 1) seriesIndex = 0;
-          formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
-          res +=
-            `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 0"><div><span style="display:inline-block;vertical-align:middle;margin-right:6px;margin-bottom:4px;border-radius:6px;` +
-            `width:6px;height:6px;background-color:${color};"></span>${seriesName}:</div><span>${value}${
-              seriesUnit ? seriesUnit[seriesIndex] : "mm"
-            }</span></div>`;
-        });
-        return formatterName + res;
-      },
       extraCssText: "padding:12px",
       textStyle: {
         fontSize: 12,

@@ -14,6 +14,8 @@ import w4 from "@/assets/images/w4.png";
 // import w6 from "@/assets/images/w6.png";
 import w7 from "@/assets/images/w7.png";
 import w8 from "@/assets/images/w8.png";
+import w9 from "@/assets/images/w9.png";
+
 
 const legendColor1 = getCssVariableValue("--legend-bg-color-1");
 const legendColor2 = getCssVariableValue("--legend-bg-color-2");
@@ -285,6 +287,7 @@ const weather = {
   雷阵雨: w4,
   小雨: w7,
   中雨: w8,
+  大雨:w9
 };
 
 const alarm = {
