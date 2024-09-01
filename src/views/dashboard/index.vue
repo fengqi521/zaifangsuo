@@ -4,11 +4,17 @@
     <Left />
     <!-- 地图 -->
     <div class="map-section">
-      <Map :deviceList="deviceList" :fetchData="fetchData" />
+      <Map :deviceList="mapDevice.lists" :fetchData="fetchData" />
       <ul class="map-controls">
-        <li v-for="(item) in devices" :key="item.value"
-          :class="['map-controls__item', { 'map-controls__item--action': active !== item.value }]"
-          @click="handleActive(item.value)">
+        <li
+          v-for="item in devices"
+          :key="item.value"
+          :class="[
+            'map-controls__item',
+            { 'map-controls__item--action': active !== item.value },
+          ]"
+          @click="handleActive(item.value)"
+        >
           {{ item.label }}
         </li>
       </ul>
@@ -32,7 +38,11 @@
     <!-- 天气预报广告 -->
     <div class="forecast-container">
       <div class="weather-forecast">
-        <div v-for="(item, index) in forecast" :key="index" class="forecast-item">
+        <div
+          v-for="(item, index) in forecast"
+          :key="index"
+          class="forecast-item"
+        >
           <span>{{ item.date }}</span>
           <span>{{ item.week }}</span>
           <span>{{ item.weather }}</span>
@@ -56,15 +66,15 @@ import { deviceMap, area, weather, weeks } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
-const devices = ref([{ label: '全部', value: 0 }, ...deviceMap])
-const active = ref(0)
+const devices = ref([{ label: "全部", value: 0 }, ...deviceMap]);
+const active = ref(0);
 const { hourMinutes, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
 // 切换显示设备
 const handleActive = (value) => {
   active.value = value;
-  getDeviceList()
-}
+  getDeviceList();
+};
 // 天气信息
 const weatherInfo = ref({
   path: "",
@@ -118,9 +128,10 @@ const getWeatherForecast = async () => {
   }
 };
 // 获取设备列表数据
-const deviceList = reactive([]);
+const mapDevice = reactive({
+  lists: [],
+});
 const getDeviceList = async () => {
-  deviceList.length = 0;
   try {
     const res = await systemApi.getDeviceList({
       limit: 10000,
@@ -129,13 +140,18 @@ const getDeviceList = async () => {
     });
 
     if (res.code) return;
-    let lists = []
+    let lists = [];
     if (active.value) {
-      lists = res.data.list.filter(item => item.device_type == active.value)
+      lists = res.data.list.filter((item) => item.device_type == active.value);
     } else {
       lists = res.data.list;
     }
-    Object.assign(deviceList, lists);
+    // deviceList.length = 0;
+    mapDevice.lists = lists;
+
+
+
+    // 设备状态统计数据
     const groupArea = groupBy(lists, "zone");
     let areaList = [...area].map((item) => ({
       ...item,
@@ -159,24 +175,32 @@ const getDeviceList = async () => {
       offline: areaList.map((item) => item.offline),
     });
 
+    //  设备运行统计数据
+
     const groupByType = groupBy(lists, "device_type");
     const values = [];
-    const onlineArr = [];
-    const offlineArr = [];
-
-    Object.entries(groupByType).forEach(([deviceType, devices]) => {
+    const data = [];
+    const status = ["离线", "在线"];
+    Object.entries(groupByType).forEach(([deviceType, devices], index) => {
       const onlineCount = devices.filter((item) => item.online === 1).length;
       const offlineCount = devices.filter((item) => item.online === 0).length;
-      onlineArr.push(onlineCount);
-      offlineArr.push(offlineCount);
+      const runData = status.map((item, ind) => {
+        const statusList = [index, ind];
+        if (item === "在线") {
+          statusList.push(onlineCount);
+        } else {
+          statusList.push(offlineCount);
+        }
+        return statusList;
+      });
+      data.push(...runData);
       const list = deviceMap.find((item) => item.value === Number(deviceType));
       values.push(list?.label);
     });
-
     screenStore.setData("deviceList", {
       values,
-      online: onlineArr,
-      offline: offlineArr,
+      status,
+      data,
     });
   } catch (error) {
     console.log(error);
@@ -228,9 +252,11 @@ const fetchData = () => {
   const id = screenStore.screenData.id;
   const type = screenStore.screenData.type;
   if (!id || !type) return;
+  // 设备详情
   getDeviceRealData(id, type);
+  // 工况数据
   getWordData(id, type);
-  const list = deviceList.find((item) => item.id === id);
+  const list = mapDevice.lists.find((item) => item.id === id);
   const curDeviceType = deviceMap.find(
     (item) => item.value === list.device_type
   );
@@ -247,8 +273,6 @@ let secondIntervalId = null;
 let minuteTasksIntervalId = null;
 let weatherIntervalId = null;
 onMounted(() => {
-  getDeviceList();
-  getDeviceCategory();
   // 定义每秒钟执行的任务
   const secondTasks = () => {
     getHourMinutes();
@@ -273,7 +297,7 @@ onMounted(() => {
   weatherIntervalId = setInterval(getWeather, 60 * 60 * 1000);
 
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 30000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
 });
 
 onUnmounted(() => {
@@ -295,7 +319,6 @@ onUnmounted(() => {
     flex: 1;
 
     @keyframes jump {
-
       0%,
       100% {
         transform: translateY(0);
@@ -311,15 +334,11 @@ onUnmounted(() => {
       align-items: center;
       height: 100px;
 
-
-
-
       &__item {
         font-size: 18px;
-        color: #FFF;
+        color: #fff;
         padding-inline: 24px;
         cursor: pointer;
-
       }
 
       &__item--action {
@@ -376,7 +395,7 @@ onUnmounted(() => {
     right: 16px;
     top: 40px;
     width: 350px;
-    overflow: hidden
+    overflow: hidden;
   }
 
   .weather-forecast {

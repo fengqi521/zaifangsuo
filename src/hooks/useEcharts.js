@@ -5,7 +5,7 @@ import {
   onUnmounted
 } from "vue";
 import * as echarts from "echarts";
-// import 'echarts-gl'
+
 export function useEchartsHook() {
   const chart = ref(null);
   // 初始化图表

@@ -7,7 +7,7 @@ export const useScreenStoreHook = defineStore("screenStore", () => {
     id: "",
     detail: {}, // 设备详情
     area: { values: [], online: [], offline: [] },
-    deviceList: { values: [], online: [], offline: [] }, // 设备数据
+    deviceList: { values: [], status: [], data: [] }, // 设备数据
     deviceCount: [], // 设备数量统计
     statusLists: [], //
     monitorData: [], // 监测数据

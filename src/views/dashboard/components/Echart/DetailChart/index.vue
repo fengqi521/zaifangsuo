@@ -7,7 +7,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import {  ref, watch } from "vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 const lists = ref([

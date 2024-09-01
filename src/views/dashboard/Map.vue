@@ -1,17 +1,28 @@
 <template>
   <div class="map-container">
-    <el-select v-model="selectList" class="map-select" style="width: 240px" @change="handleChangeDevice">
-      <el-option v-for="(item, index) in deviceList" :key="index" :label="item.device_name" :value="item.device_number" />
+    <el-select
+      v-model="selectList"
+      class="map-select"
+      style="width: 240px"
+      @change="handleChangeDevice"
+    >
+      <el-option
+        v-for="(item, index) in deviceList"
+        :key="index"
+        :label="item.device_name"
+        :value="item.device_number"
+      />
     </el-select>
     <div class="map" id="cesiumContainer" ref="cesiumRef"></div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { isEqual } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
+import { reactify } from "@vueuse/core";
 const screenStore = useScreenStoreHook();
 let viewer;
 const prevMarker = ref(null);
@@ -32,7 +43,7 @@ const props = defineProps({
   },
   fetchData: {
     type: Function,
-    default: () => { },
+    default: () => {},
   },
 });
 
@@ -76,8 +87,9 @@ onMounted(async () => {
   watchEffect(() => {
     const div = document.querySelector(".cesium-viewer");
     if (!div) return;
-    div.style.transform = `scale(${1 / screenStore.scale},${1 / screenStore.scale
-      })`;
+    div.style.transform = `scale(${1 / screenStore.scale},${
+      1 / screenStore.scale
+    })`;
     div.style.transformOrigin = "center";
   });
 });
@@ -181,23 +193,24 @@ const updateMarker = (marker) => {
   }
 };
 
+const prevValues = ref([]);
 // 数据
-watch(() => props.deviceList, (values, oldValues) => {
-  console.log(isEqual(values, oldValues),values, oldValues)
-  if (!isEqual(values, oldValues)) {
+watch(
+  () => props.deviceList,
+  (values) => {
+    if (isEqual(values, prevValues.value)) return;
+    prevValues.value = values;
     viewer.entities.removeAll();
-    // setTimeout(() => {
-
-    //   values.forEach((item) => {
-    //     addMarker(item);
-    //   });
-    //   selectList.value = values[0].device_number;
-
-    //   handleChangeDevice(selectList.value);
-    // }, 2000);
-  }
-
-}, { deep: true });
+    setTimeout(() => {
+      values.forEach((item) => {
+        addMarker({...item});
+      });
+      selectList.value = values[0].device_number;
+      handleChangeDevice(selectList.value);
+    }, 0);
+  },
+  { deep: true }
+);
 
 // marker点击事件
 const handleClick = (handler) => {

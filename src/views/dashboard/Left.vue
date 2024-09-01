@@ -27,7 +27,7 @@ import TotalChart from "./components/Echart/TotalChart/index.vue";
 .dashboard-left {
   display: grid;
   margin-right: 24px;
-  grid-template-rows: 314px 312px 312px;
+  grid-template-rows: 312px 312px 314px;
   row-gap: 12px;
 
   :deep(.chart-container) {

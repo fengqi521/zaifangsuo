@@ -551,41 +551,68 @@ export const getCommonStackBar = function () {
 
 export const getCommon3dBar = function () {
   return {
-    tooltip: {},
-    visualMap: {
-      max: 20,
-      inRange: {
-        color: [
-          "#313695",
-          "#4575b4",
-          "#74add1",
-          "#abd9e9",
-          "#e0f3f8",
-          "#ffffbf",
-          "#fee090",
-          "#fdae61",
-          "#f46d43",
-          "#d73027",
-          "#a50026",
-        ],
-      },
-    },
+    tooltip: {show:false},
+    // visualMap: {
+    //   show: false,
+    //   inRange: {
+    //     color: ['#FF4500', '#FF6347'],
+    // },
+    // },
     xAxis3D: {
       type: "category",
+      name:'',
       data: [],
+      axisLabel:{
+        margin:30,
+        textStyle:{
+          fontSize:16,
+          color:'#FFF'
+        }
+      }
     },
     yAxis3D: {
       type: "category",
+      name:'',
       data: [],
+      axisLabel:{
+        margin:10,
+        textStyle:{
+          fontSize:14
+        }
+      },
+      axisLine:{
+        lineStyle:{
+          color:'#FFF'
+        }
+      }
     },
     zAxis3D: {
       type: "value",
+      name:'',
+      axisLabel:{
+        margin:10,
+        textStyle:{
+          color:'#FFF',
+          fontSize:14
+        }
+      }
     },
     grid3D: {
-      boxWidth: 200,
+      boxWidth: 180,
       boxDepth: 80,
-      viewControl: {
-        // projection: 'orthographic'
+      axisLine: {
+        lineStyle: {
+          color: "#FFF",
+          width: 1,
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          opacity:.4
+        }
+      },
+      axisLabel: {
+        fontSize: "12",
       },
       light: {
         main: {
@@ -593,8 +620,16 @@ export const getCommon3dBar = function () {
           shadow: true,
         },
         ambient: {
-          intensity: 0.3,
+          intensity: 0.7,
+          shadow: true,
         },
+      },
+      viewControl: {
+        alpha: 70,
+        beta: 0,
+        autoRotate: true,
+        autoRotateAfterStill: 5,
+        distance: 225,
       },
     },
     series: [
@@ -605,6 +640,14 @@ export const getCommon3dBar = function () {
         label: {
           fontSize: 16,
           borderWidth: 1,
+        },
+        label: {
+          show: true,
+          distance: 1,
+          textStyle: {
+            color: "#FFF",
+            fontSize: 18,
+          },
         },
         emphasis: {
           label: {
