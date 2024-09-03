@@ -73,8 +73,7 @@ const getLists = async (page, limit) => {
     if (!result?.code) {
       const lists = result.data.list.map((item) => ({
         ...item,
-        role_name: userRolesMap.find((cur) => cur.value === item.role).label,
-        // devices: item.devices.map(cur=>cur.device_name).join(","),
+        role_name: userRolesMap.find((cur) => cur.value === item.role).label
       }));
       userData.value = lists;
       total.value = result.data.total_count;
@@ -109,7 +108,6 @@ const title = ref("");
 
 // 添加、修改
 const handleEdit = (row) => {
-  console.log(row);
   currentRow.value = {};
   dialogVisible.value = true;
   if (!row) {
@@ -118,7 +116,7 @@ const handleEdit = (row) => {
   }
 
   title.value = "修改用户";
-  currentRow.value = row;
+  currentRow.value = {...row};
 };
 
 // 关闭弹窗
@@ -132,7 +130,6 @@ const transferValue = ref({ uid: "", did: [] });
 const authorVisible = ref(false);
 // 显示授权
 const handleClickShowAuthor = (row) => {
-  console.log(row);
   transferValue.value.did = [];
   transferValue.value.uid = row.id;
   authorVisible.value = true;

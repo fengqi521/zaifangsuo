@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watchEffect } from "vue";
 import ElModal from "@/components/ElModal/index.vue";
 import { isEmpty } from "lodash";
 import { useMessage } from "@/plugins/message";
@@ -89,30 +89,32 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["handle-close", "get-list"]);
-watch(
-  () => props.currentRow,
-  (newVal) => {
-    if (isEmpty(newVal)) {
-      userForm = reactive({ ...initialData });
-      userFormRules.password[0].required = true;
-    } else {
-      const { id, devices, create_time, ...others } = newVal;
-      if (id) userFormRules.password[0].required = false;
-      Object.assign(userForm, {
-        ...others,
-        uid: id,
-        did: devices.map((item) => item.id),
-      });
+
+watchEffect(() => {
+  const value = props.currentRow;
+  if (!value || isEmpty(value)) {
+    userForm = reactive({ ...initialData });
+    userFormRules.password[0].required = true;
+  } else {
+    const { id, devices, create_time, ...others } = value;
+    if (id) {
+      userFormRules.password[0].required = false;
     }
-  },
-  { deep: true }
-);
+    Object.assign(userForm, {
+      ...others,
+      uid: id,
+      did: devices.map((item) => item.id),
+    });
+  }
+});
 
 // 关闭弹窗
 const handleClose = (status) => {
   emit("handle-close", status);
-  userForm = reactive({ ...initialData });
-  userFormRef.value.resetFields();
+  setTimeout(() => {
+    userForm = reactive({ ...initialData });
+    userFormRef.value.resetFields();
+  }, 0);
 };
 
 // 提交表单
@@ -197,17 +199,17 @@ const handleSubmit = async () => {
             placeholder="请输入密码"
           ></el-input>
         </el-form-item>
-        <el-form-item label="用户权限" prop="role">
+        <el-form-item label="用户权限" prop="role" v-if="!userForm.uid">
           <el-select v-model="userForm.role" placeholder="请选择用户权限">
             <el-option
-              v-for="item in userRolesMap.filter((cur,index)=>index>0)"
+              v-for="item in userRolesMap.filter((cur, index) => index > 0)"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备授权" prop="did">
+        <el-form-item label="设备授权" prop="did" v-if="!userForm.uid">
           <el-select-v2
             v-model="userForm.did"
             filterable

@@ -29,8 +29,8 @@ export default defineConfig({
     proxy: {
       "/api": {
         // target: "http://82.156.191.234/",
-        // target: "http://192.168.100.180:8001/",
-        target: "http://localhost:3001",
+        target: "http://192.168.100.180:8001/",
+        // target: "http://localhost:3001",
 
         ws: false,
         /** 是否允许跨域 */

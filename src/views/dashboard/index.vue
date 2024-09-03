@@ -66,7 +66,7 @@ import { deviceMap, area, weather, weeks } from "@/constants";
 import systemApi from "@/api";
 
 const screenStore = useScreenStoreHook();
-const devices = ref([{ label: "全部", value: 0 }, ...deviceMap]);
+const devices = ref([...deviceMap]);
 const active = ref(0);
 const { hourMinutes, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
@@ -173,7 +173,6 @@ const getDeviceList = async () => {
     });
 
     //  设备运行统计数据
-
     const groupByType = groupBy(res.data.list, "device_type");
     const values = [];
     const data = [];
@@ -199,6 +198,13 @@ const getDeviceList = async () => {
       status,
       data,
     });
+
+    // 显示按钮
+    const keys = Object.keys(groupByType).map((item) => Number(item));
+    devices.value = [
+      { label: "全部", value: 0 },
+      ...devices.value.filter(({ value }) => keys.includes(value)),
+    ];
   } catch (error) {
     console.log(error);
   }
@@ -309,7 +315,7 @@ onMounted(() => {
   weatherIntervalId = setInterval(getWeather, 60 * 60 * 1000);
 
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 30000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
 });
 
 onUnmounted(() => {

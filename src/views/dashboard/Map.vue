@@ -3,14 +3,16 @@
     <el-select
       v-model="selectList"
       class="map-select"
-      style="width: 240px"
+      style="width: 310px"
       @change="handleChangeDevice"
+      filterable
     >
       <el-option
         v-for="(item, index) in deviceList"
         :key="index"
         :label="item.device_name"
         :value="item.device_number"
+        style="width: 100%"
       />
     </el-select>
     <div class="map" id="cesiumContainer" ref="cesiumRef"></div>
@@ -18,8 +20,8 @@
 </template>
 
 <script setup>
-import {  onMounted, ref, watch, watchEffect } from "vue";
-import { isEqual,omit } from "lodash";
+import { onMounted, ref, watch, watchEffect } from "vue";
+import { isEqual, omit } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
@@ -197,12 +199,14 @@ const prevValues = ref([]);
 watch(
   () => props.deviceList,
   (values) => {
-    if (isEqual(omit(values,'online_last'), omit(prevValues.value,'online_last'))) return;
+    const transValues = values.map((item) => omit(item, "online_last"));
+    const transPrev = prevValues.value.map((item) => omit(item, "online_last"));
+    if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
     viewer.entities.removeAll();
     setTimeout(() => {
       values.forEach((item) => {
-        addMarker({...item});
+        addMarker({ ...item });
       });
       selectList.value = values[0].device_number;
       handleChangeDevice(selectList.value);
