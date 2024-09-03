@@ -24,8 +24,8 @@ const legendColor3 = getCssVariableValue("--legend-bg-color-3");
 // 用户信息
 const userRolesMap = [
   { label: "超级管理员", value: 1 },
-  { label: "审计管理员", value: 2 },
-  { label: "安全管理员", value: 3 },
+  // { label: "审计管理员", value: 2 },
+  // { label: "安全管理员", value: 3 },
   { label: "普通账户", value: 4 },
   { label: "只读账户", value: 5 },
 ];
@@ -195,7 +195,7 @@ const userFormItems = [
   {
     label: "用户名",
     prop: "user_name",
-    attrs: { placeholder: "请输入用户名" },
+    attrs: { placeholder: "请输入用户名" ,style: { width: '240px'} },
     type: "el-input",
   },
 ];
@@ -224,7 +224,7 @@ const recordFormItems = [
   {
     label: "操作类型",
     prop: "Category",
-    attrs: { placeholder: "请选择操作类型" },
+    attrs: { placeholder: "请选择操作类型" , style: { width: '200px'}},
     type: "el-select",
     options: [{ label: "全部", value: 14 }, ...recordOptions],
   },
@@ -241,7 +241,7 @@ const recordFormItems = [
   {
     label: "设备名称",
     prop: "Did",
-    attrs: { placeholder: "请选择设备", style: { width: 200 } },
+    attrs: { placeholder: "请选择设备", style: { width: '240px' } },
     type: "el-select",
     options: [],
   },
@@ -256,6 +256,7 @@ const recordFormItems = [
       endPlaceholder: "结束日期",
       rangeSeparator: "至",
       valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
+      style: { width: '310px'} 
     },
   },
 ];

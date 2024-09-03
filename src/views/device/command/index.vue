@@ -21,16 +21,15 @@ const activeTab = ref("data");
 
     <!-- 设备名称 -->
     <p class="command-name">{{ name }}</p>
-    <ElCard>
-      <el-tabs type="border-card" class="command-tabs" v-model="activeTab">
-        <el-tab-pane label="下发功能指令" name="data">
-          <Function  v-if="activeTab==='data'"/>
-        </el-tab-pane>
-        <el-tab-pane label="下发报警指令" name="alarm"  >
-          <Alarm v-if="activeTab==='alarm'"/>
-        </el-tab-pane>
-      </el-tabs>
-    </ElCard>
+
+    <el-tabs type="border-card" class="command-tabs" v-model="activeTab">
+      <el-tab-pane label="下发功能指令" name="data">
+        <Function v-if="activeTab === 'data'" />
+      </el-tab-pane>
+      <el-tab-pane label="下发报警指令" name="alarm">
+        <Alarm v-if="activeTab === 'alarm'" />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <style lang="scss" scoped>

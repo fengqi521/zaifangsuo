@@ -16,7 +16,7 @@ const lists = ref([
   { label: "设备状态", field: "status" },
   { label: "设备经纬度坐标", field: "loc" },
   { label: "设备地址", field: "location" },
-  { label: "设备离线时间", field: "online_last" },
+  { label: "设备在线时间", field: "online_last" },
 ]);
 watch(
   () => screenStore.screenData.detail,

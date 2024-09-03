@@ -6,10 +6,14 @@ import ElModal from "@/components/ElModal/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import { userInfoStoreHook } from "@/store/modules/user";
 import { isOnLine } from "@/utils";
 import systemApi from "@/api";
 
 import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
+
+const userStore = userInfoStoreHook();
+userStore.getUserInfo();
 
 const breadList = ref([{ title: "设备管理" }]);
 const formItems = reactive(deviceFormItems);
@@ -172,13 +176,31 @@ const handleCloseModal = () => {
           >
             查看详情
           </router-link>
-          <router-link
-            class="rtu-table__action-btn rtu-table__action-btn--command"
-            :to="`/device/command/${row.device_name}/${row.device_type}/${row.id}`"
+          <el-tooltip
+            content="设备未在线，无法下发指令"
+            :disabled="!!row.online"
+            placement="top"
           >
-            下发指令</router-link
-          >
-          <span class="rtu-table__action-btn" @click="handleClickUpdate"
+            <router-link
+              v-if="userStore?.userInfo?.role !== 5"
+              :class="[
+                'rtu-table__action-btn rtu-table__action-btn--command',
+                { 'disabled-link': !row.online },
+              ]"
+              :to="
+                !row.online
+                  ? null
+                  : `/device/command/${row.device_name}/${row.device_type}/${row.id}`
+              "
+            >
+              下发指令</router-link
+            >
+            <!-- <span v-if="!row.online">下发指令</span> -->
+          </el-tooltip>
+          <span
+            class="rtu-table__action-btn"
+            @click="handleClickUpdate"
+            v-if="userStore?.userInfo?.role !== 5"
             >设备升级</span
           >
         </template>
@@ -260,6 +282,11 @@ const handleCloseModal = () => {
     color: var(--normal-active-color);
     cursor: pointer;
     white-space: nowrap;
+  }
+
+  .disabled-link {
+    color: var(--normal-disabled);
+    cursor: not-allowed;
   }
 }
 

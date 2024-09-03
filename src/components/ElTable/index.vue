@@ -25,7 +25,7 @@
         <template #default="scope">
           <el-tooltip
             :disabled="!isShowTooltip"
-            :content="scope.row[column.prop] ? `${scope.row[column.prop]}` : ''"
+            :content="setTooltipContent(scope, column.prop)"
             placement="top"
             popper-class="table-tooltip"
           >
@@ -41,7 +41,7 @@
               >
               </slot>
               <div v-else>
-                {{ scope.row[column.prop] }}
+                {{ scope.row[column.prop] || "--" }}
               </div>
             </div>
           </el-tooltip>
@@ -58,7 +58,7 @@
         </template>
       </el-table-column>
       <template #empty>
-        <el-empty v-if="!props.data.length" :image-size="80" />
+        <el-empty v-if="!props.data.length" />
       </template>
     </el-table>
   </div>
@@ -78,6 +78,17 @@ const props = defineProps({
   defaultSort: Object,
   tableProps: Object,
 });
+const setTooltipContent = (scope, prop) => {
+  const row = scope.row;
+  const value = row[prop];
+  if (value && Array.isArray(value) && value.length) {
+    return value.map((item) => item.device_name).join(",");
+  }
+
+  if (value) return `${value}`;
+  return "";
+};
+
 // 排序改变处理函数
 const handleSortChange = (sortInfo) => {
   emit("sort-change", sortInfo);

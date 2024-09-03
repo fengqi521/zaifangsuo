@@ -12,8 +12,9 @@ import ElModal from "@/components/ElModal/index.vue";
 import Author from "./components/Author/index.vue";
 
 import { userFormData, userFormItems } from "@/constants";
-import systemApi from "@/api";
 import { useMessage } from "@/plugins/message";
+import { userRolesMap } from "@/constants";
+import systemApi from "@/api";
 
 const { success, warning, error } = useMessage();
 
@@ -28,6 +29,7 @@ const loading = ref(false);
 const userData = ref([]);
 const columns = ref([
   { prop: "id", label: "ID", width: 40 },
+  { prop: "role_name", label: "角色" },
   { prop: "user_name", label: "用户名", width: 300 },
   { prop: "phone", label: "手机号", width: 150 },
   { prop: "devices", label: "已授权设备", width: 300, type: "slot" },
@@ -71,6 +73,7 @@ const getLists = async (page, limit) => {
     if (!result?.code) {
       const lists = result.data.list.map((item) => ({
         ...item,
+        role_name: userRolesMap.find((cur) => cur.value === item.role).label,
         // devices: item.devices.map(cur=>cur.device_name).join(","),
       }));
       userData.value = lists;
@@ -82,6 +85,10 @@ const getLists = async (page, limit) => {
   loading.value = false;
 };
 getLists();
+
+const rowClassName = ({ row }) => {
+  return row.role === 1 ? "inactive-row" : "";
+};
 
 // 查询数据
 const handleSearch = (values) => {
@@ -200,12 +207,17 @@ const handleCloseDeleteModal = () => {
         :loading="loading"
         :columns="columns"
         :data="userData"
-        :tableProps="{ showSelection: false, border: true }"
+        :tableProps="{
+          showSelection: false,
+          border: true,
+          'row-class-name': rowClassName,
+        }"
       >
         <template #devices="scope">
-          <p v-for="(item, index) in scope.row.devices" :key="index">
-            {{ item.device_name }}
+          <p v-if="scope.row.devices.length" v-for="(item, index) in scope.row.devices" :key="index">
+            {{ item.device_name}}
           </p>
+          <span v-else> -- </span>
         </template>
         <template #action="{ row }">
           <span
@@ -271,6 +283,10 @@ const handleCloseDeleteModal = () => {
 </template>
 <style lang="scss" scoped>
 .user-list__table {
+  :deep(.inactive-row) {
+    opacity: 0.6;
+    pointer-events: none;
+  }
   .user-list__action-btn {
     margin-inline: 4px;
     color: var(--normal-active-color);

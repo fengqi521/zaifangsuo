@@ -569,16 +569,16 @@ onUnmounted(() => {
 .func-command {
   display: grid;
   grid-template-columns: 378px 1fr;
-  padding-inline: 24px;
-  border: 1px solid var(--card-border-color);
-  background: var(--background-color);
-  height: calc(100vh - 239px);
+  column-gap: 16px;
+  // border: 1px solid var(--card-border-color);
+  // background: var(--background-color);
+  height: calc(100vh - 198px);
 }
 
 .func-command__form {
-  padding: 24px 24px 0 0;
-  border-right: 1px solid var(--card-border-color);
-
+  padding:24px;
+  // border-right: 1px solid var(--card-border-color);
+  background: var(--background-color);
   .command-form__operate {
     display: flex;
     align-items: center;
@@ -615,10 +615,6 @@ onUnmounted(() => {
     .el-range-input {
       width: 40%;
     }
-
-    &.el-input__wrapper {
-      // padding-inline: 2px;
-    }
   }
 
   .func-command__group {
@@ -645,7 +641,8 @@ onUnmounted(() => {
 
 .func-command__feedback {
   color: var(--command-message-color);
-  padding: 24px 0 0 24px;
+  background: var(--background-color);
+  padding: 24px;
   overflow: hidden;
   :deep(.card-content) {
     height: calc(100% - 48px);

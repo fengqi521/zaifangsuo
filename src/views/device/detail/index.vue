@@ -65,7 +65,7 @@ const dateRange = computed({
         <el-date-picker
           v-model="dateRange"
           type="datetimerange"
-          range-separator="To"
+          range-separator="至"
           style="width: 355px"
         />
       </div>

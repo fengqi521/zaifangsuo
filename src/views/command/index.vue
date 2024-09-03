@@ -134,6 +134,7 @@ const handleChangePage = (page) => {
 
 // 切换条数
 const handleChangeSize = (size) => {
+  searchModel.value.page = 1;
   searchModel.value.limit = size;
   getRecord();
 };

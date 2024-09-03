@@ -1,10 +1,13 @@
 <script setup>
-import { reactive, ref, watch, watchEffect } from "vue";
+import { reactive, ref, watch } from "vue";
 import Bread from "@/components/Bread/index.vue";
 import CompareChart from "./components/CompareChart.vue";
 import DevicePanel from "./components/DevicePanel.vue";
 import systemApi from "@/api";
 import { getDatePeriod } from "@/utils";
+import { useMessage } from "@/plugins/message";
+
+const { warning, error } = useMessage();
 const deviceInfo = ref({});
 
 const allOptions = reactive([]);
@@ -22,6 +25,10 @@ const getDeviceDetail = async (arg) => {
   if (!result.code) {
     const { type, id, name } = params;
     const data = result.data.list;
+    if (!data[0].timeList.length) {
+      warning("设备暂无数据");
+      return;
+    }
     const list = allOptions.find((item) => item.id === id);
     switch (type) {
       case 1:
@@ -46,7 +53,7 @@ const getDeviceDetail = async (arg) => {
               id,
               type,
               name,
-              data: datas,
+              data: datas
             });
         break;
       case 3:
@@ -81,9 +88,13 @@ const handleClear = () => {
 watch(
   () => deviceInfo.value,
   (info) => {
-    const index = allOptions.findIndex((item) => item.id === info.id);
-    if (index > -1) {
-      allOptions.splice(index, 1);
+    if (allOptions.length > 1) {
+      error(`设备图表已满，清除图表再进行操作`);
+      return;
+    }
+    const list = allOptions.find((item) => item.id === info.id);
+    if (list) {
+      warning(`${list.name}设备图表已存在`);
       return;
     }
     getDeviceDetail(info);
@@ -92,7 +103,7 @@ watch(
 );
 </script>
 <template>
-  <div >
+  <div>
     <Bread :breadList="[{ title: '综合分析' }]" />
     <div class="analysis-container">
       <!-- 左侧-设备列表 -->

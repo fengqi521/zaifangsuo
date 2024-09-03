@@ -4,14 +4,14 @@ import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import Chart from "@/components/Chart/index.vue";
+import BreakLineChart from '@/components/BreakLineChart/index.vue'
 import { useRtuStoreHook } from "@/store/modules/rtu";
-import { getCommonLine } from "@/utils/chartData";
+
 import systemApi from "@/api";
 const useRtuStore = useRtuStoreHook();
 const route = useRoute();
 const { id, type } = route.params;
-const collectOption = reactive(getCommonLine({ seriesUnit: [""] }));
+
 // 图表
 const searchInfo = ref({
   id,
@@ -32,24 +32,7 @@ const getBreakChartData = () => {
     }
   });
 };
-// 图表数据重组
-const resetOptions = (data) => {
-  collectOption.legend.show = true;
-  collectOption.xAxis[0].data = data.timeList;
-  collectOption.yAxis[0].name = "{title|1代表断开、0代表正常}";
-  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 65];
-  collectOption.series[0] = {
-    name: "断线状态",
-    type: "line",
-    data: data.valueList,
-    Symbol: "circle",
-    // symbolSize: 6,
-    smooth: true,
-  };
-};
-watchEffect(() => {
-  resetOptions(chartData);
-});
+
 
 // 历史table数据
 const loading = ref(false);
@@ -100,52 +83,38 @@ watch(
 
 <template>
   <div class="device-data">
-    <ElCard title="传感器监测历史数据" v-loading="loading">
-      <div class="device-data__history">
-        <el-empty v-if="!chartData.timeList.length"></el-empty>
-        <Chart :options="[collectOption]" v-else />
-      </div>
-      <div class="device-data__table">
-        <ElTable
-          :loading="loading"
-          :columns="tableColumns"
-          :data="deviceData.data"
-          :tableProps="{ showSelection: false, border: true }"
-        />
-        <ElPagination
-          :currentPage="deviceData.page"
-          :page-size="deviceData.limit"
-          :total="deviceData.total"
-          @pagination-change="(page) => getBreakLevelHistory(page)"
-          @page-size-change="
-            (size) => getBreakLevelHistory(deviceData.page, size)
-          "
-        />
-      </div>
+    <ElCard
+      title="断线监测数据"
+      class="device-data__chart"
+      v-loading="loading"
+    >
+      <BreakLineChart :data="chartData" />
+    </ElCard>
+    <ElCard title="数据列表">
+      <ElTable
+        :loading="loading"
+        :columns="tableColumns"
+        :data="deviceData.data"
+        :tableProps="{ showSelection: false, border: true }"
+      />
+      <ElPagination
+        :currentPage="deviceData.page"
+        :page-size="deviceData.limit"
+        :total="deviceData.total"
+        @pagination-change="(page) => getBreakLevelHistory(page)"
+        @page-size-change="
+          (size) => getBreakLevelHistory(deviceData.page, size)
+        "
+      />
     </ElCard>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .device-data {
-  &__title {
-    line-height: 52px;
-    font-size: 16px;
-    color: var(--normal-title-color);
-    font-weight: 700;
-  }
-
-  &__history {
-    display: grid;
-    // grid-template-columns: 1fr 1fr;
-    grid-template-rows:382px;
-    gap: 16px;
-  }
-
-  &__table {
-    margin-top: 24px;
-    padding: 24px;
-    border: 1px solid var(--card-border-color);
+  &__chart {
+    height: 382px;
+    margin-bottom: 24px;
   }
 }
 </style>

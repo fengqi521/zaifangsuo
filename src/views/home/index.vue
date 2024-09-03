@@ -42,9 +42,5 @@ DEVICE_DATA.forEach((device, index) => {
 .home-container {
   position: relative;
 
-  .home-left {
-    // height:332px;
-    // width:  calc(100% - var(--home-message-width) - 16px) ;
-  }
 }
 </style>

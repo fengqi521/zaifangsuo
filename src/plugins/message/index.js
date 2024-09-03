@@ -13,6 +13,7 @@ const showMessage = (options = {}) => {
     type: options.type || "info",
     duration: options.duration || 3000,
     showClose: options.showClose !== false,
+    offset: options.offset || 300,
     ...options,
   });
 };
@@ -27,11 +28,3 @@ export const useMessage = () => ({
   error: (msg, options = {}) =>
     showMessage({ message: msg, type: "error", ...options }),
 });
-
-// export const messagePlugin = (app) => {
-//   app.use({
-//     install(app) {
-//       app.config.globalProperties.$message = message;
-//     },
-//   });
-// };

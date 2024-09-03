@@ -200,7 +200,7 @@ const handleSubmit = async () => {
         <el-form-item label="用户权限" prop="role">
           <el-select v-model="userForm.role" placeholder="请选择用户权限">
             <el-option
-              v-for="item in userRolesMap"
+              v-for="item in userRolesMap.filter((cur,index)=>index>0)"
               :key="item.value"
               :label="item.label"
               :value="item.value"

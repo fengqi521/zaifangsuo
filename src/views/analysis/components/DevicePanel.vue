@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref, watch } from "vue";
+import { remove } from "lodash";
 import systemApi from "@/api";
 const treeRef = ref(null);
 const loading = ref(false);
@@ -8,15 +9,18 @@ const dataSource = reactive([
   {
     id: 1,
     label: "泥位计",
+    children: [],
   },
   {
     id: 2,
     label: "雨量计",
+    children: [],
   },
 
   {
     id: 3,
     label: "断线传感器",
+    children: [],
   },
 ]);
 
@@ -41,6 +45,7 @@ const getDeviceList = async () => {
         name: list.device_name,
       }));
     });
+    remove(dataSource, (item) => item.children.length === 0);
   }
   loading.value = false;
 };
@@ -61,9 +66,6 @@ const emit = defineEmits(["update:modelValue"]);
 // 选择tree
 const handleChangeTree = (nodeObj, data) => {
   const { checkedNodes } = data;
-  //   const nodes = checkedNodes.filter((item) => item.children);
-  //   const selectNodes = nodes.flatMap((item) => item.children);
-  //   console.log(nodeObj)
   emit("update:modelValue", {
     id: nodeObj._id,
     type: nodeObj.type,

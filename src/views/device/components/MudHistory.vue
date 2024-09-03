@@ -5,16 +5,14 @@ import TimelineImage from "./TimelineImage.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import Chart from "@/components/Chart/index.vue";
+import MudChart from "@/components/MudChart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
-import { getCommonLine } from "@/utils/chartData";
 import systemApi from "@/api";
 
 const useRtuStore = useRtuStoreHook();
 const route = useRoute();
 const { id, type } = route.params;
 
-const mudLevelImages = reactive({ timeList: [], valueList: [] });
 const searchInfo = ref({
   id,
   type,
@@ -24,14 +22,10 @@ const searchInfo = ref({
   end_time: "",
 });
 
-const collectOption = reactive(
-  getCommonLine({ seriesUnit: ["m"], yAxisTitlePadding: [0, 0, 0, 10] })
-);
-// 图表
-const chartData = reactive({ timeList: [], valueList: [] });
-
 // 获取泥水位图表数据
 const chartLoading = ref(false);
+const chartData = reactive({ timeList: [], valueList: [] });
+const mudLevelImages = reactive({ timeList: [], valueList: [] });
 const getMudChartData = () => {
   chartLoading.value = true;
   const { page, limit, ...params } = searchInfo.value;
@@ -43,35 +37,6 @@ const getMudChartData = () => {
     }
   });
 };
-
-// 图表数据重组
-const resetOptions = (data) => {
-  collectOption.legend.show = true;
-  collectOption.xAxis[0].data = data.timeList;
-  collectOption.yAxis[0].name = "{title|泥水位(m)}";
-  collectOption.yAxis[1].show = false;
-  const min = Math.min(...data.valueList);
-  const max = Math.max(...data.valueList);
-
-  collectOption.yAxis[0].min = min;
-  // collectOption.yAxis[0].max = max;
-
-  collectOption.series[0] = {
-    name: "泥水位",
-    type: "line",
-    data: data.valueList,
-    Symbol: "circle",
-    smooth: true,
-  };
-};
-
-// 监听数据变化
-watch(
-  () => chartData.valueList,
-  (values) => {
-    resetOptions(chartData);
-  }
-);
 
 // 历史table数据
 const loading = ref(false);
@@ -105,6 +70,7 @@ const handleChangePage = (page) => {
 
 // 切换条数
 const handleChangeSize = (size) => {
+  searchInfo.value.page = 1;
   searchInfo.value.limit = size;
   getMudLevelHistory();
 };
@@ -112,8 +78,8 @@ const handleChangeSize = (size) => {
 const fetchData = (values) => {
   searchInfo.value.start_time = values[0];
   searchInfo.value.end_time = values[1];
-  Object.assign(mudLevelImages, { timeList: [], valueList: [] });
   Object.assign(chartData, { timeList: [], valueList: [] });
+  Object.assign(mudLevelImages, { timeList: [], valueList: [] });
   Object.assign(deviceData, { data: [], total: 0 });
   getMudChartData();
   getMudLevelHistory();
@@ -131,27 +97,28 @@ watch(
 
 <template>
   <div class="device-data">
-    <ElCard title="传感器监测历史数据">
-      <div class="device-data__history" v-loading="chartLoading">
-        <el-empty v-if="!chartData.timeList.length"></el-empty>
-        <Chart :option="collectOption" v-else />
-        <TimelineImage :imagesData="mudLevelImages" />
-      </div>
-      <ElCard class="history-data-card">
-        <ElTable
-          :loading="loading"
-          :columns="tableColumns"
-          :data="deviceData.data"
-          :tableProps="{ showSelection: false, border: true }"
-        />
-        <ElPagination
-          :currentPage="searchInfo.page"
-          :page-size="searchInfo.limit"
-          :total="deviceData.total"
-          @pagination-change="handleChangePage"
-          @page-size-change="handleChangeSize"
-        />
+    <div class="device-data__history" v-loading="chartLoading">
+      <ElCard title="泥水位监测数据">
+        <MudChart :data="chartData" />
       </ElCard>
+      <ElCard title="泥水位图像">
+        <TimelineImage :imagesData="mudLevelImages" />
+      </ElCard>
+    </div>
+    <ElCard class="history-data-card" title="数据列表">
+      <ElTable
+        :loading="loading"
+        :columns="tableColumns"
+        :data="deviceData.data"
+        :tableProps="{ showSelection: false, border: true }"
+      />
+      <ElPagination
+        :currentPage="searchInfo.page"
+        :page-size="searchInfo.limit"
+        :total="deviceData.total"
+        @pagination-change="handleChangePage"
+        @page-size-change="handleChangeSize"
+      />
     </ElCard>
   </div>
 </template>
@@ -161,7 +128,7 @@ watch(
   &__history {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows:382px;
+    grid-template-rows: 382px;
     gap: 16px;
   }
 

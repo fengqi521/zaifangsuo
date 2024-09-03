@@ -5,18 +5,27 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  meta: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 </script>
 <template>
-  <a v-if="isExternal(props.path)" :href="props.path" target="__blank">
+  <a
+    v-if="isExternal(props.path) || props?.meta?.newWindow"
+    :href="`#${props.path}`"
+    target="__blank"
+  >
     <slot />
   </a>
+
   <router-link class="menu-item-link" v-else :to="props.path">
     <slot />
   </router-link>
 </template>
 <style lang="scss" scoped>
-.menu-item-link{
+.menu-item-link {
   display: block;
   margin-bottom: 14px;
 }

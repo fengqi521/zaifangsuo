@@ -195,6 +195,21 @@ const resetOptions = (lists) => {
       data: lists,
     },
   ];
+
+  option.aria={
+        enabled:true,
+        decal:{
+          show: true,
+          decals: [
+            {
+              color: 'rgba(255,255,255,.5)',
+              dashArrayX: [1, 0],
+              dashArrayY: [4, 3],
+              rotation: -Math.PI / 4
+            },
+          ]
+        }
+      }
   handleChartInstance(lists)
 };
 </script>

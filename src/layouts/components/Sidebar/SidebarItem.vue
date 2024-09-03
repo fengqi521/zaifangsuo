@@ -44,6 +44,7 @@ const resolvePath = (routePath) => {
   <SidebarItemLink
     v-if="onlyOneChild && !onlyOneChild.children"
     :path="resolvePath(route.path)"
+    :meta="onlyOneChild?.meta"
   >
     <el-menu-item :index="resolvePath(onlyOneChild.path)">
       <Icon

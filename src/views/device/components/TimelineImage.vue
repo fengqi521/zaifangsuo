@@ -14,37 +14,30 @@ const valueList = computed(() => {
 });
 </script>
 <template>
-  <div class="timeline-container">
-    <el-empty v-if="!props.imagesData.timeList.length"></el-empty>
-    <el-timeline v-else>
-      <el-timeline-item
-        v-for="(item, index) in props.imagesData.timeList"
-        :key="index"
-        :timestamp="item"
-        placement="top"
-      >
-        <el-image
-          lazy
-          style="width: 99%; height: 196px"
-          :src="valueList[index]"
-          :preview-src-list="[valueList[index]]"
-          fit="cover"
-        />
-      </el-timeline-item>
-    </el-timeline>
-  </div>
+  <el-empty v-if="!props.imagesData.timeList.length"></el-empty>
+  <el-timeline v-else>
+    <el-timeline-item
+      v-for="(item, index) in props.imagesData.timeList"
+      :key="index"
+      :timestamp="item"
+      placement="top"
+    >
+      <el-image
+        lazy
+        style="width: 99%; height: 196px"
+        :src="valueList[index]"
+        :preview-src-list="[valueList[index]]"
+        fit="cover"
+      />
+    </el-timeline-item>
+  </el-timeline>
 </template>
 <style lang="scss" scoped>
 @import "@/styles/tools.scss";
 
-.timeline-container {
-  padding: 16px;
-  border: 1px solid var(--card-border-color);
-}
-
 .el-timeline {
   width: 100%;
-  max-height: 386px;
+  height: 100%;
   overflow-y: auto;
   @extend %scrollbar;
 

@@ -19,8 +19,8 @@ export const getCommonLine = function ({
     },
     grid: {
       top: 36,
-      left: 10,
-      right: 16,
+      left: 0,
+      right: 0,
       bottom: 25,
       containLabel: true,
     },
@@ -37,6 +37,9 @@ export const getCommonLine = function ({
         let formatterName = "";
         params.forEach((current) => {
           let { name, color, value, seriesName, seriesIndex } = current;
+          if (color?.colorStops) {
+            color = color.colorStops[1].color;
+          }
           if (seriesUnit && seriesUnit.length === 1) seriesIndex = 0;
           formatterName = `<span style='display:block;font-weight:bold'>${name}</span>`;
           res +=
@@ -551,7 +554,7 @@ export const getCommonStackBar = function () {
 
 export const getCommon3dBar = function () {
   return {
-    tooltip: {show:false},
+    tooltip: { show: false },
     // visualMap: {
     //   show: false,
     //   inRange: {
@@ -560,42 +563,42 @@ export const getCommon3dBar = function () {
     // },
     xAxis3D: {
       type: "category",
-      name:'',
+      name: "",
       data: [],
-      axisLabel:{
-        margin:30,
-        textStyle:{
-          fontSize:16,
-          color:'#FFF'
-        }
-      }
+      axisLabel: {
+        margin: 30,
+        textStyle: {
+          fontSize: 16,
+          color: "#FFF",
+        },
+      },
     },
     yAxis3D: {
       type: "category",
-      name:'',
+      name: "",
       data: [],
-      axisLabel:{
-        margin:10,
-        textStyle:{
-          fontSize:14
-        }
+      axisLabel: {
+        margin: 10,
+        textStyle: {
+          fontSize: 14,
+        },
       },
-      axisLine:{
-        lineStyle:{
-          color:'#FFF'
-        }
-      }
+      axisLine: {
+        lineStyle: {
+          color: "#FFF",
+        },
+      },
     },
     zAxis3D: {
       type: "value",
-      name:'',
-      axisLabel:{
-        margin:10,
-        textStyle:{
-          color:'#FFF',
-          fontSize:14
-        }
-      }
+      name: "",
+      axisLabel: {
+        margin: 10,
+        textStyle: {
+          color: "#FFF",
+          fontSize: 14,
+        },
+      },
     },
     grid3D: {
       boxWidth: 180,
@@ -608,8 +611,8 @@ export const getCommon3dBar = function () {
       },
       splitLine: {
         lineStyle: {
-          opacity:.4
-        }
+          opacity: 0.4,
+        },
       },
       axisLabel: {
         fontSize: "12",

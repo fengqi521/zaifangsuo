@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { useEchartsHook } from "@/hooks/useEcharts";
 import systemApi from "@/api";
 import Chart from "@/components/Chart/index.vue";
 import { getCssVariableValue } from "@/utils";
@@ -104,7 +103,9 @@ onMounted(async () => {
 <template>
   <div class="device-status">
     <p class="device-status__title">设备状态分析</p>
-    <Chart class="device-status__container" :option="option" />
+    <div class="device-status__container" >
+      <Chart :option="option" />
+    </div>
   </div>
 </template>
 

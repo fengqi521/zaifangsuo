@@ -231,16 +231,17 @@ onUnmounted(() => {
 .alarm-command {
   display: grid;
   grid-template-columns: 378px 1fr;
-  padding-inline: 24px;
-  border: 1px solid var(--card-border-color);
-  background: var(--background-color);
-  height: calc(100vh - 239px);
+  column-gap: 16px;
+  // padding-inline: 24px;
+  // border: 1px solid var(--card-border-color);
+  // background: var(--background-color);
+  height: calc(100vh - 198px);
 }
 
 .alarm-command__form {
-  padding: 24px 24px 0 0;
-  border-right: 1px solid var(--card-border-color);
-
+  padding: 24px;
+  // border-right: 1px solid var(--card-border-color);
+  background: var(--background-color);
   .textarea {
     margin-top: 10px;
     :deep(.el-textarea__inner) {
@@ -260,7 +261,8 @@ onUnmounted(() => {
 
 .func-command__feedback {
   color: var(--command-message-color);
-  padding: 24px 0 0 24px;
+  background: var(--background-color);
+  padding: 24px;
   overflow: hidden;
 
   :deep(.card-content) {

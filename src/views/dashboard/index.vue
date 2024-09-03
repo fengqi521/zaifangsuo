@@ -146,13 +146,10 @@ const getDeviceList = async () => {
     } else {
       lists = res.data.list;
     }
-    // deviceList.length = 0;
     mapDevice.lists = lists;
 
-
-
     // 设备状态统计数据
-    const groupArea = groupBy(lists, "zone");
+    const groupArea = groupBy(res.data.list, "zone");
     let areaList = [...area].map((item) => ({
       ...item,
       online: 0,
@@ -177,7 +174,7 @@ const getDeviceList = async () => {
 
     //  设备运行统计数据
 
-    const groupByType = groupBy(lists, "device_type");
+    const groupByType = groupBy(res.data.list, "device_type");
     const values = [];
     const data = [];
     const status = ["离线", "在线"];
@@ -214,8 +211,24 @@ const getDeviceRealData = (id, type) => {
     .getRainData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {
       if (!res.code) {
-        const lists = type === 1 ? [res.data.list[0]] : res.data.list;
-        screenStore.setData("monitorData", lists);
+        let list = {};
+        switch (type) {
+          case 1:
+            list = res.data.list[0];
+            break;
+          case 2:
+            list.timeList = res.data.list[0].timeList;
+            list.rain = res.data.list[0].valueList;
+            list.duration = res.data.list[1].valueList;
+            list.total_rain = res.data.list[2].valueList;
+            break;
+          case 3:
+            list = res.data.list[0];
+            break;
+          default:
+            break;
+        }
+        screenStore.setData("monitorData", { type, data: list });
       }
     });
 };
@@ -238,9 +251,8 @@ const getWordData = (id, type) => {
     });
 };
 
-// 设备数量
+// 设备数量占比
 const getDeviceCategory = () => {
-  // screenStore.setData("deviceCount", []);
   systemApi.getDevicePercent().then((res) => {
     if (!res.code) {
       screenStore.setData("deviceCount", res.data.list);
@@ -297,7 +309,7 @@ onMounted(() => {
   weatherIntervalId = setInterval(getWeather, 60 * 60 * 1000);
 
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 30000);
 });
 
 onUnmounted(() => {
@@ -332,12 +344,25 @@ onUnmounted(() => {
     .map-controls {
       display: flex;
       align-items: center;
-      height: 100px;
+      justify-content: center;
+      height: 80px;
 
       &__item {
+        color: #00fff6;
+        height: 38px;
+        line-height: 38px;
+        font-size: 32px;
+        font-weight: 700;
         font-size: 18px;
-        color: #fff;
+        border-radius: 4px;
         padding-inline: 24px;
+        margin-inline: 24px;
+
+        background: linear-gradient(
+          1turn,
+          rgba(0, 255, 254, 0),
+          rgba(0, 255, 255, 0.3)
+        );
         cursor: pointer;
       }
 

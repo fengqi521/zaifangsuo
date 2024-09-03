@@ -23,9 +23,7 @@ export const userInfoStoreHook = defineStore("user", () => {
         Object.assign(userInfo, info);
       }
       return result;
-    } catch (err) {
-      // setUserCookie({username:'zhang',role:1,uid:1})
-    }
+    } catch (err) {}
   };
 
   // 获取用户信息

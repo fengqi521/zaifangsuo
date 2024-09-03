@@ -9,31 +9,52 @@ const props = defineProps({
     require: true,
   },
 });
+
 onMounted(() => {
   initEchart(chartContainer.value);
+  isOptionsEmpty(props.option)
   setEchartOption(props.option);
 });
 
-defineExpose({ chart })
+const isOptionEmpty = ref(true);
 watch(
   () => props.option,
   (newOption) => {
+    isOptionsEmpty(newOption);
     setEchartOption(newOption);
   },
   { deep: true }
 );
+
+// 计算属性，判断所有 options 的 series 是否为空
+const isOptionsEmpty = (option) => {
+  isOptionEmpty.value = option.series.every(
+    (item) => !item.data || item.data.length === 0
+  );
+};
+
+defineExpose({ chart });
 </script>
 <template>
-  <div class="chart-container" ref="chartContainer"></div>
+  <el-empty v-if="isOptionEmpty"></el-empty>
+  <div
+    :class="['chart-container fade', { 'fade-in': !isOptionEmpty }]"
+    ref="chartContainer"
+  ></div>
 </template>
 <style lang="scss" scoped>
 .chart-container {
-  padding: 16px;
   width: 100%;
-  border: 1px solid var(--card-border-color);
-
+  height: 100%;
   &:last-child {
     margin: 0;
   }
+}
+.fade {
+  opacity: 0;
+}
+
+.fade-in {
+  opacity: 1;
 }
 </style>

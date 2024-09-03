@@ -8,12 +8,18 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import Bread from "@/components/Bread/index.vue";
 import Upload from "./components/Upload.vue";
 
+import { userInfoStoreHook } from "@/store/modules/user";
+
 import { userFormData, userFormItems } from "@/constants";
 import { useMessage } from "@/plugins/message";
 import { formatSize } from "@/utils";
 import systemApi from "@/api";
 
-const { success, warning, error } = useMessage();
+const userStore  = userInfoStoreHook()
+const { success,error } = useMessage();
+userStore.getUserInfo()
+
+const isRead = userStore.userInfo?.role===5
 
 // 查询数据
 const initialData = ref(userFormData);
@@ -171,7 +177,7 @@ const handleCloseDeleteModal = () => {
       @reset="handleReset"
     /> -->
     <ElCard title="固件列表">
-      <template v-slot:actions>
+      <template v-slot:actions v-if="!isRead">
         <el-button type="primary" @click="handleClickShowModal"
           >上传固件</el-button
         >
@@ -183,7 +189,7 @@ const handleCloseDeleteModal = () => {
         :data="packageData"
         :tableProps="{ showSelection: false, border: true }"
       >
-        <template #action="{ row }">
+        <template #action="{ row }" v-if="!isRead">
           <span
             class="package-table__action-btn delete-btn"
             @click="handleDelete(row)"

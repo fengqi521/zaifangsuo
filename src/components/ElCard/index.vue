@@ -38,6 +38,7 @@ const props = defineProps({
 
   .card-content {
     margin-top: 16px;
+    height:calc(100% - 64px);
   }
 }
 </style>

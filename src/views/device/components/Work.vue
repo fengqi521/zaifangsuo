@@ -37,8 +37,8 @@ const workColumns = [
   { prop: "temperature", label: "温度(°C)" },
   { prop: "signal_strength", label: "信号强度(dBm)" },
 ];
-
-const colors = ["#ff0000", "#ff733f", "#FFFF00"];
+// #7B3F00
+const colors = ["#7B3F00", "#ff0000"];
 const chartData = reactive({
   timeList: [],
   voltage: [],
@@ -63,8 +63,8 @@ const getWorkChartData = () => {
 
 // 图表数据重组
 const resetOptions = (data) => {
-  const { timeList,voltage, temperature, strength } = data;
- 
+  const { timeList, voltage, temperature, strength } = data;
+
   collectOption.legend.show = true;
   collectOption.grid.right = 70;
   collectOption.legend = {
@@ -80,63 +80,45 @@ const resetOptions = (data) => {
       padding: [0, 0, -2, 0],
     },
   };
+
   collectOption.color = colors;
-  collectOption.xAxis[0].data = timeList
+  collectOption.xAxis[0].data = timeList;
 
-
-  const spliceNumber = 5
   const voltageMin = Math.min(...voltage);
   const voltageMax = Math.max(...voltage);
-  const voltageInterval  = (voltageMax - voltageMin) / spliceNumber
-  
   const temperatureMin = Math.min(...temperature);
   const temperatureMax = Math.max(...temperature);
-  const temperatureInterval  = (temperatureMax - temperatureMin) / spliceNumber
 
   const strengthMin = Math.min(...strength);
-  const strengthMax = Math.max(...strength)
-  const strengthInterval  = (strengthMax - strengthMin) / spliceNumber
-  console.log(strengthMax,strengthMin)
+  const strengthMax = Math.max(...strength);
   collectOption.yAxis[0] = {
     ...collectOption.yAxis[0],
-    name :"{title|电压(V)}",
-    axisLabel: {
-      formatter: (value) => value.toFixed(2),
-    },
-    min:voltageMin,
-    interval:voltageInterval,
-    max:voltageMax
-  }
-
-
+    name: "{title|电压(V)}",
+    min: voltageMin,
+    max: voltageMax,
+  };
 
   collectOption.yAxis[1] = {
     ...collectOption.yAxis[1],
     name: "{title|温度(°C)}",
-    axisLabel: {
-      formatter: (value) => value.toFixed(2),
-    },
-    min:temperatureMin,
-    max:temperatureMax,
-    interval:temperatureInterval
+    min: temperatureMin,
+    max: temperatureMax,
+    splitLine:{show:false},
   };
 
   collectOption.yAxis[2] = {
     ...collectOption.yAxis[1],
     name: "{title|信号强度(dBm)}",
-    axisLabel: {
-      formatter: (value) => value.toFixed(2),
-    },
+    splitLine:{show:false},
     offset: 100,
-    min:strengthMin,
-    max:strengthMax,
-    interval:strengthInterval
+    min: strengthMin,
+    max: strengthMax
   };
 
   collectOption.series[0] = {
     name: "电压",
     type: "line",
-    data:voltage,
+    data: voltage,
     Symbol: "circle",
     smooth: true,
     position: "left",
@@ -152,7 +134,7 @@ const resetOptions = (data) => {
   collectOption.series[2] = {
     name: "信号强度",
     type: "line",
-    data:strength,
+    data: strength,
     Symbol: "circle",
     smooth: true,
     yAxisIndex: 2,
@@ -193,6 +175,7 @@ const handleChangePage = (page) => {
 
 // 处理分页
 const handleChangeLimit = (size) => {
+  searchInfo.value.page = 1;
   searchInfo.value.limit = size;
   getWorkHistory();
 };
@@ -216,39 +199,34 @@ watch(
 </script>
 
 <template>
-  <div class="device-data">
-    <ElCard title="设备工况">
-      <div v-loading="chartLoading" class="device-data__history">
-        <el-empty v-if="!chartData.timeList.length"></el-empty>
-        <Chart :option="collectOption" v-else />
-      </div>
-      <ElCard v-loading="loading" class="history-data-card">
-        <ElTable
-          :loading="loading"
-          :columns="workColumns"
-          :data="workData.data"
-          :tableProps="{ showSelection: false, border: true }"
-        />
-        <ElPagination
-          :currentPage="searchInfo.page"
-          :page-size="searchInfo.limit"
-          :total="workData.total"
-          @pagination-change="handleChangePage"
-          @page-size-change="handleChangeLimit"
-        />
-      </ElCard>
+  <div class="device-work">
+    <ElCard title="设备工况数据" class="device-work__chart">
+      <el-empty v-if="!chartData.timeList.length"></el-empty>
+      <Chart :option="collectOption" v-else />
+    </ElCard>
+    <ElCard v-loading="loading" class="table-card" title="数据列表">
+      <ElTable
+        :loading="loading"
+        :columns="workColumns"
+        :data="workData.data"
+        :tableProps="{ showSelection: false, border: true }"
+      />
+      <ElPagination
+        :currentPage="searchInfo.page"
+        :page-size="searchInfo.limit"
+        :total="workData.total"
+        @pagination-change="handleChangePage"
+        @page-size-change="handleChangeLimit"
+      />
     </ElCard>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.device-data {
-  &__history{
-    display: grid;
-    grid-template-rows:382px;
-  }
-  .history-data-card {
-    margin-top: 24px;
+.device-work {
+  &__chart{
+    height:382px;
+    margin-bottom: 24px;
   }
 }
 </style>

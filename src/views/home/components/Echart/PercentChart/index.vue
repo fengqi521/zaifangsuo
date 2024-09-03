@@ -1,43 +1,20 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { useEchartsHook } from "@/hooks/useEcharts";
 import systemApi from "@/api";
+import Chart from "@/components/Chart/index.vue";
 import { getCommonPie } from "@/utils/chartData";
-
-// 引入 ECharts 相关方法和函数
-const { initEchart, setEchartOption } = useEchartsHook();
 
 // 定义 ref 引用和初始化数据
 const percentContainer = ref(null);
 const option = reactive({ ...getCommonPie() });
 
-onMounted(async () => {
-  // 更新饼图数据和样式配置
-  var color1 = ["rgb(61, 186, 45)", "rgb(43,166,254)", "rgb(255, 176, 63)"];
-
+const resetOptions = (data) => {
   var colorList = ["rgb(61, 186, 45)", "rgb(43,166,254)", "rgb(255, 176, 63)"];
   var colorListSub = [
     "rgba(35,143,56,.7)",
     "rgb(43, 166, 254,.88)",
     "rgb(255, 176, 63,.8)",
   ];
-  let data = [];
-  try {
-    const result = await systemApi.getDevicePercent();
-    if (!result?.code) {
-      data = result?.data?.list.map(({ name, count }, index) => ({
-        name,
-        value: count,
-        itemStyle: {
-          borderWidth: 4,
-          borderColor: color1[index],
-          shadowColor: color1[index],
-          color: color1[index],
-          opacity: 0.8,
-        },
-      }));
-    }
-  } catch (error) {}
   option.title = [];
   option.tooltip.show = false;
   option.legend = {
@@ -122,21 +99,44 @@ onMounted(async () => {
         },
       },
     },
-    labelLine:{
-      length2:30
-    }
+    labelLine: {
+      length2: 30,
+    },
   };
+};
 
-  // 初始化和设置 echarts 实例
-  initEchart(percentContainer.value);
-  setEchartOption(option);
+onMounted(async () => {
+  // 更新饼图数据和样式配置
+  var color1 = ["rgb(61, 186, 45)", "rgb(43,166,254)", "rgb(255, 176, 63)"];
+
+
+  let data = [];
+  try {
+    const result = await systemApi.getDevicePercent();
+    if (!result?.code) {
+      data = result?.data?.list.map(({ name, count }, index) => ({
+        name,
+        value: count,
+        itemStyle: {
+          borderWidth: 4,
+          borderColor: color1[index],
+          shadowColor: color1[index],
+          color: color1[index],
+          opacity: 0.8,
+        },
+      }));
+      resetOptions(data)
+    }
+  } catch (error) {}
 });
 </script>
 
 <template>
   <div class="device-percent">
     <p class="device-percent__title">设备占比分析</p>
-    <div ref="percentContainer" class="device-percent__container"></div>
+    <div class="device-percent__container">
+      <Chart :option="option" />
+    </div>
   </div>
 </template>
 

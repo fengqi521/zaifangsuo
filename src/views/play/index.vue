@@ -7,10 +7,17 @@ import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Bread from "@/components/Bread/index.vue";
 
+import { userInfoStoreHook } from "@/store/modules/user";
+
 import { useMessage } from "@/plugins/message";
 import systemApi from "@/api";
 
-const { success, warning, error } = useMessage();
+const userStore = userInfoStoreHook()
+userStore.getUserInfo()
+
+const { success, error } = useMessage();
+
+const isRead = userStore.userInfo?.role===5
 
 // 查询数据
 const initialData = { did: "" };
@@ -187,7 +194,7 @@ const handleCloseDeleteModal = () => {
       @reset="handleReset"
     />
     <ElCard title="内容列表">
-      <template v-slot:actions>
+      <template v-slot:actions v-if="!isRead">
         <el-button type="primary" @click="handleClickShowModal"
           >新建报警播放内容</el-button
         >
@@ -199,7 +206,7 @@ const handleCloseDeleteModal = () => {
         :data="alarmData.data"
         :tableProps="{ showSelection: false, border: true }"
       >
-        <template #action="{ row }">
+        <template #action="{ row }" v-if="!isRead">
           <span
             class="package-table__action-btn delete-btn"
             @click="handleDelete(row)"

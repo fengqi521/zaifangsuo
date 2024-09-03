@@ -18,11 +18,10 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch, watchEffect } from "vue";
-import { isEqual } from "lodash";
+import {  onMounted, ref, watch, watchEffect } from "vue";
+import { isEqual,omit } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { reactify } from "@vueuse/core";
 const screenStore = useScreenStoreHook();
 let viewer;
 const prevMarker = ref(null);
@@ -198,7 +197,7 @@ const prevValues = ref([]);
 watch(
   () => props.deviceList,
   (values) => {
-    if (isEqual(values, prevValues.value)) return;
+    if (isEqual(omit(values,'online_last'), omit(prevValues.value,'online_last'))) return;
     prevValues.value = values;
     viewer.entities.removeAll();
     setTimeout(() => {
@@ -234,7 +233,7 @@ const handleClick = (handler) => {
 
 .map-container {
   position: relative;
-  height: calc(100% - 100px);
+  height: calc(100% - 80px);
 
   .map-select {
     position: absolute;
