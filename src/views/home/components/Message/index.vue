@@ -186,8 +186,8 @@ const scrollToBottom = () => {
       margin: 0 8px 0 0;
     }
     :deep(.el-button) {
-      padding: 4px;
-      height: 24px;
+      padding: 8px;
+      // height: 24px;
     }
   }
 

@@ -218,6 +218,7 @@ const handleCloseDeleteModal = () => {
         </template>
         <template #action="{ row }">
           <span
+            v-if="row.role!==5"
             class="user-list__action-btn author-btn"
             @click="handleClickShowAuthor(row)"
             >设备授权</span

@@ -108,6 +108,16 @@ watchEffect(() => {
   }
 });
 
+//
+const handleChangeRoles = (value) => {
+  console.log(value);
+  if (value === 5) {
+    userFormRules.did[0].required = false;
+    return;
+  }
+
+  userFormRules.did[0].required = true;
+};
 // 关闭弹窗
 const handleClose = (status) => {
   emit("handle-close", status);
@@ -124,7 +134,7 @@ const handleSubmit = async () => {
     if (valid) {
       const userFormParams = {
         ...userForm,
-        did: userForm.did.join(","),
+        did: userForm.did.length ? userForm.did.join(",") : "",
       };
       if (userForm?.uid) {
         // 修改
@@ -151,7 +161,9 @@ const handleSubmit = async () => {
         });
       }
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 </script>
 
@@ -200,7 +212,11 @@ const handleSubmit = async () => {
           ></el-input>
         </el-form-item>
         <el-form-item label="用户权限" prop="role" v-if="!userForm.uid">
-          <el-select v-model="userForm.role" placeholder="请选择用户权限">
+          <el-select
+            v-model="userForm.role"
+            @change="handleChangeRoles"
+            placeholder="请选择用户权限"
+          >
             <el-option
               v-for="item in userRolesMap.filter((cur, index) => index > 0)"
               :key="item.value"
@@ -209,7 +225,11 @@ const handleSubmit = async () => {
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备授权" prop="did" v-if="!userForm.uid">
+        <el-form-item
+          label="设备授权"
+          prop="did"
+          v-if="!userForm.uid && userForm.role !== 5"
+        >
           <el-select-v2
             v-model="userForm.did"
             filterable

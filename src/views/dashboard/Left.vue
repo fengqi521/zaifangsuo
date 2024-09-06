@@ -3,6 +3,7 @@ import Card from "./components/Card.vue";
 import PercentChart from "./components/Echart/PercentChart/index.vue";
 import StatusLineChart from "./components/Echart/StatusLineChart/index.vue";
 import TotalChart from "./components/Echart/TotalChart/index.vue";
+import MapChart from "./components/Echart/MapChart/index.vue";
 </script>
 <template>
   <div class="dashboard-left">
@@ -10,8 +11,9 @@ import TotalChart from "./components/Echart/TotalChart/index.vue";
 
     <Card>
       <p class="card-title">设备状态统计</p>
-      <TotalChart />
+      <MapChart />
     </Card>
+
     <Card>
       <p class="card-title">设备数量占比</p>
       <PercentChart />

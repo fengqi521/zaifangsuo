@@ -16,7 +16,6 @@ import w7 from "@/assets/images/w7.png";
 import w8 from "@/assets/images/w8.png";
 import w9 from "@/assets/images/w9.png";
 
-
 const legendColor1 = getCssVariableValue("--legend-bg-color-1");
 const legendColor2 = getCssVariableValue("--legend-bg-color-2");
 const legendColor3 = getCssVariableValue("--legend-bg-color-3");
@@ -154,14 +153,15 @@ const deviceFormItems = [
   {
     label: "设备名称",
     prop: "device_name",
-    attrs: { placeholder: "请输入设备名称" },
-    type: "el-input",
+    attrs: { placeholder: "请输入设备名称", style: { width: "200px" } },
+    type: "el-select",
+    options: [],
   },
   {
     label: "设备类型",
     prop: "device_type",
     type: "el-select",
-    attrs: { placeholder: "请输入设备类型" },
+    attrs: { placeholder: "请选择设备类型" },
     options: [
       { label: "全部", value: 0 },
       { label: "泥位计", value: 1 },
@@ -195,7 +195,7 @@ const userFormItems = [
   {
     label: "用户名",
     prop: "user_name",
-    attrs: { placeholder: "请输入用户名" ,style: { width: '240px'} },
+    attrs: { placeholder: "请输入用户名", style: { width: "240px" } },
     type: "el-input",
   },
 ];
@@ -219,12 +219,17 @@ const recordFormData = {
   Did: "",
   range: [],
 }; // transfer 1是上行报文解析
-const recordOptions = [...allOperateType, { label: "自定义", value: 13 },{label:"下发报警及响应",value:15},{label:'设备自动触发报警上报',value:17}];
+const recordOptions = [
+  ...allOperateType,
+  { label: "自定义", value: 13 },
+  { label: "下发报警及响应", value: 15 },
+  { label: "设备自动触发报警上报", value: 17 },
+];
 const recordFormItems = [
   {
     label: "操作类型",
     prop: "Category",
-    attrs: { placeholder: "请选择操作类型" , style: { width: '200px'}},
+    attrs: { placeholder: "请选择操作类型", style: { width: "200px" } },
     type: "el-select",
     options: [{ label: "全部", value: 14 }, ...recordOptions],
   },
@@ -241,7 +246,7 @@ const recordFormItems = [
   {
     label: "设备名称",
     prop: "Did",
-    attrs: { placeholder: "请选择设备", style: { width: '240px' } },
+    attrs: { placeholder: "请选择设备", style: { width: "240px" } },
     type: "el-select",
     options: [],
   },
@@ -256,7 +261,7 @@ const recordFormItems = [
       endPlaceholder: "结束日期",
       rangeSeparator: "至",
       valueFormat: "YYYY-MM-DD HH:mm:ss", // 数据格式
-      style: { width: '310px'} 
+      style: { width: "310px" },
     },
   },
 ];
@@ -288,15 +293,15 @@ const weather = {
   雷阵雨: w4,
   小雨: w7,
   中雨: w8,
-  大雨:w9
+  大雨: w9,
 };
 
 const alarm = {
-  sound:{
-   0:'关闭',
-   1:'低',
-   2:'中',
-   3:'高'
+  sound: {
+    0: "关闭",
+    1: "低",
+    2: "中",
+    3: "高",
   },
   level: {
     0: "提示",
@@ -308,14 +313,14 @@ const alarm = {
 };
 
 const weeks = {
-  1:'星期一',
-  2:'星期二',
-  3:'星期三',
-  4:'星期四',
-  5:'星期五',
-  6:'星期六',
-  7:'星期日'
-}
+  1: "星期一",
+  2: "星期二",
+  3: "星期三",
+  4: "星期四",
+  5: "星期五",
+  6: "星期六",
+  7: "星期日",
+};
 
 export {
   userRolesMap,
@@ -341,5 +346,5 @@ export {
   area,
   weather,
   alarm,
-  weeks
+  weeks,
 };

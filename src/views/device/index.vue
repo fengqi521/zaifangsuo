@@ -6,6 +6,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import Upgrade from './components/Upgrade.vue'
 import { userInfoStoreHook } from "@/store/modules/user";
 import { isOnLine } from "@/utils";
 import systemApi from "@/api";
@@ -27,8 +28,22 @@ const columns = ref([
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型", type: "slot" },
   { prop: "online", label: "在线状态", type: "slot" },
+  { prop: "status", label: "升级状态", type: "slot" ,width:180},
   { prop: "online_last", label: "最后在线时间" },
 ]);
+// 获取设备下拉
+const getDeviceOption = () => {
+  systemApi.getAllDevice().then((res) => {
+    if (!res.code) {
+      formItems[1].options = res.data.devices.map((item) => ({
+        label: item.DeviceName,
+        value: item.Id,
+      }));
+    }
+  });
+};
+
+getDeviceOption();
 // 获取设备数据
 const getRtuData = async () => {
   loading.value = true;
@@ -79,7 +94,8 @@ const handleChangeSize = (size) => {
 };
 
 // 升级固件
-const show = ref(false);
+
+const currentList = ref({})
 const packageColumns = [
   { prop: "num", label: "序号", width: 80 },
   { prop: "upgrade_name", label: "固件名称" },
@@ -101,9 +117,10 @@ const getPackageList = async () => {
     all = lists;
   }
 };
+
 // 显示选择固件modal
-const handleClickUpdate = () => {
-  show.value = true;
+const handleClickUpdate = (row) => {
+  currentList.value = row;
   getPackageList();
 };
 
@@ -118,12 +135,15 @@ const searchPackage = () => {
 // 确认提交
 const handleConfirmSelect = () => {
   show.value = false;
+  console.log(selectedId.value,'======')
+  // 调用升级接口，进行升级
+
 };
 
 // 关闭
 const handleCloseModal = () => {
   selectedId.value = null;
-  show.value = false;
+  currentList.value = {}
 };
 </script>
 
@@ -169,6 +189,17 @@ const handleCloseModal = () => {
             {{ isOnLine(scope.row.online_last) ? "在线" : "离线" }}
           </span>
         </template>
+        <template #status="scope">
+          <span
+            :class="{
+              'rtu-table__status-text': true,
+              'rtu-table__status-text--online': scope.row.online,
+            }"
+          >
+            <!-- {{ isOnLine(scope.row.online_last) ? "成功" : "失败" }} -->
+          </span>
+          <Upgrade/>
+        </template>
         <template #action="{ row }">
           <router-link
             class="rtu-table__action-btn rtu-table__action-btn--details"
@@ -189,7 +220,7 @@ const handleCloseModal = () => {
               ]"
               :to="
                 !row.online
-                  ? null
+                  ? ''
                   : `/device/command/${row.device_name}/${row.device_type}/${row.id}`
               "
             >
@@ -197,12 +228,18 @@ const handleCloseModal = () => {
             >
             <!-- <span v-if="!row.online">下发指令</span> -->
           </el-tooltip>
+          <el-tooltip
+            content="设备正在升级中"
+            :disabled="row.status"
+            placement="top"
+          >
           <span
-            class="rtu-table__action-btn"
-            @click="handleClickUpdate"
+            :class="['rtu-table__action-btn',{ 'disabled-link': !row.status },]"
+            @click="handleClickUpdate(row)"
             v-if="userStore?.userInfo?.role !== 5"
             >设备升级</span
           >
+          </el-tooltip>
         </template>
       </ElTable>
 
@@ -218,7 +255,7 @@ const handleCloseModal = () => {
     <ElModal
       class="update-modal"
       title="选择固件"
-      :dialogVisible="show"
+      :dialogVisible="currentList.id"
       @handle-close="handleCloseModal"
       width="560"
     >

@@ -17,7 +17,7 @@ const resetOptions = (values) => {
   collectOption.legend.show = true;
   collectOption.xAxis[0].data = timeList;
   collectOption.yAxis[0].name = "{title|1代表断开、0代表正常}";
-  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 65];
+  collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 75];
   collectOption.series[0] = {
     name: "断线状态",
     type: "line",

@@ -48,7 +48,32 @@ const resetOptions = (values, sum) => {
       data: values,
       itemStyle: {
         color: function (params) {
-          var colorList = ["#01ff2b", "#ffa300"];
+          var colorList = [
+            {
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "#3c38e4",
+                },
+                {
+                  offset: 1,
+                  color: "#24a5cd",
+                },
+              ],
+            },
+            {
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "#f0515e",
+                },
+                {
+                  offset: 1,
+                  color: "#ef8554",
+                },
+              ],
+            },
+          ];
           return params.dataIndex % 2
             ? "rgba(0,0,0,0)"
             : colorList[params.dataIndex / 2];
@@ -103,7 +128,7 @@ onMounted(async () => {
 <template>
   <div class="device-status">
     <p class="device-status__title">设备状态分析</p>
-    <div class="device-status__container" >
+    <div class="device-status__container">
       <Chart :option="option" />
     </div>
   </div>

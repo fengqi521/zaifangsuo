@@ -8,7 +8,7 @@ import { isEqual } from "lodash";
 const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据
 const option = reactive({ ...getCommonPie() });
-const chartComponent = ref(null)
+const chartComponent = ref(null);
 var colors = [
   {
     type: "linear",
@@ -66,91 +66,93 @@ var colors = [
 watch(
   () => screenStore.screenData.deviceCount,
   (values, oldValue) => {
-    if (!isEqual(values, oldValue)) {
-      resetOptions(values);
-    }
+    resetOptions(values);
   }
 );
 
 // 操作实例
 let dataIndex = 0;
-let intervalId = null
+let intervalId = null;
 let mouseOverListener = null;
 let mouseOutListener = null;
-const positions = [[300, 20], [150, 200], [20, 20]]
+const positions = [
+  [300, 20],
+  [150, 200],
+  [20, 20],
+];
 const intervalAction = (chartInstance, data) => {
   intervalId = setInterval(() => {
     chartInstance.dispatchAction({
-      type: 'downplay',
-      seriesIndex: 0
-    })
+      type: "downplay",
+      seriesIndex: 0,
+    });
 
     chartInstance.dispatchAction({
-      type: 'showTip',
+      type: "showTip",
       seriesIndex: 0,
       position: positions[dataIndex],
-      dataIndex
-    })
+      dataIndex,
+    });
     chartInstance.dispatchAction({
-      type: 'highlight',
+      type: "highlight",
       seriesIndex: 0,
-      dataIndex
-    })
-    dataIndex = dataIndex >= data.length - 1 ? 0 : (dataIndex + 1)
-  }, 2000)
-}
+      dataIndex,
+    });
+    dataIndex = dataIndex >= data.length - 1 ? 0 : dataIndex + 1;
+  }, 2000);
+};
 const handleChartInstance = (data) => {
   if (intervalId) {
-    clearInterval(intervalId)
+    clearInterval(intervalId);
     intervalId = null;
   }
   nextTick(() => {
-    const chartInstance = chartComponent.value?.chart
+    const chartInstance = chartComponent.value?.chart;
     if (!chartInstance) return;
 
     // 清理旧的事件监听器
     if (mouseOverListener) {
-      chartInstance.off('mouseover', mouseOverListener);
+      chartInstance.off("mouseover", mouseOverListener);
     }
     if (mouseOutListener) {
-      chartInstance.off('mouseout', mouseOutListener);
+      chartInstance.off("mouseout", mouseOutListener);
     }
-    intervalAction(chartInstance, data)
+    intervalAction(chartInstance, data);
 
     // 鼠标移入时暂停定时器并恢复高亮
     mouseOverListener = (params) => {
       clearInterval(intervalId);
       intervalId = null;
       chartInstance.dispatchAction({
-        type: 'downplay',
-        seriesIndex: 0
-      })
-      chartInstance.dispatchAction({
-        type: 'highlight',
+        type: "downplay",
         seriesIndex: 0,
-        dataIndex: params.dataIndex
       });
       chartInstance.dispatchAction({
-        type: 'showTip',
+        type: "highlight",
         seriesIndex: 0,
-        dataIndex: params.dataIndex
+        dataIndex: params.dataIndex,
+      });
+      chartInstance.dispatchAction({
+        type: "showTip",
+        seriesIndex: 0,
+        dataIndex: params.dataIndex,
       });
     };
-    chartInstance.on('mouseover', mouseOverListener);
+    chartInstance.on("mouseover", mouseOverListener);
 
     // 鼠标移出时重新启动定时器
     mouseOutListener = () => {
       if (intervalId === null) {
         chartInstance.dispatchAction({
-          type: 'downplay',
-          seriesIndex: 0
-        })
+          type: "downplay",
+          seriesIndex: 0,
+        });
         intervalAction(chartInstance, data);
       }
     };
-    chartInstance.on('mouseout', mouseOutListener);
-  })
-}
+    chartInstance.on("mouseout", mouseOutListener);
+  });
+};
 
 const resetOptions = (lists) => {
   lists = lists.map((item, index) => ({ ...item, value: item.count }));
@@ -168,7 +170,7 @@ const resetOptions = (lists) => {
           ${params.name}: ${params.value}个 (${params.percent}%)
         </div>
       `;
-    }
+    },
   };
   option.title[0].text = sum;
   option.title.forEach((item) => {
@@ -184,8 +186,8 @@ const resetOptions = (lists) => {
       emphasis: { scale: true, scaleSize: 12 },
       itemStyle: {
         borderRadius: 10,
-        borderColor: '#FFF',
-        borderWidth: 6
+        borderColor: "#FFF",
+        borderWidth: 6,
       },
       label: {
         show: false,
@@ -196,21 +198,21 @@ const resetOptions = (lists) => {
     },
   ];
 
-  option.aria={
-        enabled:true,
-        decal:{
-          show: true,
-          decals: [
-            {
-              color: 'rgba(255,255,255,.5)',
-              dashArrayX: [1, 0],
-              dashArrayY: [4, 3],
-              rotation: -Math.PI / 4
-            },
-          ]
-        }
-      }
-  handleChartInstance(lists)
+  option.aria = {
+    enabled: true,
+    decal: {
+      show: true,
+      decals: [
+        {
+          color: "rgba(255,255,255,.5)",
+          dashArrayX: [1, 0],
+          dashArrayY: [4, 3],
+          rotation: -Math.PI / 4,
+        },
+      ],
+    },
+  };
+  handleChartInstance(lists);
 };
 </script>
 

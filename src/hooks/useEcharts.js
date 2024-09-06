@@ -1,9 +1,4 @@
-import {
-  ref,
-  markRaw,
-  nextTick,
-  onUnmounted
-} from "vue";
+import { ref, markRaw, nextTick, onUnmounted } from "vue";
 import * as echarts from "echarts";
 
 export function useEchartsHook() {
@@ -17,14 +12,21 @@ export function useEchartsHook() {
   };
 
   // 设置图表选项
-  const setEchartOption = (option, ele) => {
+  const setEchartOption = (option) => {
     if (chart.value && option) {
-      chart.value.clear()
+      chart.value.clear();
       chart.value.setOption(option);
-      nextTick(()=>resizeChart());
+      nextTick(() => resizeChart());
     }
   };
 
+  // 地图设置数据
+  const setMapData = (area, geoJson) => {
+    console.log(area, geoJson, "vvv");
+    if (area && geoJson) {
+      echarts.registerMap(area, geoJson);
+    }
+  };
 
   // 处理图表尺寸调整
   const resizeChart = () => {
@@ -32,7 +34,7 @@ export function useEchartsHook() {
       chart.value.resize({
         animation: {
           duration: 500,
-          easing: 'cubicInOut'
+          easing: "cubicInOut",
         },
       });
     }
@@ -50,6 +52,7 @@ export function useEchartsHook() {
   return {
     chart,
     initEchart,
-    setEchartOption
+    setEchartOption,
+    setMapData,
   };
 }

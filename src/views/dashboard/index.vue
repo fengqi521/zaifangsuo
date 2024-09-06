@@ -165,12 +165,8 @@ const getDeviceList = async () => {
       list.total = onlineCount + offlineCount;
     });
 
-    areaList = orderBy(areaList, "total", "desc");
-    screenStore.setData("area", {
-      values: areaList.map((item) => item.label),
-      online: areaList.map((item) => item.online),
-      offline: areaList.map((item) => item.offline),
-    });
+    // areaList = orderBy(areaList, "total", "desc");
+    screenStore.setData("area",areaList);
 
     //  设备运行统计数据
     const groupByType = groupBy(res.data.list, "device_type");
@@ -315,7 +311,7 @@ onMounted(() => {
   weatherIntervalId = setInterval(getWeather, 60 * 60 * 1000);
 
   // 每分钟执行一次 minuteTasks
-  minuteTasksIntervalId = setInterval(minuteTasks, 10000);
+  minuteTasksIntervalId = setInterval(minuteTasks, 60000);
 });
 
 onUnmounted(() => {

@@ -1,5 +1,7 @@
 import { getCssVariableValue } from "@/utils";
 import handleIconUrl from "@/assets/images/dataZoom-handle.png"; // 引入图片
+import WLImg from "@/assets/images/test.png"; // 引入图片
+
 import downloadIconUrl from "@/assets/images/download.png";
 import viewIconUrl from "@/assets/images/view.png";
 
@@ -641,16 +643,11 @@ export const getCommon3dBar = function () {
         data: [],
         shading: "lambert",
         label: {
-          fontSize: 16,
-          borderWidth: 1,
-        },
-        label: {
           show: true,
           distance: 1,
-          textStyle: {
-            color: "#FFF",
-            fontSize: 18,
-          },
+          borderWidth: 1,
+          color: "#FFF",
+          fontSize: 18,
         },
         emphasis: {
           label: {
@@ -659,6 +656,136 @@ export const getCommon3dBar = function () {
           },
           itemStyle: {
             color: "#900",
+          },
+        },
+      },
+    ],
+  };
+};
+
+export const getCommon3dMap = function () {
+  return {
+    tooltip: {
+      backgroundColor: "rgba(0,0,0,0.8)",
+      borderRadius: 2,
+      extraCssText: "padding:12px",
+      textStyle: {
+        fontSize: 12,
+        color: "#FFF",
+      },
+      formatter: (params) => {
+        let {
+          name,
+          value,
+          seriesName,
+          data: { selfParams },
+        } = params;
+        const colors = ["#24FEB4", "#ff4b55"];
+        let str = `<span style='display:block;font-weight:bold'>${name}</span>`;
+        let online = 0;
+        let offline = 0;
+        if (selfParams) {
+          online = selfParams.online;
+          offline = selfParams.offline;
+        } else {
+          if (seriesName === "在线") {
+            online = value[2];
+          } else {
+            offline = value[2];
+          }
+        }
+
+        str += `<div style="display:flex;align-items:center;padding:2px 0""><span style="margin-right:6px;width:6px;height:6px;background:${colors[0]}"></span>在线：<span>${online}个</span></div><div style="display:flex;align-items:center;padding:2px 0""><span style="margin-right:6px;width:6px;height:6px;background:${colors[1]}"></span>离线：<span>${offline}个</span></div>`;
+        return str;
+      },
+    },
+    visualMap: {
+      show: false,
+    },
+    geo3D: {
+      map: "beijing",
+      left: "0%",
+      roam: true,
+      regionHeight: 5,
+      label: {
+        // 标签的相关设置
+        show: false, // (地图上的城市名称)是否显示标签 [ default: false ]
+
+        // 标签的字体样式
+        // color: "#FFF", // 地图初始化区域字体颜色
+        fontSize: 12, // 字体大小
+        opacity: 1, // 字体透明度
+        backgroundColor: "transparent", // 字体背景色
+      },
+
+      itemStyle: {
+        opacity: 0.5,
+        borderWidth: 1,
+        borderColor: "#fdb347",
+      },
+      emphasis: {
+        label: {
+          show: false,
+          color: "#fff000",
+        },
+      },
+      viewControl: {
+        distance: 100,
+        center: [-10, -10, 0],
+      },
+      shading: "realistic",
+      realisticMaterial: {
+        // 引入纹理贴图
+        detailTexture: WLImg,
+        // textureTiling: 1,
+      },
+      light:{
+        main: {
+          shadow: true,
+          shadowQuality: "ultra",
+          intensity: 1,
+          alpha: 40,
+          // beta: 300,
+        },
+      }
+    },
+    series: [
+      {
+        name: "在线",
+        type: "bar3D",
+        shading: "lambert",
+        coordinateSystem: "geo3D",
+        data: [],
+        minHeight: 1,
+        barSize: 2, // 柱子粗细
+        label: {
+          show: true,
+          distance: 1,
+          color: "#FFF",
+          fontSize: 14,
+          fontWeight: "bold",
+
+          formatter(params) {
+            return params.value[2];
+          },
+        },
+      },
+      {
+        name: "离线",
+        type: "bar3D",
+        shading: "lambert",
+        coordinateSystem: "geo3D",
+        minHeight: 1,
+        data: [],
+        barSize: 1.99,
+        label: {
+          show: true,
+          distance: 1,
+          color: "#FFF",
+          fontSize: 14,
+          fontWeight: "bold",
+          formatter(params) {
+            return params.value[2];
           },
         },
       },

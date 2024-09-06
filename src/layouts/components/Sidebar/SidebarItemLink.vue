@@ -13,14 +13,14 @@ const props = defineProps({
 </script>
 <template>
   <a
-    v-if="isExternal(props.path) || props?.meta?.newWindow"
-    :href="`#${props.path}`"
+    v-if="isExternal(props.path)"
+    :href="props.path"
     target="__blank"
   >
     <slot />
   </a>
 
-  <router-link class="menu-item-link" v-else :to="props.path">
+  <router-link class="menu-item-link" v-else :to="props.path" :target="props?.meta?.newWindow ? '_blank' : '_self'" >
     <slot />
   </router-link>
 </template>

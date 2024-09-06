@@ -105,7 +105,7 @@ const content = computed(() => {
       serial ? `流水号：${serial}` : "",
       sensor_name ? `设备类型：${sensor_name}` : "",
       collect_time ? `采集时间：${collect_time}` : "",
-      collect > -1 ? `泥水位：${collect}m` : "",
+      `${collect > -1 ? (parseData.info.transfer_type === 1 ? `断线状态：${collect===0?'正常':'断开'}` : `泥位：${collect}m`) : ''}`,
       muddy_addr ? `泥位计地址：${muddy_addr}` : "",
       rain_addr ? `雨量计地址：${rain_addr}` : "",
       rain_period > -1 ? `降雨量：${rain_period}mm` : "",

@@ -6,6 +6,7 @@ import {
   getUserCookie,
   removeUserCookie,
 } from "@/utils/cache/cookie";
+
 export const userInfoStoreHook = defineStore("user", () => {
   const userInfo = reactive({ name: "", role: "", uid: "" });
 
@@ -38,7 +39,7 @@ export const userInfoStoreHook = defineStore("user", () => {
     if (!result.code) {
       removeUserCookie();
       Object.assign(userInfo, { name: "", role: "", uid: "" });
-      window.location.reload();
+
     }
   };
 
