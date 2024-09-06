@@ -28,7 +28,7 @@ const getBreakChartData = () => {
   const { page, limit, ...params } = searchInfo.value;
   systemApi.getRainData(params).then((res) => {
     if (!res.code) {
-      Object.assign(chartData, res.data.list[0]);
+      Object.assign(chartData, res.data.list);
     }
   });
 };
