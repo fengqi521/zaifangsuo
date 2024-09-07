@@ -1,12 +1,11 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref ,onUnmounted} from "vue";
 import Bread from "@/components/Bread/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElModal from "@/components/ElModal/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import Upgrade from './components/Upgrade.vue'
 import { userInfoStoreHook } from "@/store/modules/user";
 import { isOnLine } from "@/utils";
 import systemApi from "@/api";
@@ -56,6 +55,9 @@ const getRtuData = async () => {
     }));
     rtuData.data = [...newTableData];
     rtuData.total = res.data.total_count;
+    const upgradeDevice = res.data.list.filter(item => item.is_on_update)
+    console.log(upgradeDevice, 'vvvv')
+    getDeviceUpgradeStatus(upgradeDevice)
   }
   loading.value = false;
 };
@@ -88,8 +90,14 @@ const setToPath = (row) => {
   return `/device/command/${device_name}/${device_type}/${id}`
 }
 
+const tooltipContent = (row) => {
+  return !row.online ? '设备离线' :
+    row.is_on_update ? '设备升级中' : '';
+}
+
 // 切换页数
 const handleChangePage = (page) => {
+  onUnmounted()
   searchInfo.value.page = page;
   getRtuData();
 };
@@ -101,7 +109,6 @@ const handleChangeSize = (size) => {
 };
 
 // 升级固件
-
 const currentList = ref({})
 const packageColumns = [
   { prop: "num", label: "序号", width: 80 },
@@ -109,7 +116,7 @@ const packageColumns = [
   { prop: "md5", label: "MD5" },
 ];
 const packageData = ref([]);
-const selectedId = ref(null);
+const gid = ref(null);
 const searchQuery = ref("");
 let all = [];
 // 获取固件包   //功能码16
@@ -139,17 +146,58 @@ const searchPackage = () => {
   );
 };
 
+// 实时显示升级状态
+const getDeviceUpgradeStatus = (lists) => {
+  if (!lists.length) return;
+  console.log('2222222')
+  lists.forEach(async list => {
+    intervalStatus(list)
+  });
+}
+
+let timers = {}
+// 实时请求升级状态
+const intervalStatus = async (list) => {
+  const result = await systemApi.upgradeStatus({ id: list.id })
+  if (!result.code) {
+    const { current, number } = result.data;
+    list.process = (current / number) * 100
+  }
+  try {
+    const timer = timers[list.id]
+    if (timer) {
+      clearInterval(tiemr)
+    }
+    timers[list.id] = setInterval(() => {
+      intervalStatus(list)
+    }, 2000);
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+onUnmounted(()=>{
+  const values = Object.values(timers)
+  values.map(item=>clearInterval(item))
+})
+
 // 确认提交
 const handleConfirmSelect = () => {
-  show.value = false;
-  console.log(selectedId.value, '======')
   // 调用升级接口，进行升级
-
+  systemApi.upgradeDevice({ Did: currentList.value.id, Gid: gid.value }).then(res => {
+    if (!res.code) {
+      getRtuData()
+      return
+    }
+    error(res.message)
+  })
+  currentList.value = {}
 };
 
 // 关闭
 const handleCloseModal = () => {
-  selectedId.value = null;
+  gid.value = null;
   currentList.value = {}
 };
 </script>
@@ -182,30 +230,31 @@ const handleCloseModal = () => {
             {{ isOnLine(scope.row.online_last) ? "在线" : "离线" }}
           </span>
         </template>
-        <template #status="scope">
-          <span :class="{
+        <template #is_on_update="{ row }">
+          <span v-if="!row.is_on_update" :class="{
             'rtu-table__status-text': true,
-            'rtu-table__status-text--online': scope.row.online,
+            'rtu-table__status-text--online': row.is_on_update,
           }">
-            <!-- {{ isOnLine(scope.row.online_last) ? "成功" : "失败" }} -->
+            {{ row.is_on_update ? "升级中" : "--" }}
           </span>
-          <Upgrade />
+          <el-progress v-else :percentage="row.process" :stroke-width="6" striped striped-flow :duration="1" />
         </template>
         <template #action="{ row }">
           <router-link class="rtu-table__action-btn rtu-table__action-btn--details"
             :to="`/device/detail/${row.device_type}/${row.id}`">
             查看详情
           </router-link>
-          <el-tooltip content="设备未在线，无法下发指令" :disabled="!!row.online" placement="top">
+          <el-tooltip content="设备离线" :disabled="!!row.online" placement="top">
             <router-link v-if="userStore?.userInfo?.role !== 5" :class="[
               'rtu-table__action-btn rtu-table__action-btn--command',
               { 'disabled-link': !row.online },
             ]" :to="setToPath(row)">
               下发指令</router-link>
           </el-tooltip>
-          <el-tooltip content="设备正在升级中" :disabled="!row.is_on_update" placement="top">
-            <span :class="['rtu-table__action-btn', { 'disabled-link': row.is_on_update },]"
-              @click="!row.is_on_update && handleClickUpdate(row)" v-if="userStore?.userInfo?.role !== 5">设备升级</span>
+          <el-tooltip :content="tooltipContent(row)" :disabled="!row.is_on_update && !!row.online" placement="top">
+            <span :class="['rtu-table__action-btn', { 'disabled-link': row.is_on_update || !row.online },]"
+              @click="!row.is_on_update && !!row.online && handleClickUpdate(row)"
+              v-if="userStore?.userInfo?.role !== 5">设备升级</span>
           </el-tooltip>
         </template>
       </ElTable>
@@ -224,7 +273,7 @@ const handleCloseModal = () => {
         <ElTable :loading="loading" :columns="packageColumns" :data="packageData"
           :tableProps="{ showSelection: false, border: true }">
           <template #action="{ row }">
-            <el-radio v-model="selectedId" :value="row.id"></el-radio>
+            <el-radio v-model="gid" :value="row.id"></el-radio>
           </template>
         </ElTable>
       </template>
