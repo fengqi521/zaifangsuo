@@ -56,7 +56,6 @@ const getRtuData = async () => {
     rtuData.data = [...newTableData];
     rtuData.total = res.data.total_count;
     const upgradeDevice = res.data.list.filter(item => item.is_on_update)
-    console.log(upgradeDevice, 'vvvv')
     getDeviceUpgradeStatus(upgradeDevice)
   }
   loading.value = false;

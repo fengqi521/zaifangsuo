@@ -9,7 +9,7 @@ import Empty from "../../Empty.vue";
 import { getCommonLine } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
-const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C", ""] }));
+const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C", "dBm"] }));
 
 const colors = [
   {
@@ -74,7 +74,7 @@ const resetOptions = (lists) => {
 
   collectOption.yAxis[0].name = "{title|电压(V)}";
 
-  collectOption.yAxis[1].name = "{title|温度(V)}";
+  collectOption.yAxis[1].name = "{title|温度(°C)}";
   collectOption.yAxis[0].nameTextStyle.fontSize = 14;
   collectOption.yAxis[0].nameTextStyle.color = "#FFF";
   collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 5, 0, 0];
@@ -106,7 +106,7 @@ const resetOptions = (lists) => {
 
   collectOption.yAxis[2] = {
     ...collectOption.yAxis[1],
-    name: "{title|信号强度}",
+    name: "{title|信号强度(dBm)}",
     nameTextStyle: {
       rich: {
         title: {

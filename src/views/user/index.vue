@@ -30,10 +30,10 @@ const userData = ref([]);
 const columns = ref([
   { prop: "id", label: "ID", width: 40 },
   { prop: "role_name", label: "角色" },
-  { prop: "user_name", label: "用户名", width: 300 },
+  { prop: "user_name", label: "用户名" },
   { prop: "phone", label: "手机号", width: 150 },
   { prop: "devices", label: "已授权设备", width: 300, type: "slot" },
-  { prop: "create_time", label: "创建时间" },
+  { prop: "create_time", label: "创建时间",width:200 },
 ]);
 
 const initSearchData = {

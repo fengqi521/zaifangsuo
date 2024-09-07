@@ -153,7 +153,7 @@ const deviceFormItems = [
   {
     label: "设备名称",
     prop: "device_name",
-    attrs: { placeholder: "请输入设备名称", style: { width: "200px" } },
+    attrs: { placeholder: "请选择设备名称", style: { width: "200px" } },
     type: "el-select",
     options: [],
   },

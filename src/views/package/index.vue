@@ -30,11 +30,11 @@ const loading = ref(false);
 const packageData = ref([]);
 const columns = ref([
   { prop: "id", label: "ID", width: 40 },
-  { prop: "upgrade_name", label: "固件名称", width: 300 },
-  { prop: "url", label: "固件地址", width: 300 },
-  { prop: "size", label: "固件大小", width: 100 },
-  { prop: "upgrade_desc", label: "固件描述" },
-  { prop: "md5", label: "MD5" },
+  { prop: "upgrade_name", label: "固件名称" },
+  { prop: "url", label: "固件地址",width:300},
+  { prop: "size", label: "固件大小" },
+  { prop: "upgrade_desc", label: "固件描述",width:300 },
+  { prop: "md5", label: "MD5",width:400 },
 ]);
 
 const initSearchData = {

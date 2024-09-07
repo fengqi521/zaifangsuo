@@ -25,7 +25,7 @@ const searchInfo = ref({
 
 const tempOption = reactive({...getCommonLine({ seriesUnit: ["°C"] })}); //温度
 
-const humidityOption = reactive({...getCommonLine({ seriesUnit: ["°"] })}); //湿度
+const humidityOption = reactive({...getCommonLine({ seriesUnit: ["%RH"] })}); //湿度
 
 const windOption = reactive({...getCommonLine({ seriesUnit: ["°"] })}); //风向
 
@@ -207,7 +207,7 @@ const resetOptions = (data) => {
   const humidityMin = Math.min(...data.humidity);
   humidityOption.color = ["#b3e5fc"];
   humidityOption.xAxis[0].data = data.timeList;
-  humidityOption.yAxis[0].name = "{title|湿度(m/s)}";
+  humidityOption.yAxis[0].name = "{title|湿度(%RH)}";
   humidityOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 20];
   humidityOption.yAxis[0].min = humidityMin;
   humidityOption.series[0] = {

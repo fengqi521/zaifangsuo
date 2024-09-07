@@ -19,7 +19,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column v-if="$slots.action" label="操作">
+      <el-table-column v-if="$slots.action" label="操作" width="200">
         <template #default="scope">
           <slot name="action" :row="scope.row" :column="scope.column" :$index="scope.$index"></slot>
         </template>
@@ -123,6 +123,8 @@ const handleMouseOver = (event, row, prop) => {
 
     .cell {
       text-align: center;
+      line-height: 18px;
+      max-height: 54px;
     }
 
     .cell-item {

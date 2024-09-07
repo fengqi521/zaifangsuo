@@ -36,9 +36,9 @@ const loading = ref(false);
 const alarmData = reactive({ total: 0, data: [] });
 const columns = ref([
   { prop: "id", label: "ID", width: 40 },
-  { prop: "content", label: "播放内容" },
+  { prop: "content", label: "播放内容", width:360},
   { prop: "device_name", label: "绑定设备" },
-  { prop: "user_name", label: "操作用户" },
+  { prop: "user_name", label: "操作用户"},
 ]);
 
 const initSearchData = {
