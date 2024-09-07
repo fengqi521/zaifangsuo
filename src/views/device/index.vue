@@ -28,7 +28,7 @@ const columns = ref([
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型", type: "slot" },
   { prop: "online", label: "在线状态", type: "slot" },
-  { prop: "status", label: "升级状态", type: "slot" ,width:180},
+  { prop: "is_on_update", label: "升级状态", type: "slot", width: 180 },
   { prop: "online_last", label: "最后在线时间" },
 ]);
 // 获取设备下拉
@@ -80,6 +80,13 @@ const getType = (type) => {
   const list = deviceMap.find(({ value }) => Number(type) === value);
   return list.label;
 };
+
+// 设置下发指令跳转
+const setToPath = (row) => {
+  const { online, device_name, device_type, id } = row
+  if (!online) return ''
+  return `/device/command/${device_name}/${device_type}/${id}`
+}
 
 // 切换页数
 const handleChangePage = (page) => {
@@ -135,7 +142,7 @@ const searchPackage = () => {
 // 确认提交
 const handleConfirmSelect = () => {
   show.value = false;
-  console.log(selectedId.value,'======')
+  console.log(selectedId.value, '======')
   // 调用升级接口，进行升级
 
 };
@@ -151,128 +158,71 @@ const handleCloseModal = () => {
   <div>
     <Bread :breadList="breadList" />
     <!-- 查询 -->
-    <SearchForm
-      :initialData="searchInfo"
-      :formItems="formItems"
-      @submit="handleSearchSubmit"
-      @reset="handleReset"
-      ref="searchFormRef"
-    />
+    <SearchForm :initialData="searchInfo" :formItems="formItems" @submit="handleSearchSubmit" @reset="handleReset"
+      ref="searchFormRef" />
 
     <ElCard title="设备列表">
       <!-- 表格 -->
-      <ElTable
-        class="rtu-table"
-        :loading="loading"
-        :columns="columns"
-        :data="rtuData.data"
-        :tableProps="{ showSelection: false, border: true }"
-      >
+      <ElTable class="rtu-table" :loading="loading" :columns="columns" :data="rtuData.data"
+        :tableProps="{ showSelection: false, border: true }">
         <template #device_type="scope">
           <span class="rtu-table__device-type">{{
             getType(scope.row.device_type)
           }}</span>
         </template>
         <template #online="scope">
-          <span
-            :class="{
-              'rtu-table__status': true,
-              'rtu-table__status--online': scope.row.online,
-            }"
-          ></span>
-          <span
-            :class="{
-              'rtu-table__status-text': true,
-              'rtu-table__status-text--online': scope.row.online,
-            }"
-          >
+          <span :class="{
+            'rtu-table__status': true,
+            'rtu-table__status--online': scope.row.online,
+          }"></span>
+          <span :class="{
+            'rtu-table__status-text': true,
+            'rtu-table__status-text--online': scope.row.online,
+          }">
             {{ isOnLine(scope.row.online_last) ? "在线" : "离线" }}
           </span>
         </template>
         <template #status="scope">
-          <span
-            :class="{
-              'rtu-table__status-text': true,
-              'rtu-table__status-text--online': scope.row.online,
-            }"
-          >
+          <span :class="{
+            'rtu-table__status-text': true,
+            'rtu-table__status-text--online': scope.row.online,
+          }">
             <!-- {{ isOnLine(scope.row.online_last) ? "成功" : "失败" }} -->
           </span>
-          <Upgrade/>
+          <Upgrade />
         </template>
         <template #action="{ row }">
-          <router-link
-            class="rtu-table__action-btn rtu-table__action-btn--details"
-            :to="`/device/detail/${row.device_type}/${row.id}`"
-          >
+          <router-link class="rtu-table__action-btn rtu-table__action-btn--details"
+            :to="`/device/detail/${row.device_type}/${row.id}`">
             查看详情
           </router-link>
-          <el-tooltip
-            content="设备未在线，无法下发指令"
-            :disabled="!!row.online"
-            placement="top"
-          >
-            <router-link
-              v-if="userStore?.userInfo?.role !== 5"
-              :class="[
-                'rtu-table__action-btn rtu-table__action-btn--command',
-                { 'disabled-link': !row.online },
-              ]"
-              :to="
-                !row.online
-                  ? ''
-                  : `/device/command/${row.device_name}/${row.device_type}/${row.id}`
-              "
-            >
-              下发指令</router-link
-            >
-            <!-- <span v-if="!row.online">下发指令</span> -->
+          <el-tooltip content="设备未在线，无法下发指令" :disabled="!!row.online" placement="top">
+            <router-link v-if="userStore?.userInfo?.role !== 5" :class="[
+              'rtu-table__action-btn rtu-table__action-btn--command',
+              { 'disabled-link': !row.online },
+            ]" :to="setToPath(row)">
+              下发指令</router-link>
           </el-tooltip>
-          <el-tooltip
-            content="设备正在升级中"
-            :disabled="row.status"
-            placement="top"
-          >
-          <span
-            :class="['rtu-table__action-btn',{ 'disabled-link': !row.status },]"
-            @click="handleClickUpdate(row)"
-            v-if="userStore?.userInfo?.role !== 5"
-            >设备升级</span
-          >
+          <el-tooltip content="设备正在升级中" :disabled="!row.is_on_update" placement="top">
+            <span :class="['rtu-table__action-btn', { 'disabled-link': row.is_on_update },]"
+              @click="!row.is_on_update && handleClickUpdate(row)" v-if="userStore?.userInfo?.role !== 5">设备升级</span>
           </el-tooltip>
         </template>
       </ElTable>
 
       <!-- 分页 -->
-      <ElPagination
-        :currentPage="searchInfo.page"
-        :page-size="searchInfo.limit"
-        :total="rtuData.total"
-        @pagination-change="handleChangePage"
-        @page-size-change="handleChangeSize"
-      />
+      <ElPagination :currentPage="searchInfo.page" :page-size="searchInfo.limit" :total="rtuData.total"
+        @pagination-change="handleChangePage" @page-size-change="handleChangeSize" />
     </ElCard>
-    <ElModal
-      class="update-modal"
-      title="选择固件"
-      :dialogVisible="currentList.id"
-      @handle-close="handleCloseModal"
-      width="560"
-    >
+    <ElModal class="update-modal" title="选择固件" :dialogVisible="currentList.id > -1" @handle-close="handleCloseModal"
+      width="560">
       <template v-slot>
         <div class="update-modal__header">
-          <el-input
-            v-model="searchQuery"
-            placeholder="请输入固件名称"
-          ></el-input>
+          <el-input v-model="searchQuery" placeholder="请输入固件名称"></el-input>
           <el-button type="primary" @click="searchPackage">搜索</el-button>
         </div>
-        <ElTable
-          :loading="loading"
-          :columns="packageColumns"
-          :data="packageData"
-          :tableProps="{ showSelection: false, border: true }"
-        >
+        <ElTable :loading="loading" :columns="packageColumns" :data="packageData"
+          :tableProps="{ showSelection: false, border: true }">
           <template #action="{ row }">
             <el-radio v-model="selectedId" :value="row.id"></el-radio>
           </template>
@@ -281,9 +231,7 @@ const handleCloseModal = () => {
       <template v-slot:footer>
         <div class="dialog-footer">
           <el-button @click="handleCloseModal">取消</el-button>
-          <el-button type="primary" @click="handleConfirmSelect"
-            >确认</el-button
-          >
+          <el-button type="primary" @click="handleConfirmSelect">确认</el-button>
         </div>
       </template>
     </ElModal>
@@ -309,6 +257,7 @@ const handleCloseModal = () => {
 
   .rtu-table__status-text {
     color: var(--offline-text-color);
+
     &--online {
       color: var(--online-bg-color);
     }
