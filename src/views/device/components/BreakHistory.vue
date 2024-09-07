@@ -22,7 +22,7 @@ const searchInfo = ref({
   end_time: "",
 });
 
-const chartData = reactive({ timeList: [], valueList: [] });
+const chartData = reactive([]);
 // 获取断线图表数据
 const getBreakChartData = () => {
   const { page, limit, ...params } = searchInfo.value;

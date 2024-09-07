@@ -225,7 +225,7 @@ const getDeviceRealData = (id, type) => {
             list.total_rain = res.data.list[2].valueList;
             break;
           case 3:
-            list = res.data.list[0];
+            list = {timeList:res.data.list[0].timeList,valueList:res.data.list}
             break;
           default:
             break;

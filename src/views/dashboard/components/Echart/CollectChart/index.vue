@@ -16,19 +16,17 @@ const collectOption = reactive({});
 
 
 const resetOptions = (values) => {
-  Object.assign(
-    collectOption,
-   { ...getCommonLine({ seriesUnit: ["m", "min", "m"] })},
-  );
   const { type, data } = values;
   const { timeList, ...others } = data;
   let { valueList } = others;
-  collectOption.xAxis[0].data = timeList;
-  collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
-  collectOption.xAxis[0].axisLabel.color = "#96B4BE";
+
 
   switch (type) {
     case 1:
+      Object.assign(
+        collectOption,
+        { ...getCommonLine({ seriesUnit: ["m"] }) },
+      );
       collectOption.grid = {
         ...collectOption.grid,
         left: 0,
@@ -67,6 +65,10 @@ const resetOptions = (values) => {
       };
       break;
     case 2:
+      Object.assign(
+        collectOption,
+        { ...getCommonLine({ seriesUnit: ["m", "m", "min"] }) },
+      );
       const { rain, duration, total_rain } = others;
       // 雨量
       collectOption.legend = {
@@ -90,7 +92,7 @@ const resetOptions = (values) => {
         ...collectOption.grid,
         bottom: 0,
         left: 0,
-        right:10
+        right: 10
       };
 
       const rainMin = Math.min(...rain, ...total_rain);
@@ -173,7 +175,21 @@ const resetOptions = (values) => {
       };
       break;
     case 3:
-      collectOption.legend.show = true;
+
+      Object.assign(
+        collectOption,
+        { ...getCommonLine({ seriesUnit: [""] }) },
+      );
+      const colors = ["#e32f46", "#94d96c", "#7049f0"];
+      collectOption.color = colors;
+      collectOption.legend = {
+        ...collectOption.legend,
+        show: true,
+        data:valueList.map(item=>item.name),
+        textStyle:{
+          color: "#FFF",
+        }
+      }
       collectOption.yAxis[0] = {
         ...collectOption.yAxis[0],
         name: "{title|1代表断开、0代表正常}",
@@ -188,16 +204,20 @@ const resetOptions = (values) => {
         axisLabel: { color: "#96B4BE", fontSize: 14 }
       };
 
-      collectOption.series[0] = {
-        name: "断线状态",
+      collectOption.series = valueList.map(item => ({
+        name: `${item.name}`,
         type: "line",
-        data: valueList,
+        data: item.valueList,
         Symbol: "circle",
         smooth: true,
-      };
+      }));
+      break;
+    default:
       break;
   }
-
+  collectOption.xAxis[0].data = timeList;
+  collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
+  collectOption.xAxis[0].axisLabel.color = "#96B4BE";
   collectOption.dataZoom[0].show = false;
 };
 

@@ -13,14 +13,21 @@ const props = defineProps({
 const collectOption = reactive({ ...getCommonLine({ seriesUnit: [""] }) });
 // 图表数据重组
 const resetOptions = (values) => {
+  if (!values.length) return;
+  const colors = ["#e32f46", "#94d96c", "#7049f0"];
   const timeList = values[0].timeList;
-  collectOption.legend.show = true;
+  collectOption.color = colors;
+  collectOption.legend = {
+    ...collectOption.legend,
+    show:true,
+    data:values.map(item=>item.name)
+  }
   collectOption.xAxis[0].data = timeList;
   collectOption.yAxis[0].name = "{title|1代表断开、0代表正常}";
   collectOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 75];
   collectOption.series = values.map((item) => {
     return {
-      name: "断线状态",
+      name: `${item.name}`,
       type: "line",
       data: item.valueList,
       Symbol: "circle",

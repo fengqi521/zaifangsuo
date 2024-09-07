@@ -18,6 +18,16 @@ export const getCommonLine = function ({
       x: "right",
       itemGap: 16,
       data: [],
+      textStyle: {
+        fontSize: 12,
+        rich: {
+          a: {
+            verticalAlign: "middle",
+          },
+        },
+        lineHeight: 12,
+        padding: [0, -2, -4, 4],
+      },
     },
     grid: {
       top: 36,
