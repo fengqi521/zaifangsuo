@@ -28,4 +28,18 @@ export default {
     }
     return callback();
   },
+
+  validateTime: (rule, value, callback) => {
+    if (!value) {
+      callback();
+      return;
+    }
+    const inputTime = new Date(value.replace(/-/g, '/')).getTime();
+    const now = new Date().getTime();
+    if (inputTime < now) {
+      return callback(new Error("选择的时间不能小于当前时间"));
+    }
+
+    return callback();
+  },
 };

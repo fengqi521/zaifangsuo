@@ -5,7 +5,7 @@ import Icon from "@/components/Icon.vue";
 
 import { useMessage } from "@/plugins/message";
 import systemApi from "@/api";
-
+import formValidators from '@/utils/formValidators'
 const {
   params: { id, type },
 } = useRoute();
@@ -35,8 +35,17 @@ const formRules = {
       required: true,
       message: "播放时间必选",
       trigger: "change",
+    }, {
+      validator: formValidators.validateTime,
+      trigger: "change",
     }],
   }
+}
+
+const selectTimes = ref(Date.now());
+/* 限制天 */
+const disabledDate = (time) => {
+  return time.getTime() < new Date(new Date().setHours(0, 0, 0, 0)).getTime();
 }
 
 // 获取播放内容
@@ -164,8 +173,8 @@ onUnmounted(() => {
           type="textarea"></el-input>
       </el-form-item>
       <el-form-item label="播放时间" prop="data.start_time">
-        <el-date-picker v-model="commandForm.data.start_time" value-format="YYYY-MM-DD HH:mm:ss" type="datetime"
-          placeholder="播放时间" />
+        <el-date-picker v-model="commandForm.data.start_time" :disabled-date="disabledDate" value-format="YYYY-MM-DD HH:mm:ss"
+          type="datetime" placeholder="播放时间" />
       </el-form-item>
       <el-form-item label="播放方式">
         <el-radio-group v-model="commandForm.data.way">
