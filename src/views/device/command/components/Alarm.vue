@@ -23,6 +23,22 @@ const commandForm = reactive({
   data: { content: "", start_time: "", way: "1" },
 });
 
+// 校验
+const formRules = {
+  data: {
+    content: [{
+      required: true,
+      message: "播放内容必选",
+      trigger: "change",
+    }],
+    start_time: [{
+      required: true,
+      message: "播放时间必选",
+      trigger: "change",
+    }],
+  }
+}
+
 // 获取播放内容
 const voiceList = ref([]);
 const getVoiceList = () => {
@@ -31,7 +47,7 @@ const getVoiceList = () => {
       voiceList.value = res.data.tmp.map((item) => ({
         label: item.Content,
         value: item.Content,
-        title:item.Content
+        title: item.Content
       }));
     }
   });
@@ -50,24 +66,31 @@ const isShow = computed(() => {
 });
 
 // 下发指令
-const handleClickSubmit = () => {
-  if (commandIntervalId) {
-    clearInterval(commandIntervalId);
-  }
-  const { code, count, data } = commandForm;
-  const way = data.way;
-  let params = { id, code, Data: { ...data, way: way > 16 ? way : count } };
-
-  systemApi.downControl(params).then((res) => {
-    if (!res.code) {
-      commandData.push({ ...res.data, type: "down" });
-      responseLoading.value = true;
-      setControlListScroll();
-      realResponse({ id, code, deadline: res.data.deadline });
-      return;
+const handleClickSubmit = async () => {
+  try {
+    const valid = await controlFormRef.value.validate()
+    if (!valid) return;
+    if (commandIntervalId) {
+      clearInterval(commandIntervalId);
     }
-    error(res.message);
-  });
+    const { code, count, data } = commandForm;
+    const way = data.way;
+    let params = { id, code, Data: { ...data, way: way > 16 ? way : count } };
+
+    systemApi.downControl(params).then((res) => {
+      if (!res.code) {
+        commandData.push({ ...res.data, type: "down" });
+        responseLoading.value = true;
+        setControlListScroll();
+        realResponse({ id, code, deadline: res.data.deadline });
+        return;
+      }
+      error(res.message);
+    });
+  } catch (error) {
+    console.log(error)
+  }
+
 };
 
 // 实时获取响应数据
@@ -134,35 +157,15 @@ onUnmounted(() => {
 <template>
   <div class="alarm-command">
     <!-- 报文下发表单 -->
-    <el-form
-      class="alarm-command__form"
-      :model="commandForm"
-      ref="controlFormRef"
-      label-width="auto"
-    >
-      <el-form-item label="播放内容">
-        <el-select-v2
-          v-model="commandForm.data.content"
-          :options="voiceList"
-          placeholder="选择播放内容"
-          filterable
-        />
-        <el-input
-          class="textarea"
-          v-model="commandForm.data.content"
-          placeholder="播放内容"
-          :maxlength="400"
-          disabled
-          type="textarea"
-        ></el-input>
+    <el-form class="alarm-command__form" :model="commandForm" ref="controlFormRef" :rules="formRules" label-width="auto">
+      <el-form-item label="播放内容" prop="data.content">
+        <el-select-v2 v-model="commandForm.data.content" :options="voiceList" placeholder="选择播放内容" filterable />
+        <el-input class="textarea" v-model="commandForm.data.content" placeholder="播放内容" :maxlength="400" disabled
+          type="textarea"></el-input>
       </el-form-item>
-      <el-form-item label="播放时间">
-        <el-date-picker
-          v-model="commandForm.data.start_time"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="datetime"
-          placeholder="播放时间"
-        />
+      <el-form-item label="播放时间" prop="data.start_time">
+        <el-date-picker v-model="commandForm.data.start_time" value-format="YYYY-MM-DD HH:mm:ss" type="datetime"
+          placeholder="播放时间" />
       </el-form-item>
       <el-form-item label="播放方式">
         <el-radio-group v-model="commandForm.data.way">
@@ -173,38 +176,21 @@ onUnmounted(() => {
       </el-form-item>
       <el-form-item label=" " v-if="isShow">
         <el-select v-model="commandForm.count" placeholder="Select">
-          <el-option
-            v-for="(item, index) of 16"
-            :key="item"
-            :label="`${item}次`"
-            :value="item"
-          />
+          <el-option v-for="(item, index) of 16" :key="item" :label="`${item}次`" :value="item" />
         </el-select>
       </el-form-item>
       <el-form-item label=" " class="command-form__btn">
-        <el-button
-          type="primary"
-          :disabled="!commandForm.code || responseLoading"
-          @click="handleClickSubmit"
-          >下发指令</el-button
-        >
+        <el-button type="primary" :disabled="!commandForm.code || responseLoading"
+          @click="handleClickSubmit">下发指令</el-button>
         <!-- <el-button @click="handleReset">重置</el-button> -->
       </el-form-item>
     </el-form>
 
     <!-- 下发及反馈内容 -->
     <div class="func-command__feedback">
-      <el-empty
-        v-if="!commandData.length"
-        :image-size="100"
-        style="height: 100%"
-      />
+      <el-empty v-if="!commandData.length" :image-size="100" style="height: 100%" />
       <ul v-else class="control-list" ref="controlListRef">
-        <li
-          :class="`control-item control-${list.type}`"
-          v-for="(list, index) in commandData"
-          :key="index"
-        >
+        <li :class="`control-item control-${list.type}`" v-for="(list, index) in commandData" :key="index">
           <div class="content-left">
             <p class="item-time">{{ list.deadline }}</p>
             <div class="item-content">{{ list.content }}</div>
@@ -215,11 +201,7 @@ onUnmounted(() => {
         </li>
         <li class="control-message" v-if="responseLoading">
           等待反馈数据，您可点击关闭按钮停止等待继续进行指令下发
-          <Icon
-            iconClass="close-icon icon-guanbi"
-            size="8px"
-            @click="handleClickCancelLoading"
-          />
+          <Icon iconClass="close-icon icon-guanbi" size="8px" @click="handleClickCancelLoading" />
         </li>
       </ul>
     </div>
@@ -242,8 +224,10 @@ onUnmounted(() => {
   padding: 24px;
   // border-right: 1px solid var(--card-border-color);
   background: var(--background-color);
+
   .textarea {
     margin-top: 10px;
+
     :deep(.el-textarea__inner) {
       height: 160px;
       @extend %scrollbar;
