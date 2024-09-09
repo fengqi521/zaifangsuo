@@ -31,9 +31,9 @@ const columns = ref([
   { prop: "id", label: "ID", width: 40 },
   { prop: "role_name", label: "角色" },
   { prop: "user_name", label: "用户名" },
-  { prop: "phone", label: "手机号", width: 150 },
+  { prop: "phone", label: "手机号" },
   { prop: "devices", label: "已授权设备", width: 300, type: "slot" },
-  { prop: "create_time", label: "创建时间",width:200 },
+  { prop: "create_time", label: "创建时间" },
 ]);
 
 const initSearchData = {
@@ -73,7 +73,7 @@ const getLists = async (page, limit) => {
     if (!result?.code) {
       const lists = result.data.list.map((item) => ({
         ...item,
-        role_name: userRolesMap.find((cur) => cur.value === item.role).label
+        role_name: userRolesMap.find((cur) => cur.value === item.role).label,
       }));
       userData.value = lists;
       total.value = result.data.total_count;
@@ -116,7 +116,7 @@ const handleEdit = (row) => {
   }
 
   title.value = "修改用户";
-  currentRow.value = {...row};
+  currentRow.value = { ...row };
 };
 
 // 关闭弹窗
@@ -211,14 +211,18 @@ const handleCloseDeleteModal = () => {
         }"
       >
         <template #devices="scope">
-          <p v-if="scope.row.devices.length" v-for="(item, index) in scope.row.devices" :key="index">
-            {{ item.device_name}}
+          <p
+            v-if="scope.row.devices.length"
+            v-for="(item, index) in scope.row.devices"
+            :key="index"
+          >
+            {{ item.device_name }}
           </p>
           <span v-else> -- </span>
         </template>
         <template #action="{ row }">
           <span
-            v-if="row.role!==5"
+            v-if="row.role !== 5"
             class="user-list__action-btn author-btn"
             @click="handleClickShowAuthor(row)"
             >设备授权</span

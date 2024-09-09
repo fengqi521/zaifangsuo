@@ -2,8 +2,9 @@
 import { onMounted, watch, reactive } from "vue";
 import "echarts-gl";
 import Chart from "@/components/Chart/index.vue";
-import { getCommon3dBar, getCommonBar } from "@/utils/chartData";
+import { getCommon3dBar } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
+import Empty from "../../Empty.vue";
 
 const screenStore = useScreenStoreHook();
 // 初始化数据
@@ -15,7 +16,7 @@ onMounted(() => {
     (deviceObj) => {
       resetOptions(deviceObj);
     },
-    { immediate: true,deep:true}
+    { immediate: true, deep: true }
   );
 });
 const resetOptions = (deviceObj) => {
@@ -36,7 +37,8 @@ const resetOptions = (deviceObj) => {
 </script>
 
 <template>
-  <chart :option="option" />
+  <Empty v-if="!screenStore.screenData.deviceList.values.length" />
+  <chart :option="option" v-else />
 </template>
 
 <style lang="scss" scoped></style>

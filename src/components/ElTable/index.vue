@@ -7,7 +7,7 @@
       <el-table-column v-for="column in columns" :key="column.prop" :prop="column.prop" :label="column.label"
         :sortable="column.sortable" :formatter="column.formatter" :width="column.width">
         <template #default="scope">
-          <el-tooltip :disabled="!isShowTooltip" :content="setTooltipContent(scope, column.prop)" placement="top"
+          <el-tooltip :disabled="!isShowTooltip||column.notShowTooltip" :content="setTooltipContent(scope, column.prop)" placement="top"
             popper-class="table-tooltip">
             <div class="cell-item" @mouseover="(e) => handleMouseOver(e, scope.row, scope.prop)">
               <slot v-if="column.type === 'slot'" :name="column.prop" :row="scope.row" :column="scope.column">

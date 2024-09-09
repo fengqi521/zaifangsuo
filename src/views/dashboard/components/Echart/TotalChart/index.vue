@@ -88,7 +88,8 @@ watch(
 
 <template>
   <div class="total-chart">
-    <chart :option="option" />
+    <Empty v-if="!screenStore.screenData.area.length" />
+    <chart :option="option" v-else/>
   </div>
 </template>
 <style lang="scss" scoped>

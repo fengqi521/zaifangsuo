@@ -153,7 +153,11 @@ const deviceFormItems = [
   {
     label: "设备名称",
     prop: "device_name",
-    attrs: { placeholder: "请选择设备名称", style: { width: "200px" } },
+    attrs: {
+      placeholder: "请选择设备名称",
+      filterable: true,
+      style: { width: "200px" },
+    },
     type: "el-select",
     options: [],
   },
@@ -214,7 +218,7 @@ const parseFormItems = [
 
 //---------------------报文记录----------------
 const recordFormData = {
-  Category: 14,
+  Category: -1,
   Transfer: "",
   Did: "",
   range: [],
@@ -224,14 +228,18 @@ const recordOptions = [
   { label: "自定义", value: 13 },
   { label: "下发报警及响应", value: 15 },
   { label: "设备自动触发报警上报", value: 17 },
+  { label: "设备升级", value: 16 },
 ];
 const recordFormItems = [
   {
     label: "操作类型",
     prop: "Category",
-    attrs: { placeholder: "请选择操作类型", style: { width: "200px" } },
+    attrs: {
+      placeholder: "请选择操作类型",
+      style: { width: "200px" },
+    },
     type: "el-select",
-    options: [{ label: "全部", value: 14 }, ...recordOptions],
+    options: [{ label: "全部", value: -1 }, ...recordOptions],
   },
   {
     label: "传输类型",
@@ -246,7 +254,11 @@ const recordFormItems = [
   {
     label: "设备名称",
     prop: "Did",
-    attrs: { placeholder: "请选择设备", style: { width: "240px" } },
+    attrs: {
+      placeholder: "请选择设备名称",
+      filterable: true,
+      style: { width: "240px" },
+    },
     type: "el-select",
     options: [],
   },

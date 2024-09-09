@@ -2,7 +2,6 @@
 import { ref, reactive } from "vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElModal from "@/components/ElModal/index.vue";
-import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Bread from "@/components/Bread/index.vue";
@@ -33,8 +32,8 @@ const columns = ref([
   { prop: "upgrade_name", label: "固件名称" },
   { prop: "url", label: "固件地址",width:300},
   { prop: "size", label: "固件大小" },
-  { prop: "upgrade_desc", label: "固件描述",width:300 },
-  { prop: "md5", label: "MD5",width:400 },
+  { prop: "upgrade_desc", label: "固件描述" },
+  { prop: "md5", label: "MD5"},
 ]);
 
 const initSearchData = {

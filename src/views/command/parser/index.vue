@@ -83,6 +83,8 @@ const content = computed(() => {
       alarm_time,
       alarm_level,
       alarm_sound,
+      pkg_number,
+      current_number
     } = content;
     const {
       collect,
@@ -103,9 +105,15 @@ const content = computed(() => {
     } = data;
     const parts = [
       serial ? `流水号：${serial}` : "",
-      sensor_name ? `设备类型：${sensor_name}` : "",
+      // sensor_name ? `设备类型：${sensor_name}` : "",
       collect_time ? `采集时间：${collect_time}` : "",
-      `${collect > -1 ? (parseData.info.transfer_type === 1 ? `断线状态：${collect===0?'正常':'断开'}` : `泥位：${collect}m`) : ''}`,
+      `${
+        collect > -1
+          ? type == 1
+            ? `泥水位：${collect}m`
+            : `断线状态：${collect === 0 ? "正常" : "断开"}`
+          : ""
+      }`,
       muddy_addr ? `泥位计地址：${muddy_addr}` : "",
       rain_addr ? `雨量计地址：${rain_addr}` : "",
       rain_period > -1 ? `降雨量：${rain_period}mm` : "",
@@ -124,6 +132,8 @@ const content = computed(() => {
       alarm_level > -1 ? `报警等级：${alarm["level"][alarm_level]}` : "",
       alarm_sound > -1 ? `音量大小：${alarm["sound"][alarm_sound]}` : "",
       datetime ? `时钟信息：${datetime}` : "",
+      pkg_number?`固件包包数：${pkg_number}`:'',
+      current_number?`当前上传包数：${current_number}`:''
     ];
 
     // 过滤掉空字符串并使用逗号连接

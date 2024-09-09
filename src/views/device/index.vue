@@ -7,6 +7,7 @@ import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import { userInfoStoreHook } from "@/store/modules/user";
+import { useMessage } from "@/plugins/message";
 import { isOnLine } from "@/utils";
 import systemApi from "@/api";
 
@@ -15,6 +16,7 @@ import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
 const userStore = userInfoStoreHook();
 userStore.getUserInfo();
 
+const { success,error } = useMessage();
 const breadList = ref([{ title: "设备管理" }]);
 const formItems = reactive(deviceFormItems);
 
@@ -27,7 +29,7 @@ const columns = ref([
   { prop: "device_name", label: "设备名称" },
   { prop: "device_type", label: "设备类型", type: "slot" },
   { prop: "online", label: "在线状态", type: "slot" },
-  { prop: "is_on_update", label: "升级状态", type: "slot", width: 180 },
+  { prop: "is_on_update", label: "升级状态", type: "slot", notShowTooltip:true,width: 180 },
   { prop: "online_last", label: "最后在线时间" },
 ]);
 // 获取设备下拉
@@ -148,7 +150,6 @@ const searchPackage = () => {
 // 实时显示升级状态
 const getDeviceUpgradeStatus = (lists) => {
   if (!lists.length) return;
-  console.log('2222222')
   lists.forEach(async list => {
     intervalStatus(list)
   });
@@ -165,7 +166,7 @@ const intervalStatus = async (list) => {
   try {
     const timer = timers[list.id]
     if (timer) {
-      clearInterval(tiemr)
+      clearInterval(timer)
     }
     timers[list.id] = setInterval(() => {
       intervalStatus(list)
@@ -184,7 +185,7 @@ onUnmounted(()=>{
 // 确认提交
 const handleConfirmSelect = () => {
   // 调用升级接口，进行升级
-  systemApi.upgradeDevice({ Did: currentList.value.id, Gid: gid.value }).then(res => {
+  systemApi.upgradeDevice({ did: currentList.value.id, gid: gid.value }).then(res => {
     if (!res.code) {
       getRtuData()
       return

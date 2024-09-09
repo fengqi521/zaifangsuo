@@ -18,9 +18,6 @@ import {
 const breadList = ref([{ title: "下发记录" }]);
 const loading = ref(false);
 
-// 设备数据
-const device = ref([]);
-
 // 初始查询数据
 const initParams = {
   ...recordFormData,
@@ -52,18 +49,13 @@ const recordData = reactive({ lists: [], total: 0 });
 // 获取设备列表
 const getDevice = async () => {
   try {
-    const res = await systemApi.getDeviceList({
-      status: 2,
-      limit: 10000,
-      page: 1,
-    });
+    const res = await systemApi.getAllDevice();
     if (!res.code) {
       const list = recordItems.find((item) => item.prop === "Did");
-      device.value = res.data.list;
       if (list) {
-        list.options = res.data.list.map((item) => ({
-          label: item.device_name,
-          value: item.id,
+        list.options = res.data.devices.map((item) => ({
+          label: item.DeviceName,
+          value: item.Id,
         }));
       }
     }

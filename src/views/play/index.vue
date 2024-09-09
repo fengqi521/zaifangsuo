@@ -25,7 +25,7 @@ const formItems = ref([
   {
     label: "设备名称",
     prop: "did",
-    attrs: { placeholder: "请选择绑定设备",style:{width:'240px'} },
+    attrs: { placeholder: "请选择绑定设备",      filterable: true,style:{width:'240px'} },
     type: "el-select",
     options: [],
   },
@@ -51,15 +51,11 @@ const deviceList = ref([]);
 // 获取设备列表
 const getDevice = async () => {
   try {
-    const result = await systemApi.getDeviceList({
-      status: 2,
-      page: 1,
-      limit: 10000,
-    });
+    const result = await systemApi.getAllDevice();
     if (!result?.code) {
-      const lists = result.data.list.map((item) => ({
-        label: item.device_name,
-        value: item.id,
+      const lists = result.data.devices.map((item) => ({
+        label: item.DeviceName,
+        value: item.Id,
       }));
       deviceList.value = lists;
       formItems.value[0].options = lists;

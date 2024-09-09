@@ -28,8 +28,8 @@ export default defineConfig({
     /** 接口代理 */
     proxy: {
       "/api": {
-        target: "http://1.119.55.14:8100/",
-        // target: "http://192.168.100.180:8001/",
+        // target: "http://1.119.55.14:8100/",
+        target: "http://192.168.100.180:8001/",
         // target: "http://localhost:3001",
 
         ws: false,
