@@ -10,10 +10,12 @@
           <el-tooltip :disabled="!isShowTooltip||column.notShowTooltip" :content="setTooltipContent(scope, column.prop)" placement="top"
             popper-class="table-tooltip">
             <div class="cell-item" @mouseover="(e) => handleMouseOver(e, scope.row, scope.prop)">
-              <slot v-if="column.type === 'slot'" :name="column.prop" :row="scope.row" :column="scope.column">
-              </slot>
+              <template v-if="column.type === 'slot'">
+                <slot  :name="column.prop" :row="scope.row" :column="scope.column">
+                </slot>
+              </template>
               <div v-else>
-                {{ scope.row[column.prop] || "--" }}
+                {{ scope.row[column.prop]===undefined?'--': scope.row[column.prop] }}
               </div>
             </div>
           </el-tooltip>

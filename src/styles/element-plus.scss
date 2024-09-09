@@ -65,6 +65,10 @@
     border: 1px solid var(--select-border-color);
 }
 
+.el-input__inner{
+    font-size: 14px;
+}
+
 .el-textarea__inner{
     border: 1px solid var(--select-border-color);
 }
@@ -121,8 +125,8 @@
     width:100%;
 }
 
-.el-date-editor .el-range-separator{
-    font-size: 12px;
+.el-date-editor .el-range-separator,.el-date-editor .el-range-input{
+    font-size: 14px;
 }
 
 .el-progress__text{

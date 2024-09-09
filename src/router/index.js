@@ -74,6 +74,10 @@ export const dynamicRoutes = [
   {
     path: "/dashboard",
     component: ScreenLayout,
+
+    meta: {
+      roles: [1, 2, 3, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -93,6 +97,9 @@ export const dynamicRoutes = [
     path: "/",
     component: Layout,
     redirect: "/home",
+    meta: {
+      roles: [1, 2, 3, 4, 5],
+    },
     children: [
       {
         path: "home",
@@ -110,6 +117,9 @@ export const dynamicRoutes = [
   {
     path: "/device",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -119,7 +129,7 @@ export const dynamicRoutes = [
           icon: "icon-a-RTUguanliweixuan",
           size: "18px",
           affix: true,
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
       {
@@ -128,6 +138,7 @@ export const dynamicRoutes = [
         meta: {
           hidden: true,
           activeMenu: "/device",
+          roles: [1, 4, 5],
         },
       },
       {
@@ -145,6 +156,9 @@ export const dynamicRoutes = [
   {
     path: "/command",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -153,7 +167,7 @@ export const dynamicRoutes = [
           title: "下发记录",
           icon: "icon-xiafajilu",
           size: "18px",
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
       {
@@ -162,6 +176,7 @@ export const dynamicRoutes = [
         meta: {
           hidden: true,
           activeMenu: "/command",
+          roles: [1, 4, 5],
         },
       },
     ],
@@ -169,6 +184,9 @@ export const dynamicRoutes = [
   {
     path: "/alarm",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -177,7 +195,7 @@ export const dynamicRoutes = [
           title: "报警管理",
           icon: "icon-nav_icon_bjgl_spe",
           size: "22px",
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
     ],
@@ -185,6 +203,9 @@ export const dynamicRoutes = [
   {
     path: "/analysis",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -193,7 +214,7 @@ export const dynamicRoutes = [
           title: "综合分析",
           icon: "icon-tongjifenxi2",
           size: "20px",
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
     ],
@@ -201,6 +222,9 @@ export const dynamicRoutes = [
   {
     path: "/play",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -209,7 +233,7 @@ export const dynamicRoutes = [
           title: "播放内容管理",
           icon: "icon-guzhangyuyinguanli",
           size: "18px",
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
     ],
@@ -217,6 +241,9 @@ export const dynamicRoutes = [
   {
     path: "/package",
     component: Layout,
+    meta: {
+      roles: [1, 4, 5],
+    },
     children: [
       {
         path: "",
@@ -225,7 +252,7 @@ export const dynamicRoutes = [
           title: "固件管理",
           icon: "icon-gujianguanli",
           size: "20px",
-          roles: [1, 4,5],
+          roles: [1, 4, 5],
         },
       },
     ],
@@ -233,10 +260,15 @@ export const dynamicRoutes = [
   {
     path: "/user",
     component: Layout,
+    name: "User",
+    meta: {
+      roles: [1],
+    },
     children: [
       {
         path: "",
         component: UserList,
+        name: "UserList",
         meta: {
           title: "用户管理",
           icon: "icon-yonghuguanli",
@@ -251,5 +283,21 @@ const router = createRouter({
   history,
   routes: constantRoutes,
 });
+
+/** 重置路由 */
+export function resetRouter() {
+  // 注意：所有动态路由路由必须带有 Name 属性，否则可能会不能完全重置干净
+  try {
+    router.getRoutes().forEach((route) => {
+      const { name, meta } = route;
+      if (name && meta.roles?.length) {
+        router.hasRoute(name) && router.removeRoute(name);
+      }
+    });
+  } catch {
+    // 强制刷新浏览器也行，只是交互体验不是很好
+    window.location.reload();
+  }
+}
 
 export default router;

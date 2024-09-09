@@ -13,6 +13,9 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
   const info = await getUserCookie();
   const { uid, role } = info;
+  if(!role){
+    flag = true;
+  }
   // 未登录
   if (!uid) {
     // 如果在免登录的白名单中，则直接进入
@@ -40,8 +43,6 @@ router.beforeEach(async (to, from, next) => {
       next({ ...to, replace: true });
     }
   } catch (err) {
-    //   userStore.resetToken()
-    console.log(err, "有错误");
     next("/login");
   }
 });

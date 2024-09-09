@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "741944",
+      "name": "统计分析2",
+      "font_class": "tongjifenxi2",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "39289152",
+      "name": "故障语音管理",
+      "font_class": "guzhangyuyinguanli",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "17739976",
+      "name": "报警管理实心",
+      "font_class": "nav_icon_bjgl_spe",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
       "icon_id": "1118",
       "name": "文件",
       "font_class": "wenjian",

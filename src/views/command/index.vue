@@ -37,7 +37,7 @@ const recordItems = reactive(recordFormItems);
 const columns = ref([
   { prop: "num", label: "序号", width: 80 },
   { prop: "device_name", label: "设备名称" },
-  { prop: "type_name", label: "设备类型", width: 80 },
+  { prop: "type_name", label: "设备类型",width:150 },
   { prop: "operate_type", label: "操作类型", width: 180 },
   { prop: "transfer_name", label: "传输类型", width: 100 },
   { prop: "response", label: "报文内容", type: "slot" },

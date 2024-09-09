@@ -199,8 +199,12 @@ const prevValues = ref([]);
 watch(
   () => props.deviceList,
   (values) => {
-    const transValues = values.map((item) => omit(item, "online_last"));
-    const transPrev = prevValues.value.map((item) => omit(item, "online_last"));
+    const transValues = values.map((item) =>
+      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
+    );
+    const transPrev = prevValues.value.map((item) =>
+      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
+    );
     if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
     viewer.entities.removeAll();

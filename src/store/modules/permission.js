@@ -1,10 +1,10 @@
-import { reactive } from "vue";
+import { reactive,ref } from "vue";
 import { defineStore } from "pinia";
 import { constantRoutes, dynamicRoutes } from "@/router";
 // 判断每个路由是否有权限
 const isHavePermission = (curRoute, role) => {
   const routeRoles = curRoute?.meta?.roles;
-  return routeRoles ? routeRoles.includes(role) : true;
+  return routeRoles ? routeRoles.includes(role) : false;
 };
 
 // 过滤动态路由
@@ -25,16 +25,16 @@ const filterDynamicRoutes = (routes, role) => {
   return newRoutes;
 };
 export const usePermissionStoreHook = defineStore("permission", () => {
-  const routes = reactive([]); //全部路由
+  const routes = ref([]); //全部路由
   const dynamicRealRoutes = reactive([]); // 真实的动态路由
 
   // 根据角色过滤routes
 
   const setRoutes = (role) => {
     const accessRoutes = filterDynamicRoutes(dynamicRoutes, role);
-
     // 赋值
-    Object.assign(routes, constantRoutes.concat(accessRoutes));
+    routes.value = constantRoutes.concat(accessRoutes)
+    // Object.assign(routes, constantRoutes.concat(accessRoutes));
     Object.assign(dynamicRealRoutes, accessRoutes);
   };
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watchEffect, defineAsyncComponent } from "vue";
+import { ref, computed, watchEffect, defineAsyncComponent, watch } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
@@ -39,6 +39,7 @@ const breadList = ref([
 ]);
 
 watchEffect(() => {
+  if (!active.value) return;
   useRtuStore.setDateRange(active.value);
 });
 
@@ -67,6 +68,7 @@ const dateRange = computed({
           type="datetimerange"
           range-separator="至"
           style="width: 355px"
+          value-format="YYYY-MM-DD HH:mm:ss"
         />
       </div>
       <el-tabs type="border-card" v-model="activeTab">

@@ -33,7 +33,7 @@ const handleClickLogout = () => {
         success("退出成功,即将跳转登录页");
         setTimeout(() => {
           router.push({ path: "/login" });
-        }, 2000);
+        }, 1000);
       })
       .catch((error) => {
         // error(error.message);

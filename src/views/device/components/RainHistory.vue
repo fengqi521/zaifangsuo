@@ -78,9 +78,9 @@ const loading = ref(false);
 const tableColumns = [
   { prop: "num", label: "序号" },
   { prop: "upload_time", label: "监测时间" },
-  { prop: "data", label: "降雨量(mm)" },
+  { prop: "original_data", label: "降雨量(mm)" },
   { prop: "duration", label: "降雨时长(min)" },
-  { prop: "data_rain", label: "累计降雨量(mm)" },
+  { prop: "data", label: "累计降雨量(mm)" },
   { prop: "temperature", label: "温度(°C)" },
   { prop: "humidity", label: "湿度(%RH)" },
   { prop: "wind_direction", label: "风向(°)" },

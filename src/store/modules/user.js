@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { defineStore } from "pinia";
+import { resetRouter } from "@/router"
 import systemApi from "@/api";
 import {
   setUserCookie,
@@ -38,8 +39,8 @@ export const userInfoStoreHook = defineStore("user", () => {
     const result = await systemApi.logout();
     if (!result.code) {
       removeUserCookie();
+      resetRouter()
       Object.assign(userInfo, { name: "", role: "", uid: "" });
-
     }
   };
 

@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { getStartAndEndTime } from "@/utils";
 
 export const useRtuStoreHook = defineStore("rtuStore", () => {
-  const dateTimeRange = ref([]);
+  const dateTimeRange = ref([]); 
 
   const setDateRange = (active, type) => {
     if (type) {

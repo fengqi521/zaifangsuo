@@ -4,7 +4,7 @@ import { useRoute } from "vue-router";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-import BreakLineChart from '@/components/BreakLineChart/index.vue'
+import BreakLineChart from "@/components/BreakLineChart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
 
 import systemApi from "@/api";
@@ -33,7 +33,6 @@ const getBreakChartData = () => {
   });
 };
 
-
 // 历史table数据
 const loading = ref(false);
 const tableColumns = [
@@ -42,8 +41,6 @@ const tableColumns = [
   { prop: "state_name", label: "断线状态" },
 ];
 const deviceData = reactive({
-  page: 1,
-  limit: 10,
   total: 0,
   data: [],
 });
@@ -61,6 +58,19 @@ const getBreakLevelHistory = () => {
       }));
     }
   });
+};
+
+// 切换分页
+const handleChangePage = (page) => {
+  searchInfo.value.page = page;
+  getBreakLevelHistory();
+};
+
+// 切换条数
+const handleChangeSize = (size) => {
+  searchInfo.value.page = 1;
+  searchInfo.value.limit = size;
+  getBreakLevelHistory();
 };
 
 const fetchData = (values) => {
@@ -83,11 +93,7 @@ watch(
 
 <template>
   <div class="device-data">
-    <ElCard
-      title="断线监测数据"
-      class="device-data__chart"
-      v-loading="loading"
-    >
+    <ElCard title="断线监测数据" class="device-data__chart" v-loading="loading">
       <BreakLineChart :data="chartData" />
     </ElCard>
     <ElCard title="数据列表">
@@ -98,13 +104,11 @@ watch(
         :tableProps="{ showSelection: false, border: true }"
       />
       <ElPagination
-        :currentPage="deviceData.page"
-        :page-size="deviceData.limit"
+        :currentPage="searchInfo.page"
+        :page-size="searchInfo.limit"
         :total="deviceData.total"
-        @pagination-change="(page) => getBreakLevelHistory(page)"
-        @page-size-change="
-          (size) => getBreakLevelHistory(deviceData.page, size)
-        "
+        @pagination-change="handleChangePage"
+        @page-size-change="handleChangeSize"
       />
     </ElCard>
   </div>
