@@ -22,7 +22,6 @@ export function useEchartsHook() {
 
   // 地图设置数据
   const setMapData = (area, geoJson) => {
-    console.log(area, geoJson, "vvv");
     if (area && geoJson) {
       echarts.registerMap(area, geoJson);
     }

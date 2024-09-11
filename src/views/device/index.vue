@@ -8,7 +8,6 @@ import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { useMessage } from "@/plugins/message";
-import { isOnLine } from "@/utils";
 import systemApi from "@/api";
 
 import { projectFormData, deviceFormItems, deviceMap } from "@/constants";
@@ -25,9 +24,9 @@ const loading = ref(false);
 const rtuData = reactive({ data: [], total: 0 });
 const columns = ref([
   { prop: "num", label: "序号", width: 80 },
-  { prop: "device_number", label: "设备编号" },
-  { prop: "device_name", label: "设备名称"},
-  { prop: "device_type", label: "设备类型", type: "slot"  },
+  { prop: "addr", label: "设备编号" },
+  { prop: "device_name", label: "设备名称" },
+  { prop: "device_type", label: "设备类型", type: "slot" },
   { prop: "online", label: "在线状态", type: "slot" },
   {
     prop: "is_on_update",
@@ -92,9 +91,10 @@ const getType = (type) => {
 
 // 设置下发指令跳转
 const setToPath = (row) => {
-  const { online, device_name, device_type, id } = row;
-  if (!online) return "";
-  return `/device/command/${device_name}/${device_type}/${id}`;
+  const { online, device_name, device_type, id, is_on_update } = row;
+  if (!is_on_update && !!online)
+    return `/device/command/${device_name}/${device_type}/${id}`;
+  return "";
 };
 
 const tooltipContent = (row) => {
@@ -168,10 +168,12 @@ const intervalStatus = async (list) => {
     const result = await systemApi.upgradeStatus({ id: list.upgrade_id });
     if (!result.code) {
       const { current, number } = result.data;
-      const value =(current / number) * 100
-      list.process = Number.isInteger(value) ? Number(value.toFixed(0)) : Number(value.toFixed(2));
+      const value = (current / number) * 100;
+      list.process = Number.isInteger(value)
+        ? Number(value.toFixed(0))
+        : Number(value.toFixed(2));
       if (current === number) {
-        setTimeout(()=> list.is_on_update = false,2000)
+        setTimeout(() => (list.is_on_update = false), 2000);
         clearInterval(timer);
         return;
       }
@@ -282,17 +284,20 @@ const handleCloseModal = () => {
           >
             查看详情
           </router-link>
-          
+
           <el-tooltip
-            content="设备离线"
-            :disabled="!!row.online"
+            :content="tooltipContent(row)"
+            :disabled="!row.is_on_update && !!row.online"
             placement="top"
           >
             <router-link
-              v-if="userStore?.userInfo?.role!==''&&userStore?.userInfo?.role !== 5"
+              v-if="
+                userStore?.userInfo?.role !== '' &&
+                userStore?.userInfo?.role !== 5
+              "
               :class="[
                 'rtu-table__action-btn rtu-table__action-btn--command',
-                { 'disabled-link': !row.online },
+                { 'disabled-link': row.is_on_update || !row.online },
               ]"
               :to="setToPath(row)"
             >
@@ -312,7 +317,10 @@ const handleCloseModal = () => {
               @click="
                 !row.is_on_update && !!row.online && handleClickUpdate(row)
               "
-              v-if="userStore?.userInfo?.role!==''&&userStore?.userInfo?.role !== 5"
+              v-if="
+                userStore?.userInfo?.role !== '' &&
+                userStore?.userInfo?.role !== 5
+              "
               >设备升级</span
             >
           </el-tooltip>
@@ -333,7 +341,7 @@ const handleCloseModal = () => {
       title="选择固件"
       :dialogVisible="currentList.id > -1"
       @handle-close="handleCloseModal"
-      width="560"
+      width="660"
     >
       <template v-slot>
         <div class="update-modal__header">

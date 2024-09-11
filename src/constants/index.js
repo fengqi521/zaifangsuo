@@ -53,14 +53,21 @@ const allOperateType = [
   { label: "上报自检数据", value: 11 },
   { label: "查询实时自检数据", value: 12 },
 ];
-const messageFormData = { category: 13 };
+const messageFormData = { category: -1 };
 const messageFormItems = [
   {
     label: "",
     prop: "category",
     attrs: { placeholder: "请选择报文类型" },
     type: "el-select",
-    options: [{ label: "全部", value: 13 }, ...allOperateType],
+    options: [
+      { label: "全部", value: -1 },
+      ...allOperateType,
+      { label: "自定义", value: 13 },
+      { label: "下发报警及响应", value: 15 },
+      { label: "设备自动触发报警上报", value: 17 },
+      { label: "设备升级", value: 16 },
+    ],
   },
 ];
 
@@ -138,7 +145,8 @@ const operateLists = [
 ];
 
 const projectFormData = {
-  device_number: "",
+  // device_number: "",
+  device_addr: "",
   device_name: "",
   device_type: 0,
   status: "2",
@@ -146,7 +154,7 @@ const projectFormData = {
 const deviceFormItems = [
   {
     label: "设备编号",
-    prop: "device_number",
+    prop: "device_addr",
     attrs: { placeholder: "请输入设备编号" },
     type: "el-input",
   },

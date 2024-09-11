@@ -164,7 +164,7 @@ export const dynamicRoutes = [
         path: "",
         component: HistoryRecord,
         meta: {
-          title: "下发记录",
+          title: "报文记录",
           icon: "icon-xiafajilu",
           size: "18px",
           roles: [1, 4, 5],

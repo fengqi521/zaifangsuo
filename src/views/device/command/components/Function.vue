@@ -523,7 +523,7 @@ onUnmounted(() => {
     <!-- 报文下发表单 -->
     <el-form class="func-command__form" :model="commandForm" ref="controlFormRef" :rules="formRules" label-width="auto">
       <!-- 功能码 -->
-      <el-form-item label="功能码:" class="command-form__operate">
+      <el-form-item label="功能码" class="command-form__operate">
         <el-select v-model="commandForm.code" placeholder="功能码" style="width: 100%">
           <el-option v-for="(operate, index) in operateLists" :key="index" :label="operate.label" :value="operate.code" />
         </el-select>

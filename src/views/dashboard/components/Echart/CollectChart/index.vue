@@ -70,6 +70,12 @@ const resetOptions = (values) => {
         { ...getCommonLine({ seriesUnit: ["m", "m", "min"] }) },
       );
       const { rain, duration, total_rain } = others;
+      collectOption.grid = {
+        ...collectOption.grid,
+        left: 0,
+        right: 10,
+        bottom: 0,
+      };
       // 雨量
       collectOption.legend = {
         ...collectOption.legend,
@@ -181,6 +187,12 @@ const resetOptions = (values) => {
         { ...getCommonLine({ seriesUnit: [""] }) },
       );
       const colors = ["#e32f46", "#94d96c", "#7049f0"];
+      collectOption.grid = {
+        ...collectOption.grid,
+        left: 0,
+        right: 10,
+        bottom: 0,
+      };
       collectOption.color = colors;
       collectOption.legend = {
         ...collectOption.legend,

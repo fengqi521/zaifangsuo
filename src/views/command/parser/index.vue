@@ -68,6 +68,15 @@ onMounted(async () => {
   const result = await getReportInfo();
   await getParse(result);
 });
+const getWay = (way) => {
+  if (way < 17) {
+    return `单曲播放${way}次`;
+  }
+  if (way < 18) {
+    return `循环播放`;
+  }
+  return "停止循环";
+};
 
 // 内容中数据
 const content = computed(() => {
@@ -84,8 +93,10 @@ const content = computed(() => {
       alarm_level,
       alarm_sound,
       pkg_number,
-      current_number
+      current_number,
     } = content;
+
+
     const {
       collect,
       muddy_addr,
@@ -133,7 +144,11 @@ const content = computed(() => {
       alarm_sound > -1 ? `音量大小：${alarm["sound"][alarm_sound]}` : "",
       datetime ? `时钟信息：${datetime}` : "",
       pkg_number?`固件包包数：${pkg_number}`:'',
-      current_number?`当前上传包数：${current_number}`:''
+      current_number?`当前上传包数：${current_number}`:'',
+      content?.datetime?`播放时间：${content.datetime}`:'',
+      content?.content?`播放内容：${content.content}`:'',
+      content?.way?`播放方式：${getWay(content.way)}`:''
+
     ];
 
     // 过滤掉空字符串并使用逗号连接
@@ -302,6 +317,7 @@ const content = computed(() => {
 
   &__data {
     width: 100%;
+    word-break: break-all;
   }
 
   &__label {

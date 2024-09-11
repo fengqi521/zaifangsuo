@@ -24,7 +24,7 @@ const valueList = computed(() => {
     >
       <el-image
         lazy
-        style="width: 99%; height: 196px"
+        style="width: auto; height: auto"
         :src="valueList[index]"
         :preview-src-list="[valueList[index]]"
         fit="cover"

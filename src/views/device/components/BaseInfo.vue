@@ -33,7 +33,7 @@ getDetailById();
     <div class="device-detail__info">
       <p class="device-detail__item">
         <span class="device-detail__label">设备编号:</span>
-        {{ detail.device_number }}
+        {{ detail.device_addr }}
       </p>
       <p class="device-detail__item">
         <span class="device-detail__label">在线状态:</span>

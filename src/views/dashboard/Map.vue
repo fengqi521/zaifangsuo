@@ -24,6 +24,7 @@ import { onMounted, ref, watch, watchEffect } from "vue";
 import { isEqual, omit } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
+import beijinJson from "@/js/beijingGeometry.json";
 const screenStore = useScreenStoreHook();
 let viewer;
 const prevMarker = ref(null);
@@ -75,6 +76,7 @@ onMounted(async () => {
       },
     },
   });
+
   viewer._cesiumWidget._creditContainer.style.display = "none";
   viewer.scene.sun.show = false;
   viewer.scene.moon.show = false;
@@ -93,7 +95,72 @@ onMounted(async () => {
     })`;
     div.style.transformOrigin = "center";
   });
+
+  // getMapBoundary();
 });
+
+// 获取地图边界
+const getMapBoundary = () => {
+  const { features } = beijinJson;
+  const maskpointArray = [];
+  // 这里的数据筛选要大家根据自己的json数据结构进行获取
+  const arr = features[0].geometry.coordinates[0][0];
+  // 处理莱西市的边界数据，整理成我们想要的格式
+  for (let i = 0, l = arr.length; i < l; i++) {
+    maskpointArray.push(arr[i][0]);
+    maskpointArray.push(arr[i][1]);
+  }
+  // 将其转换成下边渲染entity所需的3D笛卡尔坐标系。
+  var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
+  console.log(
+    Cesium.Cartesian3.fromDegreesArray([0, -90, 0, 90, 180, 90, 180, -90])
+  );
+  // 绘制面
+  const area1 = new Cesium.Entity({
+    id: 1,
+    polygon: {
+      hierarchy: {
+        // 定义多边形或孔外边界的线性环。
+        positions: Cesium.Cartesian3.fromDegreesArray([
+          -0, 60, -0, -60, -180, -60, -180, 60
+        ]),
+        // 一组多边形层次结构，定义多边形中的孔。
+      },
+      // 填充多边形的材质
+      material: Cesium.Color.BLACK.withAlpha(0.5),
+    },
+  });
+  const area2 = new Cesium.Entity({
+    id: 2,
+    polygon: {
+      hierarchy: {
+        // 定义多边形或孔外边界的线性环。
+        positions: Cesium.Cartesian3.fromDegreesArray([
+        100, 0, 100, 89, 160, 89, 160, 0,
+        ]),
+        // 一组多边形层次结构，定义多边形中的孔。
+
+        holes: [{ positions: maskspoint }],
+      },
+      // 填充多边形的材质
+      material: Cesium.Color.BLACK.withAlpha(0.5),
+    },
+  });
+
+  // 边界线
+  const line = new Cesium.Entity({
+    id: 3,
+    polyline: {
+      positions: maskspoint,
+      width: 2,
+      material: Cesium.Color.fromCssColorString("#6dcdeb"), //边界线颜色
+    },
+  });
+
+  // viewer.entities.add(area1);
+  viewer.entities.add(area2);
+  viewer.entities.add(line);
+};
 
 // 切换地图位置
 const handleChangeDevice = (code) => {
@@ -102,6 +169,7 @@ const handleChangeDevice = (code) => {
 
   const long = Number(langitude);
   const lat = Number(latitude);
+
   setTimeout(() => {
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(long, lat, 10000), // 目标位置的经纬度和高度
@@ -207,7 +275,7 @@ watch(
     );
     if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
-    viewer.entities.removeAll();
+    // viewer.entities.removeAll();
     setTimeout(() => {
       values.forEach((item) => {
         addMarker({ ...item });

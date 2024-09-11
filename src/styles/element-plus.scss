@@ -63,14 +63,16 @@
 .el-select__wrapper {
     padding: 0 11px;
     border: 1px solid var(--select-border-color);
+    font-size: 12px;
 }
 
 .el-input__inner{
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .el-textarea__inner{
     border: 1px solid var(--select-border-color);
+    font-size: 12px;
 }
 
 .el-tabs--border-card {
@@ -126,7 +128,7 @@
 }
 
 .el-date-editor .el-range-separator,.el-date-editor .el-range-input{
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .el-progress__text{
