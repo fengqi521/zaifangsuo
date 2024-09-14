@@ -7,7 +7,7 @@ import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import systemApi from "@/api";
 import { useRtuStoreHook } from "@/store/modules/rtu";
-import { getCommonLine } from "@/utils/chartData";
+import { getCommonLine } from "@/js/chartData";
 import { getTopNum } from "@/utils";
 
 const route = useRoute();

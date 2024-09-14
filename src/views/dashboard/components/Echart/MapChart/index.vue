@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { getCommon3dMap } from "@/utils/chartData";
+import { getCommon3dMap } from "@/js/chartData";
 
 import "echarts-gl";
 import { useEchartsHook } from "@/hooks/useEcharts";

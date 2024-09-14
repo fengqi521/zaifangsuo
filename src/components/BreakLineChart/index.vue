@@ -1,7 +1,7 @@
 <script setup>
 import { watch, reactive } from "vue";
 import Chart from "@/components/Chart/index.vue";
-import { getCommonLine } from "@/utils/chartData";
+import { getCommonLine } from "@/js/chartData";
 
 const props = defineProps({
   data: {

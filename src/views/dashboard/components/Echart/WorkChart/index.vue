@@ -6,7 +6,7 @@
 import { ref, reactive, watchEffect } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
-import { getCommonLine } from "@/utils/chartData";
+import { getCommonLine } from "@/js/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C", "dBm"] }));

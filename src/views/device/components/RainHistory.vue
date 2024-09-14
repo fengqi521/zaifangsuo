@@ -7,7 +7,7 @@ import ElPagination from "@/components/ElPagination/index.vue";
 import Chart from "@/components/Chart/index.vue";
 import RainChart from "@/components/RainChart/index.vue";
 import { useRtuStoreHook } from "@/store/modules/rtu";
-import { getCommonLine } from "@/utils/chartData";
+import { getCommonLine } from "@/js/chartData";
 import systemApi from "@/api";
 
 const useRtuStore = useRtuStoreHook();

@@ -2,7 +2,7 @@
 import { onMounted, watch, reactive } from "vue";
 import "echarts-gl";
 import Chart from "@/components/Chart/index.vue";
-import { getCommon3dBar } from "@/utils/chartData";
+import { getCommon3dBar } from "@/js/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import Empty from "../../Empty.vue";
 

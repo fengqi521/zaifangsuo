@@ -2,7 +2,7 @@
 import { ref, onMounted, reactive } from "vue";
 import systemApi from "@/api";
 import Chart from "@/components/Chart/index.vue";
-import { getCommonPie } from "@/utils/chartData";
+import { getCommonPie } from "@/js/chartData";
 
 // 定义 ref 引用和初始化数据
 const percentContainer = ref(null);

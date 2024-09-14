@@ -2,7 +2,7 @@
 import { ref, watch, reactive, nextTick } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
-import { getCommonPie } from "@/utils/chartData";
+import { getCommonPie } from "@/js/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据

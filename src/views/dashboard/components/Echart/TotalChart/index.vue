@@ -2,7 +2,7 @@
 import { reactive, watch } from "vue";
 import Chart from "@/components/Chart/index.vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { getCommonBar } from "@/utils/chartData";
+import { getCommonBar } from "@/js/chartData";
 const screenStore = useScreenStoreHook();
 const option = reactive(getCommonBar({ seriesUnit: "个" }));
 
