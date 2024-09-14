@@ -42,7 +42,7 @@
                 </slot>
               </template>
               <div v-else>
-                {{ !scope.row[column.prop] ? "--" : scope.row[column.prop] }}
+                {{ scope.row[column.prop] === ''||scope.row[column.prop]==null ? "--" : scope.row[column.prop] }}
               </div>
             </div>
           </el-tooltip>
@@ -67,6 +67,7 @@
 
 <script setup>
 import { ref } from "vue";
+
 const isShowTooltip = ref(false);
 // 组件 props
 const props = defineProps({
