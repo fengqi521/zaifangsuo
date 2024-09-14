@@ -97,13 +97,16 @@ watch(
 );
 </script>
 <template>
-  <div class="chart-container" ref="mapContainer"></div>
+  <div class="map-container" ref="mapContainer"></div>
   <ul class="legend">
     <li class="legend-item legend-online">在线</li>
     <li class="legend-item legend-offline">离线</li>
   </ul>
 </template>
 <style lang="scss" scoped>
+.map-container {
+  height: calc(100% - 38px);
+}
 .legend {
   position: absolute;
   right: 16px;

@@ -1,8 +1,5 @@
 // 固件包列表
-import {
-  getRequest,
-  postRequest
-} from "@/utils/request";
+import { getRequest, postRequest } from "@/utils/request";
 
 export default {
   // 登录
@@ -42,19 +39,18 @@ export default {
 
   // 获取全部设备
   getAllDevice: function (params) {
-    return getRequest('/v1/device/option', params)
+    return getRequest("/v1/device/option", params);
   },
 
   // 设备升级
   upgradeDevice: function (params) {
-    return postRequest('/v1/upgrade/exec', params)
+    return postRequest("/v1/upgrade/exec", params);
   },
 
   // 设备升级
   upgradeStatus: function (params) {
-    return getRequest('/v1/upgrade/process', params)
+    return getRequest("/v1/upgrade/process", params);
   },
-
 
   // 获取设备详情
   getDeviceDetail: function (params) {
@@ -88,7 +84,7 @@ export default {
 
   // 命令下发
   downControl: function (params) {
-    return getRequest("/v1/device/control", params);
+    return postRequest("/v1/device/control", params);
   },
 
   // 获取响应数据
@@ -169,6 +165,6 @@ export default {
 
   // 获取天气
   getWeather: (params) => {
-    return getRequest('/v1/weather/info', params)
-  }
+    return getRequest("/v1/weather/info", params);
+  },
 };

@@ -11,42 +11,6 @@ import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
 const collectOption = reactive(getCommonLine({ seriesUnit: ["V", "°C", "dBm"] }));
 
-const colors = [
-  {
-    type: "linear",
-    x: 0,
-    y: 0,
-    x2: 1,
-    y2: 1,
-    colorStops: [
-      {
-        offset: 0,
-        color: "rgba(255,115,63,0.3)", // 0% 处的颜色
-      },
-      {
-        offset: 1,
-        color: "rgba(247,80,100,0.8)", // 100% 处的颜色
-      },
-    ],
-  },
-  {
-    type: "linear",
-    x: 0,
-    y: 0,
-    x2: 1,
-    y2: 1,
-    colorStops: [
-      {
-        offset: 0,
-        color: "rgba(255,148,84,0.3)", // 0% 处的颜色
-      },
-      {
-        offset: 1,
-        color: "rgba(252,194,4,0.8)", // 100% 处的颜色
-      },
-    ],
-  },
-];
 // 图表数据重组
 const resetOptions = (lists) => {
   collectOption.color = ["#ff0000", "rgba(255,148,84,1)", "#FFFF00"];

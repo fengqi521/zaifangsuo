@@ -4,7 +4,6 @@ import Chart from "@/components/Chart/index.vue";
 import Empty from "../../Empty.vue";
 import { getCommonPie } from "@/utils/chartData";
 import { useScreenStoreHook } from "@/store/modules/screen";
-import { isEqual } from "lodash";
 const screenStore = useScreenStoreHook();
 // 定义 ref 引用和初始化数据
 const option = reactive({ ...getCommonPie() });

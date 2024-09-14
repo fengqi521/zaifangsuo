@@ -573,6 +573,7 @@ export const getCommon3dBar = function () {
     //     color: ['#FF4500', '#FF6347'],
     // },
     // },
+
     xAxis3D: {
       type: "category",
       name: "",
@@ -646,6 +647,7 @@ export const getCommon3dBar = function () {
         autoRotateAfterStill: 5,
         distance: 225,
       },
+      bottom:0
     },
     series: [
       {
@@ -714,9 +716,8 @@ export const getCommon3dMap = function () {
     },
     geo3D: {
       map: "beijing",
-      left: "0%",
-      roam: true,
-      regionHeight: 5,
+      left: 0,
+      bottom:0,
       label: {
         // 标签的相关设置
         show: false, // (地图上的城市名称)是否显示标签 [ default: false ]
@@ -749,7 +750,7 @@ export const getCommon3dMap = function () {
         detailTexture: WLImg,
         // textureTiling: 1,
       },
-      light:{
+      light: {
         main: {
           shadow: true,
           shadowQuality: "ultra",
@@ -757,7 +758,7 @@ export const getCommon3dMap = function () {
           alpha: 40,
           // beta: 300,
         },
-      }
+      },
     },
     series: [
       {

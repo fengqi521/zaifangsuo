@@ -230,7 +230,7 @@ onUnmounted(() => {
 }
 
 .alarm-command__form {
-  padding: 24px;
+  padding: 24px 16px;
   // border-right: 1px solid var(--card-border-color);
   background: var(--background-color);
 
@@ -255,7 +255,7 @@ onUnmounted(() => {
 .func-command__feedback {
   color: var(--command-message-color);
   background: var(--background-color);
-  padding: 24px;
+  padding: 16px 16px 16px 12px;
   overflow: hidden;
 
   :deep(.card-content) {
@@ -264,6 +264,7 @@ onUnmounted(() => {
 
   .control-list {
     height: 100%;
+    padding: 0 6px;
     position: relative;
     overflow-y: auto;
     @extend %scrollbar;

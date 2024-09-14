@@ -3,6 +3,7 @@ import Card from "./components/Card.vue";
 import CollectChart from "./components/Echart/CollectChart/index.vue";
 import WorkChart from "./components/Echart/WorkChart/index.vue";
 import DetailChart from "./components/Echart/DetailChart/index.vue";
+
 </script>
 <template>
   <Card class="dashboard-right">
@@ -25,20 +26,30 @@ import DetailChart from "./components/Echart/DetailChart/index.vue";
 </template>
 <style lang="css" scoped>
 .dashboard-right {
-  display: grid;
-  grid-template-rows: 283px 311px 311px;
-  row-gap: 12px;
-  margin-left: 24px;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  top:102px;
+  transform-origin:right top;
+  /* display: grid;
+  grid-template-rows: repeat(3,1fr);
+  row-gap: 12px; */
+  background:	rgba(0,4,15,0.8);
+  z-index:2;
 
-  .card-item{
-    border:1px solid var(--screen-card-border);
-    padding:16px;
+  .card-item {
+    height:calc((100% - 24px) / 3);
+    border: 1px solid var(--screen-card-border);
+    padding: 16px;
     background: linear-gradient(
       rgba(0, 255, 254, 0) 0%,
       rgba(0, 196, 255, 0.2) 100%
     );
+    margin-bottom:12px;
+    &:last-child{
+      margin-bottom: 0
+    }
   }
-
 
   :deep(.chart-container) {
     height: calc(100% - 38px);

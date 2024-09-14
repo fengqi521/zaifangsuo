@@ -19,6 +19,7 @@ onMounted(() => {
     { immediate: true, deep: true }
   );
 });
+
 const resetOptions = (deviceObj) => {
   const { values, status, data } = deviceObj;
   option.xAxis3D.data = values;

@@ -1,6 +1,9 @@
 <template>
   <div class="map-container">
     <el-select
+      :style="`transform:scale(${screenStore.scale});left:${
+        482 * screenStore.scale
+      }px`"
       v-model="selectList"
       class="map-select"
       style="width: 310px"
@@ -25,6 +28,7 @@ import { isEqual, omit } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
 import beijinJson from "@/js/beijingGeometry.json";
+import wallImage from "@/assets/images/fence-top.png";
 const screenStore = useScreenStoreHook();
 let viewer;
 const prevMarker = ref(null);
@@ -37,7 +41,7 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
 );
 Cesium.Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlNTVmZTY5OS02NTU5LTRjOGQtYWExZS04OTdhYzM4OWM5OGEiLCJpZCI6MjMyNzM1LCJpYXQiOjE3MjI4NTY5NDJ9.j5avjfYqPsXLfJrCzdsnV-XmhawsCYaEih7o2N-K4y8";
-
+const tiandiKey = "f6a6c4672a306047016f52afe06c5f37";
 const props = defineProps({
   deviceList: {
     type: Array,
@@ -87,20 +91,40 @@ onMounted(async () => {
   viewer.scene.globe.showGroundAtmosphere = false; // 大气
   viewer.scene.skyBox.show = false;
   viewer.scene.backgroundColor = new Cesium.Color(0.0, 0.0, 0.0, 0.0);
-  watchEffect(() => {
-    const div = document.querySelector(".cesium-viewer");
-    if (!div) return;
-    div.style.transform = `scale(${1 / screenStore.scale},${
-      1 / screenStore.scale
-    })`;
-    div.style.transformOrigin = "center";
-  });
+  // setMapData()
+  // watchEffect(() => {
+  //   const div = document.querySelector(".cesium-viewer");
+  //   if (!div) return;
+  //   div.style.transform = `scale(${1 / screenStore.scale},${
+  //     1 / screenStore.scale
+  //   })`;
+  //   div.style.transformOrigin = "center";
+  // });
 
   // getMapBoundary();
 });
 
+// 加载不同数据
+const setMapData = () => {
+  viewer.imageryLayers.addImageryProvider(
+    new Cesium.WebMapTileServiceImageryProvider({
+      url:
+        "http://t0.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=" +
+        tiandiKey,
+      layer: "tdtAnnoLayer",
+      style: "default",
+      format: "image/jpeg",
+      tileMatrixSetID: "GoogleMapsCompatible",
+      show: false,
+    })
+  );
+};
+
 // 获取地图边界
-const getMapBoundary = () => {
+let globalTileset;
+const getMapBoundary = async () => {
+  globalTileset = await Cesium.createGooglePhotorealistic3DTileset();
+  viewer.scene.primitives.add(globalTileset);
   const { features } = beijinJson;
   const maskpointArray = [];
   // 这里的数据筛选要大家根据自己的json数据结构进行获取
@@ -111,55 +135,79 @@ const getMapBoundary = () => {
     maskpointArray.push(arr[i][1]);
   }
   // 将其转换成下边渲染entity所需的3D笛卡尔坐标系。
-  var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
-  console.log(
-    Cesium.Cartesian3.fromDegreesArray([0, -90, 0, 90, 180, 90, 180, -90])
+  // var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
+  const positions = Cesium.Cartesian3.fromDegreesArray(
+    maskpointArray.splice(0, 20)
   );
-  // 绘制面
+  const clippingPolygons = new Cesium.ClippingPolygonCollection({
+    polygons: [
+      new Cesium.ClippingPolygon({
+        positions: positions,
+      }),
+    ],
+  });
+  globalTileset.clippingPolygons = clippingPolygons;
+  clippingPolygons.enabled = true;
+  return;
+  maskspoint = maskspoint.map((item) => {
+    item.z = item.z + 2000;
+    return item;
+  });
   const area1 = new Cesium.Entity({
     id: 1,
     polygon: {
       hierarchy: {
-        // 定义多边形或孔外边界的线性环。
         positions: Cesium.Cartesian3.fromDegreesArray([
-          -0, 60, -0, -60, -180, -60, -180, 60
+          0, 0, 0, 90, 179, 90, 179, 0,
         ]),
-        // 一组多边形层次结构，定义多边形中的孔。
+        holes: [
+          {
+            positions: maskspoint,
+          },
+        ],
       },
-      // 填充多边形的材质
-      material: Cesium.Color.BLACK.withAlpha(0.5),
-    },
-  });
-  const area2 = new Cesium.Entity({
-    id: 2,
-    polygon: {
-      hierarchy: {
-        // 定义多边形或孔外边界的线性环。
-        positions: Cesium.Cartesian3.fromDegreesArray([
-        100, 0, 100, 89, 160, 89, 160, 0,
-        ]),
-        // 一组多边形层次结构，定义多边形中的孔。
-
-        holes: [{ positions: maskspoint }],
-      },
-      // 填充多边形的材质
-      material: Cesium.Color.BLACK.withAlpha(0.5),
+      material: Cesium.Color.BLACK.withAlpha(0.5), // 黑色半透明遮罩
     },
   });
 
-  // 边界线
-  const line = new Cesium.Entity({
-    id: 3,
-    polyline: {
+  // 绘制面
+  // const area = new Cesium.Entity({
+  //   id: 2,
+  //   name: "北京市",
+  //   polygon: {
+  //     hierarchy: new Cesium.PolygonHierarchy(maskspoint),
+  //     height: 300,
+  //     material: Cesium.Color.RED.withAlpha(0),
+  //   },
+  // });
+  // viewer.value = new Cesium.Viewer("cesiumContainer", {
+  //   baseLayer: new Cesium.ImageryLayer(new Cesium.UrlTemplateImageryProvider({
+  //     url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+  //     minimumLevel: 1,
+  //     maximumLevel: 18
+  //   })),
+  // });
+
+  // 边界墙
+  const imageMaterial = new Cesium.ImageMaterialProperty({
+    image: wallImage,
+  });
+  const wall = new Cesium.Entity({
+    wall: {
       positions: maskspoint,
-      width: 2,
-      material: Cesium.Color.fromCssColorString("#6dcdeb"), //边界线颜色
+      maximumHeights: maskspoint.map((res) => {
+        return 300;
+      }),
+      minimumHeights: maskspoint.map((res) => {
+        return -900;
+      }),
+      material: imageMaterial,
     },
   });
 
-  // viewer.entities.add(area1);
-  viewer.entities.add(area2);
-  viewer.entities.add(line);
+  viewer.entities.add(area1);
+  // viewer.entities.add(area);
+  viewer.entities.add(wall);
 };
 
 // 切换地图位置
@@ -172,11 +220,11 @@ const handleChangeDevice = (code) => {
 
   setTimeout(() => {
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(long, lat, 10000), // 目标位置的经纬度和高度
+      destination: Cesium.Cartesian3.fromDegrees(long, lat - 0.15, 15000), // 目标位置的经纬度和高度
       orientation: {
         heading: Cesium.Math.toRadians(0), // 设置方向，0度表示朝向北
-        pitch: Cesium.Math.toRadians(-90), // 设置倾角，-90度表示垂直向下
-        roll: 0.0, // 设置滚动，0度表示没有滚动
+        pitch: Cesium.Math.toRadians(-40), // 设置倾角，-90度表示垂直向下
+        roll: 0, // 设置滚动，0度表示没有滚动
       },
       duration: 3, // 动画持续时间（秒）
     });
@@ -275,7 +323,8 @@ watch(
     );
     if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
-    // viewer.entities.removeAll();
+    viewer.entities.removeAll();
+    if(!values.length) return;
     setTimeout(() => {
       values.forEach((item) => {
         addMarker({ ...item });
@@ -305,16 +354,19 @@ const handleClick = (handler) => {
 #cesiumContainer {
   height: 100%;
   overflow: hidden;
+  background: url("@/assets/images/screen-bg.png") no-repeat;
+  background-size: contain;
 }
 
 .map-container {
-  position: relative;
-  height: calc(100% - 80px);
+  width: 100%;
+  height: 100%;
 
   .map-select {
     position: absolute;
     left: 24px;
-    top: 24px;
+    top: 102px;
+    transform-origin: left;
     z-index: 2;
 
     .el-select__wrapper {

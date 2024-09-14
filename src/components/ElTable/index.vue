@@ -42,11 +42,7 @@
                 </slot>
               </template>
               <div v-else>
-                {{
-                  scope.row[column.prop] === undefined
-                    ? "--"
-                    : scope.row[column.prop]
-                }}
+                {{ !scope.row[column.prop] ? "--" : scope.row[column.prop] }}
               </div>
             </div>
           </el-tooltip>
@@ -137,7 +133,7 @@ const handleMouseOver = (event, row, prop) => {
     }
 
     .el-scrollbar__wrap {
-      max-height: 480px;
+      // max-height: 495px;
       @extend %scrollbar;
     }
 

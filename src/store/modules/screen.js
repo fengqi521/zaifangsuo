@@ -2,6 +2,7 @@ import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
 export const useScreenStoreHook = defineStore("screenStore", () => {
   const scale = ref(1);
+  const _height = ref(1080)
   const screenData = reactive({
     type: "",
     id: "",
@@ -14,13 +15,14 @@ export const useScreenStoreHook = defineStore("screenStore", () => {
     workData: [], // 工况数据
   });
 
-  const setScale = (value) => {
-    scale.value = value;
+  const setScale = ({rate,high}) => {
+    scale.value = rate;
+    _height.value = high
   };
 
   const setData = (key, data) => {
     screenData[key] = data;
   };
 
-  return { scale, screenData, setScale, setData };
+  return { scale,_height, screenData, setScale, setData };
 });

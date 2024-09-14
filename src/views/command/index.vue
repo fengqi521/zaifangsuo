@@ -5,7 +5,6 @@ import SearchForm from "@/components/SearchForm/index.vue";
 import ElCard from "@/components/ElCard/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
-
 import systemApi from "@/api";
 
 import {
@@ -27,7 +26,7 @@ const initParams = {
 const searchModel = ref({
   ...initParams,
   page: 1,
-  limit: 100,
+  limit: 10,
 });
 
 // 查询字段
@@ -37,7 +36,7 @@ const recordItems = reactive(recordFormItems);
 const columns = ref([
   { prop: "num", label: "序号", width: 80 },
   { prop: "device_name", label: "设备名称" },
-  { prop: "type_name", label: "设备类型",width:150 },
+  { prop: "type_name", label: "设备类型", width: 150 },
   { prop: "operate_type", label: "操作类型", width: 180 },
   { prop: "transfer_name", label: "传输类型", width: 100 },
   { prop: "response", label: "报文内容", type: "slot" },

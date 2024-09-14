@@ -1,44 +1,49 @@
 html.normal {
-    /* drawer */
-    --el-dialog-padding-primary: 16px;
+  /* drawer */
+  --el-dialog-padding-primary: 16px;
 
-    /* 基础 */
-    /* --el-fill-color-blank: rgb(228, 235, 249); */
-    --el-border-radius-base: 3;
-    --el-text-color-placeholder: 	rgb(78, 90, 113,.6);;
-    --el-text-color-regular:rgb(78, 90, 113);
+  /* 基础 */
+  /* --el-fill-color-blank: rgb(228, 235, 249); */
+  --el-border-radius-base: 3;
+  --el-text-color-placeholder: rgb(78, 90, 113, 0.6);
+  --el-text-color-regular: rgb(78, 90, 113);
 
-   /* 状态 */
-   /* --el-color-success:var(--online-bg-color); */
+  /* 状态 */
+  /* --el-color-success:var(--online-bg-color); */
 
-   --el-color-info:var(--normal-title-color);
-   --el-font-size-base:12px;
+  --el-color-info: var(--normal-title-color);
+  --el-font-size-base: 12px;
 }
 
 /* button */
-html.normal .el-button--primary{
-    --el-button-bg-color: var(--btn-bg-color);
-    --el-button-hover-bg-color:rgb(11, 95, 178);
+html.normal .el-button--primary {
+  --el-button-bg-color: var(--btn-bg-color);
+  --el-button-hover-bg-color: rgb(11, 95, 178);
 }
 
 /* radio */
-html.normal .el-radio-button{
-    --el-radio-button-checked-bg-color:var(--btn-bg-color);
+html.normal .el-radio-button {
+  --el-radio-button-checked-bg-color: var(--btn-bg-color);
 }
 
-html.normal .el-pagination{
-    --el-pagination-button-width:28px;
-    --el-pagination-button-height:28px;
+html.normal .el-pagination {
+  --el-pagination-button-width: 28px;
+  --el-pagination-button-height: 28px;
 }
 
-html.normal .el-scrollbar{
-    --el-scrollbar-bg-color:var(--scrollbar-thumb-color)
+html.normal .el-scrollbar {
+  --el-scrollbar-bg-color: var(--scrollbar-thumb-color);
 }
 
-html.normal .el-form{
-    --el-form-label-font-size:12px;
+html.normal .el-form {
+  --el-form-label-font-size: 12px;
 }
 
-html.normal .el-tree{
-    --el-tree-node-content-height:32px;
+html.normal .el-tree {
+  --el-tree-node-content-height: 32px;
+}
+
+html.normal .el-checkbox {
+  --el-checkbox-checked-bg-color: var(--screen-card-bg);
+  --el-checkbox-checked-input-border-color: var(--screen-card-border);
 }

@@ -2,7 +2,7 @@
   <div class="detail">
     <div v-for="(item, index) in lists" :key="index" class="detail-item">
       <p class="detail-label">{{ item.label }}</p>
-      <p class="detail-value">{{ item.value }}</p>
+      <p class="detail-value">{{ item.value||'--' }}</p>
     </div>
   </div>
 </template>

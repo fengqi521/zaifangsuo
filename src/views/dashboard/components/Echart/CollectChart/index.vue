@@ -16,7 +16,8 @@ const collectOption = reactive({});
 
 
 const resetOptions = (values) => {
-  const { type, data } = values;
+  try{
+    const { type, data } = values;
   const { timeList, ...others } = data;
   let { valueList } = others;
 
@@ -231,6 +232,10 @@ const resetOptions = (values) => {
   collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
   collectOption.xAxis[0].axisLabel.color = "#96B4BE";
   collectOption.dataZoom[0].show = false;
+  }catch(error){
+    console.log(error)
+  }
+ 
 };
 
 // 监听数据变化

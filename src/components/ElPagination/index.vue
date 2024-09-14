@@ -41,7 +41,7 @@ const handleSizeChange = (size) => {
     :page-size="props.pageSize"
     :total="props.total"
     :pager-count="props.pagerCount"
-    layout="slot,prev, pager, next,sizes, jumper"
+    layout="slot,prev, pager, next, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   >
@@ -53,7 +53,7 @@ const handleSizeChange = (size) => {
 <style lang="scss" scoped>
 .pagination {
   // padding:8px 0;
-  margin-top:14px;
+  margin-top:16px;
   justify-content: flex-end;
   // background:var(--body-bg-color);
 

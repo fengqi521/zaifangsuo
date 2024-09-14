@@ -1,30 +1,22 @@
 <template>
   <div class="dashboard-container">
     <!-- 左侧内容 -->
-    <Left />
+    <Left
+      :style="`transform:scale(${screenStore.scale});height:${screenStore._height}px`"
+    />
     <!-- 地图 -->
-    <div class="map-section">
-      <Map :deviceList="mapDevice.lists" :fetchData="fetchData" />
-      <ul class="map-controls">
-        <li
-          v-for="item in devices"
-          :key="item.value"
-          :class="[
-            'map-controls__item',
-            { 'map-controls__item--action': active !== item.value },
-          ]"
-          @click="handleActive(item.value)"
-        >
-          {{ item.label }}
-        </li>
-      </ul>
-    </div>
+    <Map :deviceList="mapDevice.lists" :fetchData="fetchData" />
 
     <!-- 右侧内容 -->
-    <Right />
+    <Right
+      :style="`transform:scale(${screenStore.scale});height:${screenStore._height}px`"
+    />
 
     <!-- 左侧时间和天气 -->
-    <div class="weather-widget">
+    <div
+      class="weather-widget"
+      :style="`transform:scale(${screenStore.scale})`"
+    >
       <div class="date-section">
         <span class="time-info">{{ hourMinutes }}</span>
         <p class="day-info">{{ day }}</p>
@@ -36,7 +28,10 @@
       </div>
     </div>
     <!-- 天气预报广告 -->
-    <div class="forecast-container">
+    <div
+      class="forecast-container"
+      :style="`transform:scale(${screenStore.scale})`"
+    >
       <div class="weather-forecast">
         <div
           v-for="(item, index) in forecast"
@@ -50,10 +45,35 @@
         </div>
       </div>
     </div>
+    <!-- 选择设备 -->
+    <div
+      class="device-select"
+      :style="`transform:scale(${screenStore.scale});right:${
+        482 * screenStore.scale
+      }px`"
+    >
+      <el-checkbox v-model="checkAll" @change="handleCheckAllChange">
+        全部
+      </el-checkbox>
+      <el-checkbox-group
+        class="device-select__group"
+        v-model="checkedDevice"
+        @change="handleCheckedDeviceChange"
+      >
+        <el-checkbox
+          v-for="item in devices"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+          {{ item.label }}
+        </el-checkbox>
+      </el-checkbox-group>
+    </div>
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted, onUnmounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
 import Map from "./Map.vue";
 import Left from "./Left.vue";
 import Right from "./Right.vue";
@@ -70,11 +90,7 @@ const devices = ref([...deviceMap]);
 const active = ref(0);
 const { hourMinutes, day, getHourMinutes, getWeek, getCurrentDay } =
   useCurrentDate();
-// 切换显示设备
-const handleActive = (value) => {
-  active.value = value;
-  getDeviceList();
-};
+
 // 天气信息
 const weatherInfo = ref({
   path: "",
@@ -132,6 +148,8 @@ const mapDevice = reactive({
   lists: [],
 });
 const getDeviceList = async () => {
+  screenStore.setData("area", []);
+  screenStore.setData("deviceList", { values: [], status: [], data: [] });
   try {
     const res = await systemApi.getDeviceList({
       limit: 10000,
@@ -140,13 +158,9 @@ const getDeviceList = async () => {
     });
 
     if (res.code) return;
-    let lists = [];
-    if (active.value) {
-      lists = res.data.list.filter((item) => item.device_type == active.value);
-    } else {
-      lists = res.data.list;
-    }
-    mapDevice.lists = lists;
+    mapDevice.lists = res.data.list.filter((item) =>
+      checkedDevice.value.includes(item.device_type)
+    );
 
     // 设备状态统计数据
     const groupArea = groupBy(res.data.list, "zone");
@@ -165,8 +179,7 @@ const getDeviceList = async () => {
       list.total = onlineCount + offlineCount;
     });
 
-    // areaList = orderBy(areaList, "total", "desc");
-    screenStore.setData("area",areaList);
+    screenStore.setData("area", areaList);
 
     //  设备运行统计数据
     const groupByType = groupBy(res.data.list, "device_type");
@@ -194,13 +207,6 @@ const getDeviceList = async () => {
       status,
       data,
     });
-
-    // 显示按钮
-    const keys = Object.keys(groupByType).map((item) => Number(item));
-    devices.value = [
-      { label: "全部", value: 0 },
-      ...devices.value.filter(({ value }) => keys.includes(value)),
-    ];
   } catch (error) {
     console.log(error);
   }
@@ -208,6 +214,7 @@ const getDeviceList = async () => {
 
 // 获取七天监测数据
 const getDeviceRealData = (id, type) => {
+  if (!id || !type) return;
   const times = getStartAndEndTime("week");
   systemApi
     .getRainData({ id, type, start_time: times[0], end_time: times[1] })
@@ -225,7 +232,10 @@ const getDeviceRealData = (id, type) => {
             list.total_rain = res.data.list[2].valueList;
             break;
           case 3:
-            list = {timeList:res.data.list[0].timeList,valueList:res.data.list}
+            list = {
+              timeList: res.data.list[0].timeList,
+              valueList: res.data.list,
+            };
             break;
           default:
             break;
@@ -237,6 +247,7 @@ const getDeviceRealData = (id, type) => {
 
 // 设备工况
 const getWordData = (id, type) => {
+  if (!id || !type) return;
   const times = getStartAndEndTime("week");
   systemApi
     .getWorkData({ id, type, start_time: times[0], end_time: times[1] })
@@ -261,6 +272,39 @@ const getDeviceCategory = () => {
     }
   });
 };
+
+// 选择设备类型操作
+const checkAll = ref(true);
+const checkedDevice = ref([...devices.value.map((item) => item.value)]);
+
+// 选择全部
+const handleCheckAllChange = (value) => {
+  checkedDevice.value = value ? devices.value.map((item) => item.value) : [];
+  getDeviceList();
+};
+
+// 单个选择
+const handleCheckedDeviceChange = (value) => {
+  const checkedCount = value.length;
+  checkAll.value = checkedCount === devices.value.length;
+  getDeviceList();
+};
+
+watch(
+  () => checkedDevice.value.length,
+  (val) => {
+    if (!val) {
+      screenStore.setData("monitorData", {
+        type: null,
+        data: { timeList: [] },
+      });
+      screenStore.setData("workData", []);
+      screenStore.setData("detail", {});
+      screenStore.setData("id", null);
+      screenStore.setData("type", null);
+    }
+  }
+);
 
 const fetchData = () => {
   const id = screenStore.screenData.id;
@@ -326,22 +370,11 @@ onUnmounted(() => {
 </script>
 <style lang="scss" scoped>
 .dashboard-container {
-  display: flex;
+  position: relative;
   height: 100%;
 
   .map-section {
     flex: 1;
-
-    @keyframes jump {
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-    }
 
     .map-controls {
       display: flex;
@@ -366,10 +399,6 @@ onUnmounted(() => {
           rgba(0, 255, 255, 0.3)
         );
         cursor: pointer;
-      }
-
-      &__item--action {
-        animation: jump 1s infinite;
       }
     }
   }
@@ -420,8 +449,9 @@ onUnmounted(() => {
     position: absolute;
     white-space: nowrap;
     right: 16px;
-    top: 40px;
+    top: 43px;
     width: 350px;
+    transform-origin: right top;
     overflow: hidden;
   }
 
@@ -440,6 +470,26 @@ onUnmounted(() => {
       span {
         margin-right: 8px;
       }
+    }
+  }
+
+  .device-select {
+    position: absolute;
+    bottom: 16px;
+    padding: 16px;
+    transform-origin: right bottom;
+    border: 1px solid var(--screen-card-border);
+    background: rgba(0, 4, 15, 0.8);
+    :deep(.el-checkbox__label) {
+      color: #fff;
+    }
+
+    :deep(.el-checkbox__input.is-checked + .el-checkbox__label) {
+      color: #fff;
+    }
+    &__group {
+      display: flex;
+      flex-direction: column;
     }
   }
 
