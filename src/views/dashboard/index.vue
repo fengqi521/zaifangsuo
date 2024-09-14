@@ -414,6 +414,7 @@ onUnmounted(() => {
     position: absolute;
     left: 16px;
     top: 32px;
+    transform-origin: left;
     font-weight: bold;
     color: #00fff6;
     text-align: right;
