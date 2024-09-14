@@ -38,7 +38,10 @@ const loading = ref(false);
 const tableColumns = [
   { prop: "num", label: "序号" },
   { prop: "upload_time", label: "监测时间" },
-  { prop: "state_name", label: "断线状态" },
+  { prop: "state_name", label: "断线1状态" },
+  { prop: "state_name1", label: "断线2状态" },
+  { prop: "state_name2", label: "断线3状态" },
+
 ];
 const deviceData = reactive({
   total: 0,
@@ -54,6 +57,9 @@ const getBreakLevelHistory = () => {
       deviceData.data = res.data.list.map((item, index) => ({
         ...item,
         state_name: item.line_state === 1 ? "断开" : "正常",
+        state_name1: item.line_state1 === 1 ? "断开" : "正常",
+        state_name2: item.line_state2 === 1 ? "断开" : "正常",
+
         num: (page - 1) * limit + index + 1,
       }));
     }

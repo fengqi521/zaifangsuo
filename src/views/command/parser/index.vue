@@ -199,9 +199,14 @@ const content = computed(() => {
 
     const {
       collect,
+      collect2,
+      collect3,
       muddy_addr,
       rain_addr,
       line_addr,
+      line_addr2,
+      line_addr3,
+
       air_humidity,
       air_temperature,
       rain_period,
@@ -228,15 +233,20 @@ const content = computed(() => {
       collect_time ? `采集时间：${collect_time}` : "",
       muddy_addr ? `泥位计地址：${hexToDecimal(muddy_addr)}` : "",
       rain_addr ? `雨量计地址：${hexToDecimal(rain_addr)}` : "",
-      line_addr ? `断线地址：${hexToDecimal(line_addr)}` : "",
+      line_addr ? `断线1地址：${hexToDecimal(line_addr)}` : "",
+      line_addr2 ? `断线2地址：${hexToDecimal(line_addr2)}` : "",
+      line_addr2 ? `断线3地址：${hexToDecimal(line_addr2)}` : "",
 
       `${
         collect > -1
           ? type == 1
             ? `泥水位：${collect}m`
-            : `断线状态：${collect === 0 ? "正常" : "断开"}`
+            : `断线1状态：${collect === 0 ? "正常" : "断开"}`
           : ""
       }`,
+      collect2>-1 ? `断线2状态：${collect2 === 0 ? "正常" : "断开"}` : "",
+      collect3>-1 ? `断线3状态：${collect3 === 0 ? "正常" : "断开"}` : "",
+
       range ? `泥水位变化值：${range}m` : "",
       rain_period > -1 ? `降雨量：${rain_period}mm` : "",
       rain_sum > -1 ? `累计降雨量：${rain_sum}mm` : "",
