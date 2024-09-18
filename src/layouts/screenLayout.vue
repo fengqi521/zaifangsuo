@@ -1,5 +1,5 @@
 <template>
-  <div class="geo-app">
+  <div class="geo-app" v-loading="loading">
     <div class="screen-head" :style="`transform:scale(${screenStore.scale})`">
       <span class="screen-title"
         >北京市突发地质灾害监测预警提升工程运维管理平台</span
@@ -14,6 +14,7 @@ import { ref, computed, onMounted } from "vue";
 import { AppMain } from "./components";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
+const loading = ref(true)
 const screenObj = {
   width: 1920,
   height: 1080,
@@ -27,6 +28,7 @@ const screenStyle = ref({
 onMounted(() => {
   getScreenSize();
   window.addEventListener("resize", getScreenSize);
+  setTimeout(()=>{loading.value = false},3000)
 });
 
 // 计算页面缩放

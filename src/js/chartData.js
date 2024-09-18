@@ -32,7 +32,7 @@ export const getCommonLine = function ({
     grid: {
       top: 36,
       left: 0,
-      right: 0,
+      right: 6,
       bottom: 25,
       containLabel: true,
     },
@@ -184,7 +184,7 @@ export const getCommonLine = function ({
       },
       {
         type: "inside",
-        height: 30,
+        height: 30
       },
     ],
   };

@@ -114,10 +114,9 @@ const resetOptions = (data) => {
   // 温度
   const temperatureMin = Math.min(...data.temperature);
   tempOption.color = ["#ff7e7e"];
-  tempOption.legend.x = "center";
   tempOption.xAxis[0].data = data.timeList;
   tempOption.yAxis[0].name = "{title|温度(°C)}";
-  tempOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 10];
+  tempOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
   tempOption.yAxis[0].min = temperatureMin;
 
   tempOption.series[0] = {
@@ -145,7 +144,6 @@ const resetOptions = (data) => {
   // 风向
   const windMin = Math.min(...data.wind);
   windOption.color = ["#00aaff"];
-  windOption.legend.x = "center";
   windOption.xAxis[0].data = data.timeList;
   windOption.yAxis[0].name = "{title|风向(°)}";
   windOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0,10];
@@ -176,7 +174,6 @@ const resetOptions = (data) => {
   // 风速
   const speedMin = Math.min(...data.speed);
   speedOption.color = ["#90ee90"];
-  speedOption.legend.x = "center";
   speedOption.xAxis[0].data = data.timeList;
   speedOption.yAxis[0].name = "{title|风速(m/s)}";
   speedOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 20];
@@ -237,7 +234,7 @@ const resetOptions = (data) => {
   atmosOption.color = ["#ff733f"];
   atmosOption.xAxis[0].data = data.timeList;
   atmosOption.yAxis[0].name = "{title|气压(hPa)}";
-  atmosOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 10];
+  atmosOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 0];
   atmosOption.yAxis[0].min = atmosMin;
   atmosOption.series[0] = {
     name: "气压",

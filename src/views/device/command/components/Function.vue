@@ -822,7 +822,7 @@ onUnmounted(() => {
 
 .func-command {
   display: grid;
-  grid-template-columns: 378px 1fr;
+  grid-template-columns: 380px 1fr;
   column-gap: 16px;
   // border: 1px solid var(--card-border-color);
   // background: var(--background-color);
@@ -830,7 +830,7 @@ onUnmounted(() => {
 }
 
 .func-command__form {
-  padding: 24px 16px;
+  padding: 24px 12px;
   // border-right: 1px solid var(--card-border-color);
   background: var(--background-color);
   overflow-y: auto;

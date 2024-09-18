@@ -221,7 +221,7 @@ onUnmounted(() => {
 
 .alarm-command {
   display: grid;
-  grid-template-columns: 378px 1fr;
+  grid-template-columns: 380px 1fr;
   column-gap: 16px;
   // padding-inline: 24px;
   // border: 1px solid var(--card-border-color);
@@ -230,7 +230,7 @@ onUnmounted(() => {
 }
 
 .alarm-command__form {
-  padding: 24px 16px;
+  padding: 24px 12px;
   // border-right: 1px solid var(--card-border-color);
   background: var(--background-color);
 
