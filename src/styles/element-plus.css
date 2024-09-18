@@ -46,4 +46,6 @@ html.normal .el-tree {
 html.normal .el-checkbox {
   --el-checkbox-checked-bg-color: var(--screen-card-bg);
   --el-checkbox-checked-input-border-color: var(--screen-card-border);
+  --el-checkbox-bg-color:var(--screen-card-bg);
+  --el-checkbox-input-border:1px solid var(--screen-card-border);
 }

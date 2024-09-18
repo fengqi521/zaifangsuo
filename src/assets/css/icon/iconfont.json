@@ -132,25 +132,11 @@
       "unicode_decimal": 59161
     },
     {
-      "icon_id": "4215784",
-      "name": "查看数据",
-      "font_class": "chakanshuju",
-      "unicode": "e61a",
-      "unicode_decimal": 58906
-    },
-    {
       "icon_id": "6635152",
       "name": "下载",
       "font_class": "xiazai-",
       "unicode": "e650",
       "unicode_decimal": 58960
-    },
-    {
-      "icon_id": "1279452",
-      "name": "数据",
-      "font_class": "shuju",
-      "unicode": "e664",
-      "unicode_decimal": 58980
     },
     {
       "icon_id": "791869",
@@ -186,13 +172,6 @@
       "font_class": "loading1",
       "unicode": "e614",
       "unicode_decimal": 58900
-    },
-    {
-      "icon_id": "12433031",
-      "name": "数据控制台",
-      "font_class": "shujukongzhitai",
-      "unicode": "e6ca",
-      "unicode_decimal": 59082
     },
     {
       "icon_id": "2674473",
@@ -237,13 +216,6 @@
       "unicode_decimal": 58880
     },
     {
-      "icon_id": "11835090",
-      "name": "基础管理",
-      "font_class": "jichuguanli",
-      "unicode": "e61c",
-      "unicode_decimal": 58908
-    },
-    {
       "icon_id": "12515453",
       "name": "上箭头",
       "font_class": "shangjiantou",
@@ -258,25 +230,11 @@
       "unicode_decimal": 58892
     },
     {
-      "icon_id": "23467080",
-      "name": "日志管理",
-      "font_class": "rizhiguanli",
-      "unicode": "e682",
-      "unicode_decimal": 59010
-    },
-    {
       "icon_id": "24325484",
       "name": "导入",
       "font_class": "daoru1",
       "unicode": "ee34",
       "unicode_decimal": 60980
-    },
-    {
-      "icon_id": "33891959",
-      "name": "设备数据",
-      "font_class": "shujukanban",
-      "unicode": "e62c",
-      "unicode_decimal": 58924
     },
     {
       "icon_id": "4942675",

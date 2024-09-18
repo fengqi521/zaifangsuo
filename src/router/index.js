@@ -85,7 +85,7 @@ export const dynamicRoutes = [
         meta: {
           title: "大屏",
           icon: "icon-dapingzhanshi",
-          size: "18px",
+          size: "19px",
           affix: true,
           newWindow: true,
           roles: [1, 2, 3, 4, 5],
@@ -107,7 +107,7 @@ export const dynamicRoutes = [
         meta: {
           title: "首页",
           icon: "icon-ai-home",
-          size: "22px",
+          size: "24px",
           affix: true,
           roles: [1, 2, 3, 4, 5],
         },
@@ -127,7 +127,7 @@ export const dynamicRoutes = [
         meta: {
           title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
-          size: "18px",
+          size: "19px",
           affix: true,
           roles: [1, 4, 5],
         },
@@ -166,7 +166,7 @@ export const dynamicRoutes = [
         meta: {
           title: "报文记录",
           icon: "icon-xiafajilu",
-          size: "18px",
+          size: "19px",
           roles: [1, 4, 5],
         },
       },
@@ -213,7 +213,7 @@ export const dynamicRoutes = [
         meta: {
           title: "综合分析",
           icon: "icon-tongjifenxi2",
-          size: "20px",
+          size: "21px",
           roles: [1, 4, 5],
         },
       },
@@ -232,7 +232,7 @@ export const dynamicRoutes = [
         meta: {
           title: "播放内容管理",
           icon: "icon-guzhangyuyinguanli",
-          size: "18px",
+          size: "20px",
           roles: [1, 4, 5],
         },
       },
@@ -251,7 +251,7 @@ export const dynamicRoutes = [
         meta: {
           title: "固件管理",
           icon: "icon-gujianguanli",
-          size: "20px",
+          size: "21px",
           roles: [1, 4, 5],
         },
       },

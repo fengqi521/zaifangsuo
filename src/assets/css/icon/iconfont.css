@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4590956 */
-  src: url('iconfont.woff2?t=1725864253222') format('woff2'),
-       url('iconfont.woff?t=1725864253222') format('woff'),
-       url('iconfont.ttf?t=1725864253222') format('truetype');
+  src: url('iconfont.woff2?t=1726624864137') format('woff2'),
+       url('iconfont.woff?t=1726624864137') format('woff'),
+       url('iconfont.ttf?t=1726624864137') format('truetype');
 }
 
 .iconfont {
@@ -85,16 +85,8 @@
   content: "\e719";
 }
 
-.icon-chakanshuju:before {
-  content: "\e61a";
-}
-
 .icon-xiazai-:before {
   content: "\e650";
-}
-
-.icon-shuju:before {
-  content: "\e664";
 }
 
 .icon-ai-password:before {
@@ -115,10 +107,6 @@
 
 .icon-loading1:before {
   content: "\e614";
-}
-
-.icon-shujukongzhitai:before {
-  content: "\e6ca";
 }
 
 .icon-guanbi:before {
@@ -145,10 +133,6 @@
   content: "\e600";
 }
 
-.icon-jichuguanli:before {
-  content: "\e61c";
-}
-
 .icon-shangjiantou:before {
   content: "\e60a";
 }
@@ -157,16 +141,8 @@
   content: "\e60c";
 }
 
-.icon-rizhiguanli:before {
-  content: "\e682";
-}
-
 .icon-daoru1:before {
   content: "\ee34";
-}
-
-.icon-shujukanban:before {
-  content: "\e62c";
 }
 
 .icon-tuichu:before {

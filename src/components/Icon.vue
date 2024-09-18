@@ -19,4 +19,11 @@
     },
   });
   </script>
+  <style lang="scss" scoped>
+.iconfont{
+  width:24px;
+  display: flex;
+  justify-content: center;
+}
+</style>
   
