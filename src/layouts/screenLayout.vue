@@ -1,5 +1,5 @@
 <template>
-  <div class="geo-app" v-loading="loading" element-loading-background="#F2F6FC">
+  <div class="geo-app" v-loading="loading">
     <div class="screen-head" :style="`transform:scale(${screenStore.scale})`">
       <span class="screen-title"
         >北京市突发地质灾害监测预警提升工程运维管理平台</span
