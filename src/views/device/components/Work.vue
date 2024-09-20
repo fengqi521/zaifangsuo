@@ -35,7 +35,7 @@ const workColumns = [
   { prop: "upload_time", label: "监测时间" },
   { prop: "voltage", label: "电压(V)" },
   { prop: "temperature", label: "温度(°C)" },
-  { prop: "signal_strength", label: "信号强度(dBm)" },
+  // { prop: "signal_strength", label: "信号强度(dBm)" },
 ];
 // #7B3F00
 const colors = ["#7B3F00", "#ff0000"];
@@ -70,7 +70,8 @@ const resetOptions = (data) => {
   collectOption.legend = {
     ...collectOption.legend,
     x: "center",
-    data: ["电压", "温度", "信号强度"],
+    // data: ["电压", "温度", "信号强度"],
+    data: ["电压", "温度"],
     textStyle: {
       rich: {
         a: {
@@ -106,14 +107,14 @@ const resetOptions = (data) => {
     splitLine:{show:false},
   };
 
-  collectOption.yAxis[2] = {
-    ...collectOption.yAxis[1],
-    name: "{title|信号强度(dBm)}",
-    splitLine:{show:false},
-    offset: 100,
-    min: strengthMin,
-    max: strengthMax
-  };
+  // collectOption.yAxis[2] = {
+  //   ...collectOption.yAxis[1],
+  //   name: "{title|信号强度(dBm)}",
+  //   splitLine:{show:false},
+  //   offset: 100,
+  //   min: strengthMin,
+  //   max: strengthMax
+  // };
 
   collectOption.series[0] = {
     name: "电压",
@@ -131,14 +132,14 @@ const resetOptions = (data) => {
     smooth: true,
     yAxisIndex: 1,
   };
-  collectOption.series[2] = {
-    name: "信号强度",
-    type: "line",
-    data: strength,
-    Symbol: "circle",
-    smooth: true,
-    yAxisIndex: 2,
-  };
+  // collectOption.series[2] = {
+  //   name: "信号强度",
+  //   type: "line",
+  //   data: strength,
+  //   Symbol: "circle",
+  //   smooth: true,
+  //   yAxisIndex: 2,
+  // };
 };
 
 watchEffect(() => {
