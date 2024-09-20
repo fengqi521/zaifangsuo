@@ -210,7 +210,7 @@ const handleCloseDeleteModal = () => {
       title="上传固件"
       :dialogVisible="dialogVisible"
       @handle-close="handleClose"
-      width="340"
+      width="500"
     >
       <template v-slot>
         <el-form :model="firmware" ref="fileRef" :rules="fileFormRules">

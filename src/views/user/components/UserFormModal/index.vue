@@ -171,7 +171,7 @@ const handleSubmit = async () => {
   <ElModal
     :title="props.title"
     :dialogVisible="props.dialogVisible"
-    width="480px"
+    width="500"
     @handle-close="handleClose"
   >
     <template v-slot>

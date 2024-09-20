@@ -118,7 +118,7 @@ const resetOptions = (values) => {
         splitLine: { lineStyle: { color: "#2C4756", width: 1 } },
         axisLabel: { color: "#96B4BE", fontSize: 14 },
         min: rainMin,
-        max: rainMax,
+        // max: rainMax,
       };
 
       const durationMin = Math.min(...duration);

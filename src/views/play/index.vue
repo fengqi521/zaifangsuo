@@ -223,7 +223,7 @@ const handleCloseDeleteModal = () => {
       title="新建报警播放内容"
       :dialogVisible="dialogVisible"
       @handle-close="handleClose"
-      width="340"
+      width="500"
     >
       <template v-slot>
         <el-form :model="alarmInfo" ref="alarmRef" :rules="alarmFormRules">

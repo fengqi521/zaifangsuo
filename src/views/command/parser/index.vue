@@ -226,6 +226,7 @@ const content = computed(() => {
       52: "采集时间",
       F2: "播放时间",
       F3: "播放时间",
+      "4A": "遥测站时钟",
     };
     const parts = [
       serial ? `流水号：${serial}` : "",
@@ -244,8 +245,8 @@ const content = computed(() => {
             : `断线1状态：${collect === 0 ? "正常" : "断开"}`
           : ""
       }`,
-      collect2>-1 ? `断线2状态：${collect2 === 0 ? "正常" : "断开"}` : "",
-      collect3>-1 ? `断线3状态：${collect3 === 0 ? "正常" : "断开"}` : "",
+      collect2 > -1 ? `断线2状态：${collect2 === 0 ? "正常" : "断开"}` : "",
+      collect3 > -1 ? `断线3状态：${collect3 === 0 ? "正常" : "断开"}` : "",
 
       range ? `泥水位变化值：${range}m` : "",
       rain_period > -1 ? `降雨量：${rain_period}mm` : "",

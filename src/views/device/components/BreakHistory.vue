@@ -53,6 +53,7 @@ const getBreakLevelHistory = () => {
   const { page, limit } = searchInfo.value;
   systemApi.getRainHistory(searchInfo.value).then((res) => {
     if (!res.code) {
+      console.log(res)
       deviceData.total = res.data.total_count;
       deviceData.data = res.data.list.map((item, index) => ({
         ...item,

@@ -41,7 +41,7 @@ const resetOptions = (values) => {
   rainOption.yAxis[0].name = "{title|降雨量(mm)}";
   rainOption.yAxis[0].nameTextStyle.rich.title.padding = [0, 0, 0, 30];
   rainOption.yAxis[0].min = rainMin;
-  rainOption.yAxis[0].max = rainMax;
+  // rainOption.yAxis[0].max = rainMax;
 
   rainOption.yAxis[1].name = "{title|降雨时长(min)}";
   rainOption.yAxis[1].nameTextStyle.rich.title.padding = [0, 40, 0, 0];

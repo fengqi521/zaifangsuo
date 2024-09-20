@@ -14,7 +14,7 @@
                 <slot :name="column.prop" :row="scope.row" :column="scope.column">
                 </slot>
               </template>
-              <div v-else>
+              <div v-else >
                 {{ scope.row[column.prop] === '' || scope.row[column.prop] == null ? "--" : scope.row[column.prop] }}
               </div>
             </div>

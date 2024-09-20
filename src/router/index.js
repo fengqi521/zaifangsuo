@@ -74,14 +74,15 @@ export const dynamicRoutes = [
   {
     path: "/dashboard",
     component: ScreenLayout,
-
     meta: {
       roles: [1, 2, 3, 4, 5],
     },
+    name:'Dashboard',
     children: [
       {
         path: "",
         component: Dashboard,
+        name:'dashboard',
         meta: {
           title: "大屏",
           icon: "icon-dapingzhanshi",
@@ -97,6 +98,7 @@ export const dynamicRoutes = [
     path: "/",
     component: Layout,
     redirect: "/home",
+    name:'Home',
     meta: {
       roles: [1, 2, 3, 4, 5],
     },
@@ -104,6 +106,7 @@ export const dynamicRoutes = [
       {
         path: "home",
         component: Home,
+        name:'home',
         meta: {
           title: "首页",
           icon: "icon-ai-home",
@@ -120,10 +123,13 @@ export const dynamicRoutes = [
     meta: {
       roles: [1, 4, 5],
     },
+    name:'Device',
     children: [
       {
         path: "",
         component: DeviceData,
+        name:'device',
+
         meta: {
           title: "设备管理",
           icon: "icon-a-RTUguanliweixuan",
@@ -135,6 +141,7 @@ export const dynamicRoutes = [
       {
         path: "detail/:type/:id",
         component: DeviceDetail,
+        name:'deviceDetail',
         meta: {
           hidden: true,
           activeMenu: "/device",
@@ -144,6 +151,7 @@ export const dynamicRoutes = [
       {
         path: "command/:name/:type/:id",
         component: DeviceCommand,
+        name:'deviceCommand',
         meta: {
           hidden: true,
           activeMenu: "/device",
@@ -159,10 +167,12 @@ export const dynamicRoutes = [
     meta: {
       roles: [1, 4, 5],
     },
+    name:'command',
     children: [
       {
         path: "",
         component: HistoryRecord,
+        name:'commandRecord',
         meta: {
           title: "报文记录",
           icon: "icon-xiafajilu",
@@ -173,6 +183,7 @@ export const dynamicRoutes = [
       {
         path: "parser/:id/:type",
         component: HistoryParser,
+        name:'commandParser',
         meta: {
           hidden: true,
           activeMenu: "/command",
@@ -184,6 +195,7 @@ export const dynamicRoutes = [
   {
     path: "/alarm",
     component: Layout,
+    name:'Alarm',
     meta: {
       roles: [1, 4, 5],
     },
@@ -191,6 +203,7 @@ export const dynamicRoutes = [
       {
         path: "",
         component: Alarm,
+        name:'alarm',
         meta: {
           title: "报警管理",
           icon: "icon-nav_icon_bjgl_spe",
@@ -203,6 +216,7 @@ export const dynamicRoutes = [
   {
     path: "/analysis",
     component: Layout,
+    name:'Analysis',
     meta: {
       roles: [1, 4, 5],
     },
@@ -210,6 +224,7 @@ export const dynamicRoutes = [
       {
         path: "",
         component: Analysis,
+        name:'analysis',
         meta: {
           title: "综合分析",
           icon: "icon-tongjifenxi2",
@@ -222,6 +237,7 @@ export const dynamicRoutes = [
   {
     path: "/play",
     component: Layout,
+    name:'Play',
     meta: {
       roles: [1, 4, 5],
     },
@@ -229,6 +245,7 @@ export const dynamicRoutes = [
       {
         path: "",
         component: PlayContent,
+        name:'play',
         meta: {
           title: "播放内容管理",
           icon: "icon-guzhangyuyinguanli",
@@ -241,6 +258,7 @@ export const dynamicRoutes = [
   {
     path: "/package",
     component: Layout,
+    name:'Package',
     meta: {
       roles: [1, 4, 5],
     },
@@ -248,6 +266,7 @@ export const dynamicRoutes = [
       {
         path: "",
         component: PackageList,
+        name:'package',
         meta: {
           title: "固件管理",
           icon: "icon-gujianguanli",
@@ -287,10 +306,14 @@ const router = createRouter({
 /** 重置路由 */
 export function resetRouter() {
   // 注意：所有动态路由路由必须带有 Name 属性，否则可能会不能完全重置干净
+  window.location.reload();
+  return;
   try {
     router.getRoutes().forEach((route) => {
       const { name, meta } = route;
+  
       if (name && meta.roles?.length) {
+        console.log( router.hasRoute(name),'vvvvvvvv')
         router.hasRoute(name) && router.removeRoute(name);
       }
     });
