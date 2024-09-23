@@ -641,7 +641,7 @@ export const getCommon3dBar = function () {
         },
       },
       viewControl: {
-        alpha: 70,
+        alpha: 0,
         beta: 0,
         autoRotate: true,
         autoRotateAfterStill: 5,
@@ -664,11 +664,11 @@ export const getCommon3dBar = function () {
         emphasis: {
           label: {
             fontSize: 20,
-            color: "#900",
+            color: "#FFF",
           },
-          itemStyle: {
-            color: "#900",
-          },
+          // itemStyle: {
+          //   color: "#900",
+          // },
         },
       },
     ],

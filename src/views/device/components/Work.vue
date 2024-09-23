@@ -35,7 +35,6 @@ const workColumns = [
   { prop: "upload_time", label: "监测时间" },
   { prop: "voltage", label: "电压(V)" },
   { prop: "temperature", label: "温度(°C)" },
-  // { prop: "signal_strength", label: "信号强度(dBm)" },
 ];
 // #7B3F00
 const colors = ["#7B3F00", "#ff0000"];
@@ -63,14 +62,13 @@ const getWorkChartData = () => {
 
 // 图表数据重组
 const resetOptions = (data) => {
-  const { timeList, voltage, temperature, strength } = data;
+  const { timeList, voltage, temperature } = data;
 
   collectOption.legend.show = true;
-  collectOption.grid.right = 70;
+  // collectOption.grid.right = 70;
   collectOption.legend = {
     ...collectOption.legend,
     x: "center",
-    // data: ["电压", "温度", "信号强度"],
     data: ["电压", "温度"],
     textStyle: {
       rich: {
@@ -89,9 +87,6 @@ const resetOptions = (data) => {
   const voltageMax = Math.max(...voltage);
   const temperatureMin = Math.min(...temperature);
   const temperatureMax = Math.max(...temperature);
-
-  const strengthMin = Math.min(...strength);
-  const strengthMax = Math.max(...strength);
   collectOption.yAxis[0] = {
     ...collectOption.yAxis[0],
     name: "{title|电压(V)}",
@@ -104,17 +99,8 @@ const resetOptions = (data) => {
     name: "{title|温度(°C)}",
     min: temperatureMin,
     max: temperatureMax,
-    splitLine:{show:false},
+    splitLine: { show: false },
   };
-
-  // collectOption.yAxis[2] = {
-  //   ...collectOption.yAxis[1],
-  //   name: "{title|信号强度(dBm)}",
-  //   splitLine:{show:false},
-  //   offset: 100,
-  //   min: strengthMin,
-  //   max: strengthMax
-  // };
 
   collectOption.series[0] = {
     name: "电压",
@@ -132,14 +118,6 @@ const resetOptions = (data) => {
     smooth: true,
     yAxisIndex: 1,
   };
-  // collectOption.series[2] = {
-  //   name: "信号强度",
-  //   type: "line",
-  //   data: strength,
-  //   Symbol: "circle",
-  //   smooth: true,
-  //   yAxisIndex: 2,
-  // };
 };
 
 watchEffect(() => {
@@ -225,8 +203,8 @@ watch(
 
 <style lang="scss" scoped>
 .device-work {
-  &__chart{
-    height:382px;
+  &__chart {
+    height: 382px;
     margin-bottom: 24px;
   }
 }

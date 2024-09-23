@@ -16,7 +16,7 @@ const resetOptions = (lists) => {
   collectOption.color = ["#ff0000", "rgba(255,148,84,1)", "#FFFF00"];
   collectOption.legend = {
     ...collectOption.legend,
-    data: ["电压", "温度", "信号强度"],
+    data: ["电压", "温度"],
     show: true,
     x: 80,
     textStyle: {
@@ -31,7 +31,6 @@ const resetOptions = (lists) => {
   };
   collectOption.grid.bottom = 0;
   collectOption.grid.top = 30;
-  collectOption.grid.right = 35;
   collectOption.xAxis[0].data = lists[0].timeList;
   collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
   collectOption.xAxis[0].axisLabel.color = "#96B4BE";
@@ -68,19 +67,6 @@ const resetOptions = (lists) => {
     fontSize: 14,
   };
 
-  collectOption.yAxis[2] = {
-    ...collectOption.yAxis[1],
-    name: "{title|信号强度(dBm)}",
-    nameTextStyle: {
-      rich: {
-        title: {
-          padding: [0, 0, 0, 0],
-        },
-      },
-      color: "#FFF",
-    },
-    offset: 60,
-  };
 
   collectOption.series = lists.map((item, index) => {
     collectOption.yAxis[index].min = Math.min(...item.valueList);
@@ -96,9 +82,6 @@ const resetOptions = (lists) => {
       Symbol: "circle",
       smooth: true,
       yAxisIndex: index,
-      // areaStyle: {
-      //   color: colors[index],
-      // },
     };
   });
   collectOption.dataZoom[0].show = false;
