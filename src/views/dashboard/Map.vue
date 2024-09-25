@@ -91,6 +91,8 @@ onMounted(async () => {
   viewer.scene.globe.showGroundAtmosphere = false; // 大气
   viewer.scene.skyBox.show = false;
   viewer.scene.backgroundColor = new Cesium.Color(0.0, 0.0, 0.0, 0.0);
+  // 添加全球遮罩
+  // createGlobalMask();
   // setMapData()
   // watchEffect(() => {
   //   const div = document.querySelector(".cesium-viewer");
@@ -220,7 +222,7 @@ const handleChangeDevice = (code) => {
 
   setTimeout(() => {
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(long, lat - 0.15, 15000), // 目标位置的经纬度和高度
+      destination: Cesium.Cartesian3.fromDegrees(long, lat - 0.1, 10000), // 目标位置的经纬度和高度
       orientation: {
         heading: Cesium.Math.toRadians(0), // 设置方向，0度表示朝向北
         pitch: Cesium.Math.toRadians(-40), // 设置倾角，-90度表示垂直向下
@@ -230,12 +232,12 @@ const handleChangeDevice = (code) => {
     });
   }, 1000);
 
-  const marker = viewer.entities.getById(list.device_number);
+  const marker = viewer.entities.getById(list.addr);
   updateMarker(marker, 0.6);
+
   // 请求接口数据
   screenStore.setData("id", list.id);
   screenStore.setData("type", list.device_type);
-
   props.fetchData();
 };
 
@@ -259,7 +261,7 @@ const addMarker = (item) => {
     markUrl += "d.png";
   }
   viewer.entities.add({
-    id: item.device_number,
+    id: item.addr,
     name: item.device_name,
     position: Cesium.Cartesian3.fromDegrees(
       Number(item.langitude),
@@ -298,6 +300,10 @@ const updateMarker = (marker) => {
   }
   if (marker) {
     prevMarker.value = marker;
+
+    // 查找相同经纬度的marker
+    handleSameLocationMarker(marker);
+
     marker.billboard.scale = new Cesium.CallbackProperty(() => {
       let a = Date.now() / 200;
       a = Number(((Math.sin(a) + 1) / 20 + 0.7).toFixed(2));
@@ -306,28 +312,77 @@ const updateMarker = (marker) => {
   }
 };
 
+// 相同经纬度marker处理
+const handleSameLocationMarker = (marker) => {
+  const markers = viewer.entities.values;
+  markers.forEach((item) => (item.show = true));
+  const isSameMarker = markers.filter(
+    (item) =>
+      item.data.langitude === marker.data.langitude &&
+      item.data.latitude === marker.data.latitude
+  );
+  const otherMarkers = isSameMarker.filter((item) => item.id !== marker.id);
+  isSameMarker.length > 1 &&
+    otherMarkers.forEach((item) => (item.show = false));
+};
+
+// 创建全球遮罩
+const createGlobalMask = () => {
+  const scene = viewer.scene;
+  const globe = scene.globe;
+
+  // 遮罩半透明效果
+  const color = Cesium.Color.WHITE.withAlpha(0.5);
+
+  // 创建遮罩体
+  const mask = new Cesium.CustomSensorVolume(globe.baseColor);
+  mask.radius = globe.ellipsoid.maximumRadius;
+  mask.sensorRadius = 0.99 * globe.ellipsoid.maximumRadius;
+  mask.offsetAttribute = Cesium.GeometryInstance.computeOffsetAttribute(
+    globe._surface._tileProvider.tilingScheme,
+    color
+  );
+
+  // 应用遮罩体
+  globe.update(scene.time);
+  globe._surface._globeSurfaceShaderSet.addGlobalShaderComponent(
+    Cesium.ShaderDestination.VERTEX,
+    `
+    vec4 getGlobalPosition(vec3 positionECF, vec3 normalECF) {
+        if (czm_inSensorVolume(normalize(czm_normal3D * czm_oneOverEllipsoidRadii), czm_ellipsoidRadii)) {
+            return vec4(positionECF, 1.0);
+        }
+        czm_mask = 0.0;
+        return vec4(0.0);
+    }
+  `
+  );
+  globe.addGlobalParameter(color);
+  globe._surface._globeSurfaceShaderSet.addGlobalShaderComponent(
+    Cesium.ShaderDestination.FRAGMENT,
+    `
+    vec4 getGlobalNormal(vec3 normalECF, vec3 positionECF, out float mask) {
+        mask = czm_mask;
+        return czm_globalNormal;
+    }
+  `
+  );
+  globe.addGlobalParameter(
+    new Cesium.Cartesian4(color.red, color.green, color.blue, color.alpha)
+  );
+  globe._surface._globeSurfaceShaderSet.sensorVolume = mask;
+};
+
 const prevValues = ref([]);
 // 数据
 watch(
   () => props.deviceList,
   (values) => {
     const transValues = values.map((item) =>
-      omit(item, [
-        "online_last",
-        "is_on_update",
-        "process",
-        "upgrade_id",
-        "online",
-      ])
+      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
     );
     const transPrev = prevValues.value.map((item) =>
-      omit(item, [
-        "online_last",
-        "is_on_update",
-        "process",
-        "upgrade_id",
-        "online",
-      ])
+      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
     );
     if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
@@ -337,6 +392,8 @@ watch(
       values.forEach((item) => {
         addMarker({ ...item });
       });
+      const firstList = values[0];
+      if(prevMarker.value&&firstList.addr===prevMarker.value.id) return;
       selectList.value = values[0].device_number;
       handleChangeDevice(selectList.value);
     }, 0);

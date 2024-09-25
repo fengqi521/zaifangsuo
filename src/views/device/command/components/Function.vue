@@ -394,7 +394,6 @@ let commandIntervalId = ref(null);
 const handleClickSubmit = async () => {
   try {
     const valid = await controlFormRef.value.validate();
-    console.log(valid)
     if (!valid) return;
     if (commandIntervalId) {
       clearInterval(commandIntervalId);
@@ -439,16 +438,16 @@ const handleClickSubmit = async () => {
         end_time: data.dateTimeRange[1],
       };
     }
-    console.log(params)
+    responseLoading.value = true;
     systemApi.downControl(params).then((res) => {
       if (!res.code) {
         commandData.push({ ...res.data, type: "down" });
-        responseLoading.value = true;
         setControlListScroll();
         realResponse({ id, code, deadline: res.data.deadline });
         return;
       }
       error(res.message);
+      responseLoading.value = false
     });
   } catch (error) {
     console.log(error);

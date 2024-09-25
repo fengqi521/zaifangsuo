@@ -254,7 +254,6 @@ const getWordData = (id, type) => {
     .getWorkData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {
       if (!res.code) {
-        console.log(res.data);
         const lists = res.data.list.slice(0, 2);
         const flag = lists.some((item) => item.timeList.length);
         if (!flag) {

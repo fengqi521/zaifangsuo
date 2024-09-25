@@ -85,16 +85,17 @@ const handleClickSubmit = async () => {
     const { code, count, data } = commandForm;
     const way = data.way;
     let params = { id, code, Data: { ...data, way: way > 16 ? way : count } };
-
+    responseLoading.value = true;
     systemApi.downControl(params).then((res) => {
       if (!res.code) {
         commandData.push({ ...res.data, type: "down" });
-        responseLoading.value = true;
+
         setControlListScroll();
         realResponse({ id, code, deadline: res.data.deadline });
         return;
       }
       error(res.message);
+      responseLoading.value = false
     });
   } catch (error) {
     console.log(error)
