@@ -254,13 +254,9 @@ const addMarker = (item) => {
   }
 
   if (item.online === 0) {
-    item.deviceState = "正常";
     markUrl += ".png";
   } else if (item.online === 1) {
-    item.deviceState = "报警";
     markUrl += "d.png";
-  } else {
-    item.deviceState = "暂无";
   }
   viewer.entities.add({
     id: item.device_number,
@@ -316,15 +312,27 @@ watch(
   () => props.deviceList,
   (values) => {
     const transValues = values.map((item) =>
-      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
+      omit(item, [
+        "online_last",
+        "is_on_update",
+        "process",
+        "upgrade_id",
+        "online",
+      ])
     );
     const transPrev = prevValues.value.map((item) =>
-      omit(item, ["online_last", "is_on_update", "process", "upgrade_id"])
+      omit(item, [
+        "online_last",
+        "is_on_update",
+        "process",
+        "upgrade_id",
+        "online",
+      ])
     );
     if (isEqual(transValues, transPrev)) return;
     prevValues.value = values;
     viewer.entities.removeAll();
-    if(!values.length) return;
+    if (!values.length) return;
     setTimeout(() => {
       values.forEach((item) => {
         addMarker({ ...item });

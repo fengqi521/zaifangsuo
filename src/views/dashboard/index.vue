@@ -170,6 +170,7 @@ const getDeviceList = async () => {
       offline: 0,
       total: 0,
     }));
+
     Object.entries(groupArea).forEach(([zone, devices]) => {
       const onlineCount = devices.filter((item) => item.online === 1).length;
       const offlineCount = devices.filter((item) => item.online === 0).length;
@@ -253,8 +254,8 @@ const getWordData = (id, type) => {
     .getWorkData({ id, type, start_time: times[0], end_time: times[1] })
     .then((res) => {
       if (!res.code) {
-        console.log(res.data)
-        const lists = res.data.list.slice(0,2);
+        console.log(res.data);
+        const lists = res.data.list.slice(0, 2);
         const flag = lists.some((item) => item.timeList.length);
         if (!flag) {
           screenStore.setData("workData", []);

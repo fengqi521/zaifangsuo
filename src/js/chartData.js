@@ -1,9 +1,9 @@
 import { getCssVariableValue } from "@/utils";
 import handleIconUrl from "@/assets/images/dataZoom-handle.png"; // 引入图片
-import WLImg from "@/assets/images/test.png"; // 引入图片
+import WLImg from "@/assets/images/beijing.png"; // 引入图片
 
 import downloadIconUrl from "@/assets/images/download.png";
-import viewIconUrl from "@/assets/images/view.png";
+// import viewIconUrl from "@/assets/images/view.png";
 
 // 折线图公共配置
 export const getCommonLine = function ({

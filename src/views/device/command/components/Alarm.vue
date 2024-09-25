@@ -335,7 +335,8 @@ onUnmounted(() => {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    padding: 4px 12px;
+    display: flex;
+    padding: 4px 4px 4px 12px;
     line-height: 16px;
     font-size: 14px;
     border-radius: 4px;

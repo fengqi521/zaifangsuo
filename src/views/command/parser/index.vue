@@ -206,7 +206,6 @@ const content = computed(() => {
       line_addr,
       line_addr2,
       line_addr3,
-
       air_humidity,
       air_temperature,
       rain_period,
@@ -218,7 +217,6 @@ const content = computed(() => {
       battery_voltage,
       signal_strength,
       atmos,
-
       range,
     } = data;
     const dateTimeLabel = {
@@ -237,7 +235,6 @@ const content = computed(() => {
       line_addr ? `断线1地址：${hexToDecimal(line_addr)}` : "",
       line_addr2 ? `断线2地址：${hexToDecimal(line_addr2)}` : "",
       line_addr2 ? `断线3地址：${hexToDecimal(line_addr2)}` : "",
-
       `${
         collect > -1
           ? type == 1

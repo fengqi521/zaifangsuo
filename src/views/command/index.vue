@@ -47,6 +47,7 @@ const recordData = reactive({ lists: [], total: 0 });
 
 // 获取设备列表
 const getDevice = async () => {
+  loading.value = true;
   try {
     const res = await systemApi.getAllDevice();
     if (!res.code) {
@@ -65,7 +66,6 @@ const getDevice = async () => {
 
 // 获取历史记录
 const getRecord = async () => {
-  loading.value = true;
   try {
     const res = await systemApi.getRecord(searchModel.value);
     const { page, limit } = searchModel.value;
