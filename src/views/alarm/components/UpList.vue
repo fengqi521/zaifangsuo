@@ -45,10 +45,10 @@ const loading = ref(false);
 const rtuData = reactive({ data: [], total: 0 });
 const columns = ref([
   { prop: "num", label: "序号", width: 80 },
-  { prop: "alarm_content", label: "上报报文" },
+  { prop: "response", label: "上报报文" },
   { prop: "device_name", label: "设备名称" },
+  { prop: "alarm_content", label: "播放内容" },
   { prop: "alarm_level", label: "报警等级", type: "slot" },
-  // { prop: "alarm_sound", label: "音量大小", type: "slot" },
   { prop: "create_time", label: "上报时间" },
   { prop: "alarm_time", label: "报警时间" },
 ]);

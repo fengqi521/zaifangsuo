@@ -91,6 +91,16 @@ onMounted(async () => {
   viewer.scene.globe.showGroundAtmosphere = false; // 大气
   viewer.scene.skyBox.show = false;
   viewer.scene.backgroundColor = new Cesium.Color(0.0, 0.0, 0.0, 0.0);
+
+  // 异步加载地形
+  Cesium.createWorldTerrainAsync()
+    .then(function (terrain) {
+      viewer.terrainProvider = terrain; // 设置地形提供者
+    })
+    .catch(function (error) {
+      console.error("Error loading terrain:", error);
+    });
+
   // 添加全球遮罩
   // createGlobalMask();
   // setMapData()
@@ -125,70 +135,54 @@ const setMapData = () => {
 // 获取地图边界
 let globalTileset;
 const getMapBoundary = async () => {
-  globalTileset = await Cesium.createGooglePhotorealistic3DTileset();
-  viewer.scene.primitives.add(globalTileset);
   const { features } = beijinJson;
   const maskpointArray = [];
   // 这里的数据筛选要大家根据自己的json数据结构进行获取
   const arr = features[0].geometry.coordinates[0][0];
-  // 处理莱西市的边界数据，整理成我们想要的格式
+  // 处理北京市的边界数据，整理成我们想要的格式
   for (let i = 0, l = arr.length; i < l; i++) {
     maskpointArray.push(arr[i][0]);
     maskpointArray.push(arr[i][1]);
   }
   // 将其转换成下边渲染entity所需的3D笛卡尔坐标系。
-  // var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
-  const positions = Cesium.Cartesian3.fromDegreesArray(
-    maskpointArray.splice(0, 20)
-  );
-  const clippingPolygons = new Cesium.ClippingPolygonCollection({
-    polygons: [
-      new Cesium.ClippingPolygon({
-        positions: positions,
-      }),
-    ],
-  });
-  globalTileset.clippingPolygons = clippingPolygons;
-  clippingPolygons.enabled = true;
-  return;
-  maskspoint = maskspoint.map((item) => {
-    item.z = item.z + 2000;
-    return item;
-  });
-  const area1 = new Cesium.Entity({
-    id: 1,
-    polygon: {
-      hierarchy: {
-        positions: Cesium.Cartesian3.fromDegreesArray([
-          0, 0, 0, 90, 179, 90, 179, 0,
-        ]),
-        holes: [
-          {
-            positions: maskspoint,
-          },
-        ],
-      },
-      material: Cesium.Color.BLACK.withAlpha(0.5), // 黑色半透明遮罩
+  var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
+  console.log(maskpointArray, "vvvvvvvvvvvvvvv");
+  const czml = [
+    {
+      id: "document",
+      name: "CZML Colors",
+      version: "1.0",
     },
-  });
+    {
+      id: "rgba",
+      name: "Rectangle with outline using RGBA Colors",
+      polygon: {
+        hierarchy: {
+          positions: Cesium.Cartesian3.fromDegreesArray([
+            100, 0, 100, 89, 160, 89, 160, 0,
+          ]),
+          holes: [
+            {
+              positions: maskspoint,
+            },
+          ],
+        },
 
-  // 绘制面
-  // const area = new Cesium.Entity({
-  //   id: 2,
-  //   name: "北京市",
-  //   polygon: {
-  //     hierarchy: new Cesium.PolygonHierarchy(maskspoint),
-  //     height: 300,
-  //     material: Cesium.Color.RED.withAlpha(0),
-  //   },
-  // });
-  // viewer.value = new Cesium.Viewer("cesiumContainer", {
-  //   baseLayer: new Cesium.ImageryLayer(new Cesium.UrlTemplateImageryProvider({
-  //     url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
-  //     minimumLevel: 1,
-  //     maximumLevel: 18
-  //   })),
-  // });
+        material: {
+          solidColor: {
+            color: {
+              rgba: [0, 0, 0, 150],
+            },
+          },
+        },
+        height: 0, // 禁用地面夹持，需要绘制轮廓
+        outline: false,
+      },
+    },
+  ];
+
+  const dataSourcePromise = Cesium.CzmlDataSource.load(czml);
+  viewer.dataSources.add(dataSourcePromise);
 
   // 边界墙
   const imageMaterial = new Cesium.ImageMaterialProperty({
@@ -207,8 +201,6 @@ const getMapBoundary = async () => {
     },
   });
 
-  viewer.entities.add(area1);
-  // viewer.entities.add(area);
   viewer.entities.add(wall);
 };
 
@@ -327,51 +319,7 @@ const handleSameLocationMarker = (marker) => {
 };
 
 // 创建全球遮罩
-const createGlobalMask = () => {
-  const scene = viewer.scene;
-  const globe = scene.globe;
-
-  // 遮罩半透明效果
-  const color = Cesium.Color.WHITE.withAlpha(0.5);
-
-  // 创建遮罩体
-  const mask = new Cesium.CustomSensorVolume(globe.baseColor);
-  mask.radius = globe.ellipsoid.maximumRadius;
-  mask.sensorRadius = 0.99 * globe.ellipsoid.maximumRadius;
-  mask.offsetAttribute = Cesium.GeometryInstance.computeOffsetAttribute(
-    globe._surface._tileProvider.tilingScheme,
-    color
-  );
-
-  // 应用遮罩体
-  globe.update(scene.time);
-  globe._surface._globeSurfaceShaderSet.addGlobalShaderComponent(
-    Cesium.ShaderDestination.VERTEX,
-    `
-    vec4 getGlobalPosition(vec3 positionECF, vec3 normalECF) {
-        if (czm_inSensorVolume(normalize(czm_normal3D * czm_oneOverEllipsoidRadii), czm_ellipsoidRadii)) {
-            return vec4(positionECF, 1.0);
-        }
-        czm_mask = 0.0;
-        return vec4(0.0);
-    }
-  `
-  );
-  globe.addGlobalParameter(color);
-  globe._surface._globeSurfaceShaderSet.addGlobalShaderComponent(
-    Cesium.ShaderDestination.FRAGMENT,
-    `
-    vec4 getGlobalNormal(vec3 normalECF, vec3 positionECF, out float mask) {
-        mask = czm_mask;
-        return czm_globalNormal;
-    }
-  `
-  );
-  globe.addGlobalParameter(
-    new Cesium.Cartesian4(color.red, color.green, color.blue, color.alpha)
-  );
-  globe._surface._globeSurfaceShaderSet.sensorVolume = mask;
-};
+const createGlobalMask = () => {};
 
 const prevValues = ref([]);
 // 数据
@@ -393,7 +341,8 @@ watch(
         addMarker({ ...item });
       });
       const firstList = values[0];
-      if(prevMarker.value&&firstList.addr===prevMarker.value.id) return;
+      console.log(firstList, prevMarker.value, "内容部分");
+      if (prevMarker.value && firstList.addr === prevMarker.value.id) return;
       selectList.value = values[0].device_number;
       handleChangeDevice(selectList.value);
     }, 0);

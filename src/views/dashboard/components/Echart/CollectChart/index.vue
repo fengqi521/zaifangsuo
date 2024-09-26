@@ -217,7 +217,6 @@ const resetOptions = (values) => {
     collectOption.xAxis[0].axisLine.lineStyle.color = "#2C4756";
     collectOption.xAxis[0].axisLabel.color = "#96B4BE";
     collectOption.dataZoom[0].show = false;
-    console.log(collectOption);
   } catch (error) {
     console.log(error);
   }
