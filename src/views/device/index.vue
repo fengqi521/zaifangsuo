@@ -6,6 +6,7 @@ import ElModal from "@/components/ElModal/index.vue";
 import SearchForm from "@/components/SearchForm/index.vue";
 import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
+import AddDevice from "./components/AddDevice.vue";
 import { userInfoStoreHook } from "@/store/modules/user";
 import { useMessage } from "@/plugins/message";
 import systemApi from "@/api";
@@ -20,6 +21,7 @@ const breadList = ref([{ title: "设备管理" }]);
 const formItems = reactive(deviceFormItems);
 
 const searchInfo = ref({ ...projectFormData, page: 1, limit: 10 });
+const isRead = userStore.userInfo?.role === 5;
 const loading = ref(false);
 const rtuData = reactive({ data: [], total: 0 });
 const columns = ref([
@@ -112,6 +114,12 @@ const handleChangePage = (page) => {
 const handleChangeSize = (size) => {
   searchInfo.value.limit = size;
   getRtuData();
+};
+
+// 添加设备
+const addModal = ref(false);
+const handleClickShowModal = () => {
+  addModal.value = true;
 };
 
 // 升级固件
@@ -229,6 +237,11 @@ const handleCloseModal = () => {
     />
 
     <ElCard title="设备列表">
+      <template v-slot:actions v-if="!isRead">
+        <el-button type="primary" @click="handleClickShowModal"
+          >添加设备</el-button
+        >
+      </template>
       <!-- 表格 -->
       <ElTable
         class="rtu-table"
@@ -336,6 +349,14 @@ const handleCloseModal = () => {
         @page-size-change="handleChangeSize"
       />
     </ElCard>
+    <!-- 添加设备 -->
+    <AddDevice
+      :dialogVisible="addModal"
+      title="添加设备"
+      @handle-close="(val)=>{addModal = val}"
+      @get-list="getRtuData(1)"
+    />
+    <!-- 升级固件 -->
     <ElModal
       class="update-modal"
       title="选择固件"

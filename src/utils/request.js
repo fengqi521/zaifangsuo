@@ -1,8 +1,9 @@
 import { ref } from "vue";
 import axios from "axios";
-import { userInfoStoreHook } from "@/store/modules/user";
 import { get, merge } from "lodash";
 import { removeUserCookie } from "@/utils/cache/cookie";
+import { useMessage } from "@/plugins/message";
+const { warning} = useMessage();
 
 /** 删除cookie并强制刷新页面（会重定向到登录页） */
 function logout() {
@@ -26,7 +27,7 @@ function createService() {
       //     "Content-Type": "multipart/form-data",
       //   };
       // }
-     
+
       return config;
     },
     // 发送失败

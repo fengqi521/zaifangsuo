@@ -42,6 +42,11 @@ export default {
     return getRequest("/v1/device/option", params);
   },
 
+  // 添加设备
+  addDevice: function (params) {
+    return postRequest("/v1/device/create", params);
+  },
+
   // 设备升级
   upgradeDevice: function (params) {
     return postRequest("/v1/upgrade/exec", params);
@@ -131,7 +136,7 @@ export default {
   },
 
   getPackageList: (params) => {
-    return getRequest("/v1/upgrade/packages");
+    return getRequest("/v1/upgrade/packages", params);
   },
   postPackage: (params, config) => {
     return postRequest("/v1/upgrade/upload", params, config);

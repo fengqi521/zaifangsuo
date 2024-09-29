@@ -6,7 +6,7 @@ import ElTable from "@/components/ElTable/index.vue";
 import ElPagination from "@/components/ElPagination/index.vue";
 import Bread from "@/components/Bread/index.vue";
 import Upload from "./components/Upload.vue";
-
+import SearchForm from "@/components/SearchForm/index.vue";
 import { userInfoStoreHook } from "@/store/modules/user";
 
 import { userFormData, userFormItems } from "@/constants";
@@ -14,11 +14,11 @@ import { useMessage } from "@/plugins/message";
 import { formatSize } from "@/utils";
 import systemApi from "@/api";
 
-const userStore  = userInfoStoreHook()
-const { success,error } = useMessage();
-userStore.getUserInfo()
+const userStore = userInfoStoreHook();
+const { success, error } = useMessage();
+userStore.getUserInfo();
 
-const isRead = userStore.userInfo?.role===5
+const isRead = userStore.userInfo?.role === 5;
 
 // 查询数据
 const initialData = ref(userFormData);
@@ -26,14 +26,17 @@ const formItems = ref(userFormItems);
 
 // table数据
 const loading = ref(false);
-const packageData = ref([]);
+const packageData = reactive({
+  data: [],
+  total: 0,
+});
 const columns = ref([
   { prop: "id", label: "ID", width: 40 },
   { prop: "upgrade_name", label: "固件名称" },
-  { prop: "url", label: "固件地址",width:300},
+  { prop: "url", label: "固件地址", width: 300 },
   { prop: "size", label: "固件大小" },
   { prop: "upgrade_desc", label: "固件描述" },
-  { prop: "md5", label: "MD5"},
+  { prop: "md5", label: "MD5" },
 ]);
 
 const initSearchData = {
@@ -41,17 +44,17 @@ const initSearchData = {
   limit: 10,
 };
 const searchModel = ref({ ...initSearchData });
-const total = ref(0);
 // 获取固件包列表
 const getPackageList = async () => {
   loading.value = true;
   try {
     const result = await systemApi.getPackageList(searchModel.value);
     if (!result?.code) {
-      packageData.value = result.data.list.map((item) => ({
+      packageData.data = result.data.list.map((item) => ({
         ...item,
         size: formatSize(item.upgrade_size),
       }));
+      packageData.total = result.data.total_count;
     }
   } catch (error) {
     throw new Error(error);
@@ -69,6 +72,19 @@ const handleSearch = (values) => {
 // 重置
 const handleReset = () => {
   searchModel.value = { ...initSearchData };
+  getPackageList();
+};
+
+// 切换分页
+const handleChangePage = (page) => {
+  searchModel.value.page = page;
+  getPackageList();
+};
+
+// 切换条数
+const handleChangeSize = (size) => {
+  searchModel.value.page = 1;
+  searchModel.value.limit = size;
   getPackageList();
 };
 
@@ -170,12 +186,12 @@ const handleCloseDeleteModal = () => {
 <template>
   <div class="user-container">
     <Bread :breadList="[{ title: '固件管理' }]"> </Bread>
-    <!-- <SearchForm
+    <SearchForm
       :formItems="formItems"
       :initialData="initialData"
       @submit="handleSearch"
       @reset="handleReset"
-    /> -->
+    />
     <ElCard title="固件列表">
       <template v-slot:actions v-if="!isRead">
         <el-button type="primary" @click="handleClickShowModal"
@@ -186,7 +202,7 @@ const handleCloseDeleteModal = () => {
         class="package-table"
         :loading="loading"
         :columns="columns"
-        :data="packageData"
+        :data="packageData.data"
         :tableProps="{ showSelection: false, border: true }"
       >
         <template #action="{ row }" v-if="!isRead">
@@ -200,9 +216,9 @@ const handleCloseDeleteModal = () => {
       <ElPagination
         :currentPage="searchModel.page"
         :page-size="searchModel.limit"
-        :total="total"
-        @pagination-change="(page, size) => getLists(page, size)"
-        @page-size-change="(size) => getLists(searchModel.page, size)"
+        :total="packageData.total"
+        @pagination-change="handleChangePage"
+        @page-size-change="handleChangeSize"
       />
     </ElCard>
     <ElModal

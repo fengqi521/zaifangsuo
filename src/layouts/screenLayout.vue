@@ -1,20 +1,22 @@
 <template>
-  <div class="geo-app" v-loading="loading">
+  <div class="geo-app">
     <div class="screen-head" :style="`transform:scale(${screenStore.scale})`">
       <span class="screen-title"
         >北京市突发地质灾害监测预警提升工程运维管理平台</span
       >
     </div>
+    <Loading v-if="loading"/>
     <App-main />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { AppMain } from "./components";
+import Loading from "@/components/Loading/index.vue";
 import { useScreenStoreHook } from "@/store/modules/screen";
 const screenStore = useScreenStoreHook();
-const loading = ref(true)
+const loading = ref(true);
 const screenObj = {
   width: 1920,
   height: 1080,
@@ -28,7 +30,9 @@ const screenStyle = ref({
 onMounted(() => {
   getScreenSize();
   window.addEventListener("resize", getScreenSize);
-  setTimeout(()=>{loading.value = false},3000)
+  setTimeout(() => {
+    loading.value = false;
+  }, 3000);
 });
 
 // 计算页面缩放
@@ -84,13 +88,11 @@ const getScreenSize = () => {
       font-size: 40px;
       line-height: 102px;
       font-weight: bold;
-      background: linear-gradient(to bottom, #f7fdff, #2ac0f9,);
+      background: linear-gradient(to bottom, #f7fdff, #2ac0f9);
       -webkit-background-clip: text;
       letter-spacing: 6px;
       -webkit-text-fill-color: transparent; /* 使文字填充透明 */
       // text-shadow: 1px 1px 1px black;
-
-
     }
   }
 

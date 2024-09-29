@@ -9,7 +9,6 @@ import {
   watch,
 } from "vue";
 import { useRoute } from "vue-router";
-import ElCard from "@/components/ElCard/index.vue";
 import Icon from "@/components/Icon.vue";
 
 import { isEmpty } from "lodash";

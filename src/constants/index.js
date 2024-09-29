@@ -202,12 +202,18 @@ const deviceMap = [
 
 //---------------用户管理start--------------------
 
-const userFormData = { user_name: "" };
+const userFormData = { name: "",desc:'' };
 const userFormItems = [
   {
-    label: "用户名",
-    prop: "user_name",
-    attrs: { placeholder: "请输入用户名", style: { width: "240px" } },
+    label: "固件名称",
+    prop: "name",
+    attrs: { placeholder: "请输入固件名称", style: { width: "240px" } },
+    type: "el-input",
+  },
+  {
+    label: "固件描述",
+    prop: "desc",
+    attrs: { placeholder: "请输入固件描述", style: { width: "240px" } },
     type: "el-input",
   },
 ];
