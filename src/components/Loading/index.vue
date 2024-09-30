@@ -28,7 +28,7 @@
 .loading-prev .loading-prev-box-item {
   width: calc(100% / 3);
   height: calc(100% / 3);
-  background: rgba(0, 237, 231, 0.5);
+  background: var(--btn-bg-color);
   float: left;
   animation: loading-prev-animation 1.2s ease infinite;
   border-radius: 1px;
