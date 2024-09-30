@@ -160,8 +160,8 @@ const setSelfCheck = () => {
       wind_voltage,
     } = content;
     return [
-      !isUndefined(longitude) ? `经度：${longitude}` : "",
-      !isUndefined(latitude) ? `纬度：${latitude}` : "",
+      !isUndefined(latitude) ? `经度：${latitude}` : "",
+      !isUndefined(longitude) ? `纬度：${longitude}` : "",
       !isUndefined(elevation) ? `设备高程：${elevation}mm` : "",
 
       ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",

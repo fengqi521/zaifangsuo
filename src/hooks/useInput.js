@@ -1,7 +1,6 @@
-import { number } from "echarts";
-
 function setInputValue(value, decimals, min, max) {
   if (!value) return "";
+  
   const numericValue = parseFloat(value);
   if (isNaN(numericValue)) return "";
   if (numericValue >= max) return max;
@@ -22,16 +21,22 @@ function setInputValue(value, decimals, min, max) {
   }
 
   // 处理最小值和最大值限制
-
   if (!isNaN(numericValue)) {
-    if (min !== undefined && numericValue < min) {
-      value = min.toString();
-    }
-    if (max !== undefined && numericValue > max) {
-      value = max.toString();
+    console.log(numericValue);
+    const numericStr = numericValue.toString();
+  
+    // 验证不允许无效格式
+    if (!(/^0{2,}$/.test(numericStr) || /^0\.0+$/.test(numericStr))) {
+      if (min !== undefined && numericValue < min) {
+        value = min.toString();
+      }
+      if (max !== undefined && numericValue > max) {
+        value = max.toString();
+      }
+    } else {
+      value = ""; // 输入无效，设为默认值
     }
   }
-
   return value;
 }
 
@@ -70,5 +75,5 @@ function setInputExactDivision(value) {
   }
 }
 export function useInputHook() {
-  return { setInputValue, setInputMaxLen,setInputExactDivision };
+  return { setInputValue, setInputMaxLen, setInputExactDivision };
 }

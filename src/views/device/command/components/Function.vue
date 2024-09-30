@@ -638,7 +638,7 @@ onUnmounted(() => {
           >
             <el-input
               v-model="commandForm.data.high"
-              @input="handleInput($event, 'high', 0, 0, 65)"
+              @input="handleInput($event, 'high', 3, 0, 65.535)"
               placeholder="安装高度"
             />
             <div class="func-command__unit">m</div>
@@ -651,7 +651,7 @@ onUnmounted(() => {
           >
             <el-input
               v-model="commandForm.data.origin"
-              @input="handleInput($event, 'origin', 0, 0, 65)"
+              @input="handleInput($event, 'origin', 3, 0, 65.535)"
               placeholder="初始值"
             />
             <div class="func-command__unit">m</div>
@@ -664,7 +664,7 @@ onUnmounted(() => {
           >
             <el-input
               v-model="commandForm.data.threshold"
-              @input="handleInput($event, 'threshold', 0, 1, 65)"
+              @input="handleInput($event, 'threshold', 3, 0, 65.535)"
               placeholder="加报阈值"
             />
             <div class="func-command__unit">m</div>
@@ -699,7 +699,7 @@ onUnmounted(() => {
           >
             <el-input
               v-model="commandForm.data.threshold"
-              @input="handleInput($event, 'threshold', 0, 1, 1440)"
+              @input="handleInput($event, 'threshold',1, 1, 6553.5)"
               placeholder="报警阈值"
             />
             <div class="func-command__unit">mm</div>
@@ -725,7 +725,7 @@ onUnmounted(() => {
           >
             <el-input
               :model-value="commandForm.data.sum"
-              @input="handleInput($event, 'sum', 0, 0, 6553)"
+              @input="handleInput($event, 'sum', 1, 0, 6553.5)"
               placeholder="累计雨量"
             />
             <div class="func-command__unit">mm</div>

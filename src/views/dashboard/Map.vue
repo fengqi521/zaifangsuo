@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { isEqual, omit } from "lodash";
 import * as Cesium from "cesium";
 import { useScreenStoreHook } from "@/store/modules/screen";
@@ -146,7 +146,6 @@ const getMapBoundary = async () => {
   }
   // 将其转换成下边渲染entity所需的3D笛卡尔坐标系。
   var maskspoint = Cesium.Cartesian3.fromDegreesArray(maskpointArray);
-  console.log(maskpointArray, "vvvvvvvvvvvvvvv");
   const czml = [
     {
       id: "document",
