@@ -26,7 +26,7 @@ const initParams = {
 const searchModel = ref({
   ...initParams,
   page: 1,
-  limit: 10,
+  limit: 20,
 });
 
 // 查询字段

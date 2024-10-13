@@ -75,7 +75,8 @@ getRtuData();
 // 查询数据
 const handleSearchSubmit = (data) => {
   Object.assign(rtuData, { data: [], total: 0 });
-  searchInfo.value = { ...searchInfo.value, ...data };
+  searchInfo.value = { ...searchInfo.value, ...data, page: 1 };
+  console.log(searchInfo.value)
   getRtuData();
 };
 
@@ -128,6 +129,7 @@ const packageColumns = [
   { prop: "num", label: "序号", width: 80 },
   { prop: "upgrade_name", label: "固件名称" },
   { prop: "md5", label: "MD5" },
+  { prop: "upgrade_desc", label: "描述" ,width:150},
 ];
 const packageData = ref([]);
 const gid = ref(null);
@@ -179,7 +181,7 @@ const intervalStatus = async (list) => {
       const value = (current / number) * 100;
       list.process = Number.isInteger(value)
         ? Number(value.toFixed(0))
-        : Number(value.toFixed(2));
+        : parseFloat(value.toFixed(2));
       if (current === number) {
         setTimeout(() => (list.is_on_update = false), 2000);
         clearInterval(timer);

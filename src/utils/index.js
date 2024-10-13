@@ -114,14 +114,13 @@ export const getCRCAsHex = (hexString) => {
  * @returns   十六进制值
  */
 export const strToHex = (str, width = 2) => {
-  // 解析字符串
+  // 将输入字符串转换为数组（兼容":"分隔和单个数字）
   const strArr = str.split(":").map(Number);
-  const hexArr = strArr.map((num) =>
-    num.toString(16).toUpperCase().padStart(width, "0")
-  ); // 转换为十六进制并确保至少两位
 
-  // 根据数组长度返回相应的结果
-  return hexArr.length > 1 ? hexArr.join("") : hexArr[0];
+  // 转换每个数字为十六进制，确保每个部分至少有指定宽度
+  return strArr
+    .map((num) => num.toString(16).toUpperCase().padStart(width, "0"))
+    .join("");
 };
 
 /**
@@ -130,6 +129,7 @@ export const strToHex = (str, width = 2) => {
  * @returns   十进制值
  */
 export const hexToDecimal = (hexStr) => {
+  if(!hexStr) return;
   // 确保输入是大写，避免解析时的错误
   hexStr = hexStr.toUpperCase();
 

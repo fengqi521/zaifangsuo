@@ -22,7 +22,6 @@ function setInputValue(value, decimals, min, max) {
 
   // 处理最小值和最大值限制
   if (!isNaN(numericValue)) {
-    console.log(numericValue);
     const numericStr = numericValue.toString();
   
     // 验证不允许无效格式

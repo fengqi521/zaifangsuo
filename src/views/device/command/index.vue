@@ -2,15 +2,13 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import Bread from "@/components/Bread/index.vue";
-import ElCard from "@/components/ElCard/index.vue";
-import Function from "./components/Function.vue";
-import Alarm from "./components/Alarm.vue";
+import Function from "./Function.vue";
+import Alarm from "./Alarm.vue";
 const {
-  params: { name, type },
+  params: { name },
 } = useRoute();
 // 导航
 const breadList = [{ to: "/device", title: "设备管理" }, { title: "指令下发" }];
-
 const activeTab = ref("data");
 </script>
 

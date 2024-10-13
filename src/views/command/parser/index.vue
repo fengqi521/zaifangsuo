@@ -8,7 +8,7 @@ import { isEmpty, isUndefined } from "lodash";
 import { useMessage } from "@/plugins/message";
 import { encodeMessage, hexToDecimal } from "@/utils";
 
-import { recordOptions, deviceMap, alarm } from "@/constants";
+import { recordOptions, deviceMap, alarm, channelTypes } from "@/constants";
 import systemApi from "@/api";
 
 const {
@@ -50,6 +50,7 @@ const getReportInfo = () => {
   });
 };
 
+
 // 获取数据
 const getParse = (code) => {
   loading.value = true;
@@ -64,10 +65,14 @@ const getParse = (code) => {
   });
 };
 
+
+
 onMounted(async () => {
   const result = await getReportInfo();
   await getParse(result);
 });
+
+
 const getWay = (way) => {
   if (way < 17) {
     return `单曲播放${way}次`;
@@ -78,19 +83,109 @@ const getWay = (way) => {
   return "停止循环";
 };
 
+// 解析信道参数
+const parseChannel = (channelType, value) => {
+  if (!value) return "";
+  let channelStr = `中心站1${channelType}参数：`;
+  const defaultValue = {
+    card_or_addr: "",
+    port: "",
+    retry_timer: "",
+    retry_count: "",
+  };
+
+  const type = value.slice(0, 2);
+  // 类型为禁用
+  if (type === "00") return (channelStr += "信道类型 禁用");
+
+  const list = channelTypes.find((item) => item.code === type);
+  const channelValue = value.slice(2);
+  channelStr+=`信道类型 ${list.label}，`
+  // 类型为1 表示ip、端口号、重发等待时间、重发次数  00 AA D4 7A 03E8 3214
+  if (list?.type === 1 && channelValue.length === 16) {
+    const addr = [
+      hexToDecimal(channelValue.slice(0, 2)),
+      hexToDecimal(channelValue.slice(2, 4)),
+      hexToDecimal(channelValue.slice(4, 6)),
+      hexToDecimal(channelValue.slice(6, 8)),
+    ];
+    defaultValue.card_or_addr = addr.join(".");
+    defaultValue.port = hexToDecimal(channelValue.slice(8, 12));
+    defaultValue.retry_timer = hexToDecimal(channelValue.slice(12, 14));
+    defaultValue.retry_count = hexToDecimal(channelValue.slice(14));
+  }
+
+  // 类型为2 表示北斗卡号、重发等待时间、重发次数 00 AA D4 7A 03
+  if (list?.type === 2 && channelValue.length === 10) {
+    defaultValue.card_or_addr = hexToDecimal(channelValue.slice(0, 6));
+    defaultValue.retry_timer = hexToDecimal(channelValue.slice(6, 8));
+    defaultValue.retry_count = hexToDecimal(channelValue.slice(8));
+  }
+  // 类型为3 表示物联网号、重发等待时间、重发次数 00 AA D4 7A 03
+  if (list?.type === 3 && channelValue.length === 18) {
+    defaultValue.card_or_addr = hexToDecimal(channelValue.slice(0, 6));
+    defaultValue.retry_timer = hexToDecimal(channelValue.slice(6, 8));
+    defaultValue.retry_count = hexToDecimal(channelValue.slice(8));
+  }
+
+  Object.keys(defaultValue).forEach((attr) => {
+    const attrValue = defaultValue[attr];
+    if (attr === "card_or_addr" && attrValue) {
+     const type =
+        list.type === 1
+          ? "IP地址"
+          : list.type === 2
+          ? "北斗卡号"
+          : "物联网卡号";
+      channelStr += `${type} ${attrValue}，`;
+    }
+    if (attr === "port" && attrValue) {
+      channelStr += `端口号 ${attrValue}，`;
+    }
+    if (attr === "retry_timer" && attrValue) {
+      channelStr += `重发等待时间 ${attrValue} 秒，`;
+    }
+
+    if (attr === "retry_count" && attrValue) {
+      channelStr += `重发次数 ${attrValue} 次`;
+    }
+  });
+  return channelStr;
+};
+// 解析北斗值守参数
+const parseBeiDou = (bd) => {
+  if (!bd) return "";
+  if (bd) {
+    let beiDouStr = "北斗值守参数: ";
+    const beiDouType = parseFloat(hexToDecimal(bd.slice(0, 2)));
+    if (!beiDouType) return beiDouStr + `工作类型为 24小时值守`;
+    const beiDouTime = hexToDecimal(bd.slice(2, 4));
+    const beiDouTime2 = hexToDecimal(bd.slice(4, 6));
+    const beiDouDuration = hexToDecimal(bd.slice(6));
+    console.log(beiDouTime);
+    return (beiDouStr += `工作类型为 定点值守,值守起始时刻 ${beiDouTime}时、${beiDouTime2}时,持续时间 ${beiDouDuration} min`);
+  }
+};
+
 // 配置数据
-const getElementConfig = () => {
-  try {
+const parseElementConfig = () => {
+
     const {
       content: {
         address,
         pass,
         check,
         collect,
-        element,
-        serial,
         timer,
         timer_start,
+        one_main,
+        one_secondary,
+        phone1,
+        rtu_number,
+        standby,
+        beidou,
+        beidou_force,
+        connect_center,
         element: { addr, high, origin, threshold, the_time, sum, cycle },
       },
     } = parseData.detail;
@@ -117,20 +212,71 @@ const getElementConfig = () => {
       if (timer_start_mm <= 9) timer_start_mm = `0${timer_start_mm}`;
     }
 
+    let checkStr = `自检上报参数：`;
     if (check) {
       var check_time = hexToDecimal(check.slice(0, 2));
       var check_num = hexToDecimal(check.slice(2));
+      checkStr += `开始时刻 ${check_time} 时，每天上报次数 ${check_num} 次`;
+    }
+
+    // 北斗强制上报
+    let beiDouForceNum
+    let beiDouForceTime
+    if(beidou_force){
+      let beiDouForceTime = parseFloat(hexToDecimal(beidou_force.slice(0, 2)));
+      if (beiDouForceTime < 10) {
+        beiDouForceTime = `0${beiDouForceTime}`;
+      }
+       beiDouForceNum = hexToDecimal(beidou_force.slice(2));
+    }
+
+    let connect;
+    if (connect_center) {
+      const connect_is =
+        connect_center && parseFloat(hexToDecimal(connect_center.slice(0, 2)));
+      connect = "定时连接中心参数：";
+      if (!connect_is) {
+        connect += "不需要";
+      } else {
+        let connect_station = parseFloat(
+          hexToDecimal(connect_center.slice(2, 4))
+        );
+        const connect_time = hexToDecimal(connect_center.slice(4));
+        connect += `需要，连接中心站${connect_station},连接时间间隔 ${connect_time} min`;
+      }
     }
 
     return [
       address ? `遥测站地址：${address}` : "",
+      rtu_number ? `遥测站编号：${hexToDecimal(rtu_number)}` : "",
       pass ? `密码：${pass}` : "",
       collect ? `采集周期：${hexToDecimal(collect)}min` : "",
       timer ? `定时报周期：${hexToDecimal(timer)}min` : "",
       timer_start ? `定时报开始时间：${timer_start_hh}:${timer_start_mm}` : "",
-      timer_start ? `自检上报开始时刻：${check_time}时` : "",
-      timer_start ? `自检上报每天上报次数：${check_num}` : "",
+      checkStr ? checkStr : "",
+      // 主信道
+      parseChannel("主信道", one_main),
+      parseChannel("备用信道", one_secondary),
+      // 北斗值守参数
+      parseBeiDou(beidou),
 
+      // 北斗强制上报
+      beiDouForceTime
+        ? `北斗强制上报：每天上报时间 ${beiDouForceTime} 时，每天上报 ${beiDouForceNum} 次`
+        : "",
+
+      // 待机时长
+      standby ? `待机时长：${hexToDecimal(standby)}min` : "",
+
+      // 告警号码
+      phone1
+        ? `告警短信号码1：${
+            phone1 && phone1.length > 11 && phone1.slice(0, 11)
+          }`
+        : "",
+
+      // 定时连接参数
+      connect ? connect : "",
       addr ? `${addrName}地址：${hexToDecimal(addr)}` : "",
       high ? `安装高度：${hexToDecimal(high)}m` : "",
       origin ? `初始值：${hexToDecimal(origin)}m` : "",
@@ -140,9 +286,7 @@ const getElementConfig = () => {
       the_time ? `报警阈值时长：${hexToDecimal(the_time)}min` : "",
       sum ? `累计雨量：${hexToDecimal(sum)}mm` : "",
     ];
-  } catch (error) {
-    return [];
-  }
+  
 };
 
 // 自检数据显示
@@ -160,10 +304,9 @@ const setSelfCheck = () => {
       wind_voltage,
     } = content;
     return [
-      !isUndefined(latitude) ? `经度：${latitude}` : "",
-      !isUndefined(longitude) ? `纬度：${longitude}` : "",
+      !isUndefined(longitude) ? `经度：${longitude}` : "",
+      !isUndefined(latitude) ? `纬度：${latitude}` : "",
       !isUndefined(elevation) ? `设备高程：${elevation}mm` : "",
-
       ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
       battery_voltage ? `设备电压：${battery_voltage}V` : "",
       signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
@@ -180,11 +323,10 @@ const content = computed(() => {
   const { content, operate } = parseData.detail;
   if (Array.isArray(content)) return `查询内容：${content.join("，")}`;
   if (!content) return;
-  try {
+   console.log(content)
     const {
       collect_time,
       data = {},
-      sensor_name,
       serial,
       alarm_content,
       alarm_time,
@@ -195,6 +337,7 @@ const content = computed(() => {
       start_time,
       end_time,
       datetime,
+      version,
     } = content;
 
     const {
@@ -219,6 +362,7 @@ const content = computed(() => {
       atmos,
       range,
     } = data;
+
     const dateTimeLabel = {
       51: "时钟信息",
       52: "采集时间",
@@ -226,15 +370,20 @@ const content = computed(() => {
       F3: "播放时间",
       "4A": "遥测站时钟",
     };
+   
     const parts = [
       serial ? `流水号：${serial}` : "",
-      // sensor_name ? `设备类型：${sensor_name}` : "",
+      version ? `软件版本：${version}` : "",
       collect_time ? `采集时间：${collect_time}` : "",
       muddy_addr ? `泥位计地址：${hexToDecimal(muddy_addr)}` : "",
       rain_addr ? `雨量计地址：${hexToDecimal(rain_addr)}` : "",
       line_addr ? `断线1地址：${hexToDecimal(line_addr)}` : "",
       line_addr2 ? `断线2地址：${hexToDecimal(line_addr2)}` : "",
       line_addr2 ? `断线3地址：${hexToDecimal(line_addr2)}` : "",
+
+      // 信道等公共配置信息解析
+      ...parseElementConfig(),
+
       `${
         collect > -1
           ? type == 1
@@ -254,11 +403,9 @@ const content = computed(() => {
       wind_direction ? `风向：${wind_direction}°` : "",
       wind_speed ? `风速：${wind_speed}m/s` : "",
       atmos ? `气压：${atmos}hPa` : "",
-
       ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
       battery_voltage ? `设备电压：${battery_voltage}V` : "",
       signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
-
       alarm_time ? `设备报警时间：${alarm_time}` : "",
       alarm_content ? `报警内容：${alarm_content}` : "",
       alarm_level > -1 ? `报警等级：${alarm["level"][alarm_level]}` : "",
@@ -271,15 +418,12 @@ const content = computed(() => {
       content?.way ? `播放方式：${getWay(content.way)}` : "",
       start_time ? `开始时间：${start_time}` : "",
       end_time ? `结束时间：${end_time}` : "",
-      ...getElementConfig(),
+
       ...setSelfCheck(),
     ];
 
     // 过滤掉空字符串并使用逗号连接
-    return parts.filter(Boolean).join("，");
-  } catch (error) {
-    return [];
-  }
+    return parts.filter(Boolean).join("；");
 });
 </script>
 

@@ -52,6 +52,7 @@ const allOperateType = [
   { label: "遥测站复位", value: 10 },
   { label: "上报自检数据", value: 11 },
   { label: "查询实时自检数据", value: 12 },
+  { label: "查询软件版本", value: 18 },
 ];
 const messageFormData = { category: -1 };
 const messageFormItems = [
@@ -142,6 +143,11 @@ const operateLists = [
     type: "E2",
     code: 12,
   },
+  {
+    label: "中心站查询软件版本",
+    type: "E2",
+    code: 18,
+  },
 ];
 
 const projectFormData = {
@@ -202,7 +208,7 @@ const deviceMap = [
 
 //---------------用户管理start--------------------
 
-const userFormData = { name: "",desc:'' };
+const userFormData = { name: "", desc: "" };
 const userFormItems = [
   {
     label: "固件名称",
@@ -348,6 +354,64 @@ const weeks = {
   7: "星期日",
 };
 
+const channelTypes = [
+  {
+    label: "禁用",
+    code: "00",
+    type: 0,
+  },
+  {
+    label: "GPRS",
+    code: "01",
+    type: 1,
+  },
+  {
+    label: "GPRS-2",
+    code: "02",
+    type: 1,
+  },
+  {
+    label: "CDMA",
+    code: "03",
+    type: 1,
+  },
+  {
+    label: "4G",
+    code: "04",
+    type: 1,
+  },
+  {
+    label: "北斗二",
+    code: "05",
+    type: 2,
+  },
+  {
+    label: "物联网短信",
+    code: "06",
+    type: 3,
+  },
+  {
+    label: "RS232",
+    code: '07',
+    type:4,
+  },
+  {
+    label: "有线网络",
+    code: "08",
+    type: 1,
+  },
+  {
+    label: "5G",
+    code: "09",
+    type: 1,
+  },
+  {
+    label: "北斗三",
+    code: "0A",
+    type: 2,
+  },
+];
+
 export {
   userRolesMap,
   DEVICE_DATA,
@@ -373,4 +437,5 @@ export {
   weather,
   alarm,
   weeks,
+  channelTypes,
 };
