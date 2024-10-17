@@ -37,7 +37,7 @@ const getBreakChartData = () => {
 const loading = ref(false);
 const tableColumns = [
   { prop: "num", label: "序号" },
-  { prop: "upload_time", label: "监测时间" },
+  { prop: "collector_time", label: "监测时间" },
   { prop: "state_name", label: "断线1状态" },
   { prop: "state_name1", label: "断线2状态" },
   { prop: "state_name2", label: "断线3状态" },

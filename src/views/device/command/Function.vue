@@ -17,6 +17,58 @@ const {
 } = useRoute();
 const { setInputValue, setInputMaxLen, setInputExactDivision } = useInputHook();
 const { error } = useMessage();
+// 信道参数
+const channelForm = (type) => {
+  const channels = {};
+  ["one", "two", "three", "four"].map((item) => {
+    ["main", "secondary"].map((cur) => {
+      if (type === "form") {
+        channels[`${item}_${cur}_type`] = "";
+        channels[`${item}_${cur}_value`] = {
+          card_or_addr: "",
+          port: "",
+          retry_timer: "",
+          retry_count: "",
+        };
+      }
+
+      if (type === "rules") {
+        channels[`${item}_${cur}_type`] = [
+          {
+            required: true,
+            message: "信道类型必选",
+            trigger: "blur",
+          },
+        ];
+        channels[`${item}_${cur}_value`] = {
+          card_or_addr: [],
+          port: [
+            {
+              required: true,
+              message: "端口号必填",
+              trigger: "blur",
+            },
+          ],
+          retry_timer: [
+            {
+              required: true,
+              message: "重发等待时间必填",
+              trigger: "blur",
+            },
+          ],
+          retry_count: [
+            {
+              required: true,
+              message: "重发次数必填",
+              trigger: "blur",
+            },
+          ],
+        };
+      }
+    });
+  });
+  return channels;
+};
 
 // 参数
 const baseForm = {
@@ -30,15 +82,9 @@ const baseForm = {
   timer_start: "",
   check_time: "",
   check_num: "",
-  one_main_type: "",
-  one_main_value: {
-    card_or_addr: "",
-    port: "",
-    retry_timer: "",
-    retry_count: "",
-  },
-  one_secondary_type: "",
-  one_secondary_value: {
+  ...channelForm("form"),
+  four_secondary_type: "",
+  four_secondary_value: {
     card_or_addr: "",
     port: "",
     retry_timer: "",
@@ -152,74 +198,7 @@ const baseRules = {
       trigger: "blur",
     },
   ],
-  one_main_type: [
-    {
-      required: true,
-      message: "信道类型必选",
-      trigger: "blur",
-    },
-  ],
-  one_main_value: {
-    card_or_addr: [],
-    port: [
-      {
-        required: true,
-        message: "端口号必填",
-        trigger: "blur",
-      },
-    ],
-    retry_timer: [
-      {
-        required: true,
-        message: "重发等待时间必填",
-        trigger: "blur",
-      },
-    ],
-    retry_count: [
-      {
-        required: true,
-        message: "重发次数必填",
-        trigger: "blur",
-      },
-    ],
-  },
-  one_secondary_type: [
-    {
-      required: true,
-      message: "信道类型必选",
-      trigger: "blur",
-    },
-  ],
-  one_secondary_value: {
-    card_or_addr: [
-      {
-        required: true,
-        message: "信道类型必选",
-        trigger: "blur",
-      },
-    ],
-    port: [
-      {
-        required: true,
-        message: "端口号必填",
-        trigger: "blur",
-      },
-    ],
-    retry_timer: [
-      {
-        required: true,
-        message: "重发等待时间必填",
-        trigger: "blur",
-      },
-    ],
-    retry_count: [
-      {
-        required: true,
-        message: "重发次数必填",
-        trigger: "blur",
-      },
-    ],
-  },
+  ...channelForm("rules"),
   beiDouType: [
     {
       required: true,
@@ -277,9 +256,9 @@ const baseRules = {
       trigger: "blur",
     },
     {
-      validator:formValidators.validateAlarmPhone,
-      trigger:'blur'
-    }
+      validator: formValidators.validateAlarmPhone,
+      trigger: "blur",
+    },
   ],
   connect_is: [
     {
@@ -443,43 +422,43 @@ const otherRules = {
 };
 
 const formRules = ref({});
-watch(
-  () => commandForm.one_main_type,
-  async (value) => {
-    if (isEmpty(formRules.value)) return;
-    formRules.value.one_main_value.card_or_addr = [
-      {
-        validator: formValidators.channelValidator(value, channelTypes),
-        trigger: "blur",
-      },
-    ];
-    setTimeout(() => {
-      controlFormRef.value?.clearValidate();
-    });
-  }
-);
+const watchChannelType = (typeKey, typeValue) => {
+  watch(
+    () => commandForm[typeKey],
+    async (value) => {
+      if (isEmpty(formRules.value)) return;
+      formRules.value[typeValue].card_or_addr = [
+        {
+          validator: formValidators.channelValidator(value, channelTypes),
+          trigger: "blur",
+        },
+      ];
+      setTimeout(() => {
+        controlFormRef.value?.clearValidate([
+          `${typeValue}.card_or_addr`,
+          `${typeValue}.port`,
+          `${typeValue}.retry_timer`,
+          `${typeValue}.retry_count`,
+        ]);
+      });
+    }
+  );
+};
 
-watch(
-  () => commandForm.one_secondary_type,
-  async (value) => {
-    if (isEmpty(formRules.value)) return;
-    formRules.value.one_secondary_value.card_or_addr = [
-      {
-        validator: formValidators.channelValidator(value, channelTypes),
-        trigger: "blur",
-      },
-    ];
-    // await nextTick()
-    // controlFormRef.value?.clearValidate(['commandForm.one_main_value.card_or_addr','commandForm.one_main_value.port','commandForm.one_main_value.retry_timer','commandForm.one_main_value.retry_count']);
-  }
-);
+// 1主信道
+watchChannelType("one_main_type", "one_main_value");
+watchChannelType("one_secondary_type", "one_secondary_value");
+
+watchChannelType("two_main_type", "two_main_value");
+watchChannelType("two_secondary_type", "two_secondary_value");
+
+watchChannelType("three_main_type", "three_main_value");
+watchChannelType("three_secondary_type", "three_secondary_value");
+
+watchChannelType("four_main_type", "four_main_value");
+watchChannelType("four_secondary_type", "four_secondary_value");
 
 // 校验
-// const formRules = computed(() => {
-//   const bases = commandForm.code == "5" ? baseRules : {};
-//   const others = otherRules[`type${type}`][commandForm.code];
-//   return { ...bases, data: { ...others } };
-// });
 watch(
   () => commandForm.code,
   (value) => {
@@ -558,11 +537,23 @@ const getDeviceConfig = () => {
               one_main_value,
               one_secondary_type,
               one_secondary_value,
+              two_main_type,
+              two_main_value,
+              two_secondary_type,
+              two_secondary_value,
+              three_main_type,
+              three_main_value,
+              three_secondary_type,
+              three_secondary_value,
+              four_main_type,
+              four_main_value,
+              four_secondary_type,
+              four_secondary_value,
             },
             element_item,
           } = info;
           // 遥测站编号
-          number = hexToDecimal(`${number}`);
+          // number = hexToDecimal(`${number}`);
           // 定时报开始时间
           if (timer_start) {
             const timer_start_hh = hexToDecimal(timer_start.slice(0, 2));
@@ -582,12 +573,45 @@ const getDeviceConfig = () => {
             check_num = hexToDecimal(self_check.slice(2));
           }
 
-          // 中心站主信道参数
+          // 中心站1主信道参数
           const channelValues = parseChannelData(one_main_type, one_main_value);
-          // 中心站主备用信道
+          // 中心站1备用信道
           const channelBackupValues = parseChannelData(
             one_secondary_type,
             one_secondary_value
+          );
+
+          // 中心站2主信道参数
+          const channelTwoValues = parseChannelData(
+            two_main_type,
+            two_main_value
+          );
+          // 中心站2备用信道
+          const channelTwoBackupValues = parseChannelData(
+            two_secondary_type,
+            two_secondary_value
+          );
+
+          // 中心站3主信道参数
+          const channelThreeValues = parseChannelData(
+            three_main_type,
+            three_main_value
+          );
+          // 中心站3备用信道
+          const channelThreeBackupValues = parseChannelData(
+            three_secondary_type,
+            three_secondary_value
+          );
+
+          // 中心站4主信道参数
+          const channelFourValues = parseChannelData(
+            four_main_type,
+            four_main_value
+          );
+          // 中心站4备用信道
+          const channelFourBackupValues = parseChannelData(
+            four_secondary_type,
+            four_secondary_value
           );
 
           // 北斗值守参数
@@ -604,7 +628,7 @@ const getDeviceConfig = () => {
                 beiDouTime = `0${beiDouTime}`;
               }
               beiDouTime = beiDouType ? beiDouTime : "";
-              let beiDouTime2 = hexToDecimal(bd.slice(4, 6));
+              beiDouTime2 = hexToDecimal(bd.slice(4, 6));
               if (parseFloat(beiDouTime2) < 10) {
                 beiDouTime2 = `0${beiDouTime2}`;
               }
@@ -626,7 +650,7 @@ const getDeviceConfig = () => {
           }
 
           // 待机时长
-          standby = hexToDecimal(`${standby}`);
+          // standby = hexToDecimal(`${standby}`);
 
           // 告警号码
           const phone1 = phone_1 && phone_1.length > 11 && phone_1.slice(0, 11);
@@ -664,8 +688,20 @@ const getDeviceConfig = () => {
             beiDouForceNum,
             one_main_type,
             one_secondary_type,
+            two_main_type,
+            two_secondary_type,
+            three_main_type,
+            three_secondary_type,
+            four_main_type,
+            four_secondary_type,
             one_main_value: channelValues,
             one_secondary_value: channelBackupValues,
+            two_main_value: channelTwoValues,
+            two_secondary_value: channelTwoBackupValues,
+            three_main_value: channelThreeValues,
+            three_secondary_value: channelThreeBackupValues,
+            four_main_value: channelFourValues,
+            four_secondary_value: channelFourBackupValues,
             connect_is,
             connect_station,
             connect_time,
@@ -675,8 +711,26 @@ const getDeviceConfig = () => {
               const speFormItem = otherForm[`type${type}`][commandForm.code];
               const itemArr = Object.keys(speFormItem);
               if (itemArr.includes(attr)) {
-                const value = element_item[attr];
-                speFormItem[attr] = hexToDecimal(value);
+                let value = hexToDecimal(element_item[attr]);
+
+                switch (type) {
+                  case "1":
+                    if (
+                      attr === "high" ||
+                      attr === "origin" ||
+                      attr === "threshold"
+                    )
+                      value = value / 1000;
+                    break;
+                  case "2":
+                    if (attr === "threshold" || attr === "sum") {
+                      value = value / 10;
+                    }
+                    break;
+                  default:
+                    break;
+                }
+                speFormItem[attr] = value;
               }
             });
           resolve(otherForm[`type${type}`][commandForm.code]);
@@ -780,11 +834,75 @@ const channelSecondaryType = computed(() => {
   );
   return list?.type;
 });
+
+const channelTwoType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.two_main_type
+  );
+  return list?.type;
+});
+const channelTwoSecondaryType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.two_secondary_type
+  );
+  return list?.type;
+});
+
+const channelThreeType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.three_main_type
+  );
+  return list?.type;
+});
+const channelThreeSecondaryType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.three_secondary_type
+  );
+  return list?.type;
+});
+
+const channelFourType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.four_main_type
+  );
+  return list?.type;
+});
+const channelFourSecondaryType = computed(() => {
+  const list = channelTypes.find(
+    (item) => item.code === commandForm.four_secondary_type
+  );
+  return list?.type;
+});
+
 const responseLoading = ref(false);
 const controlFormRef = ref(null);
 const controlListRef = ref(null);
 const resizeObserver = ref(null);
 let commandIntervalId = ref(null);
+
+// 下发信道配置
+const setChannelInfo = (typeKey, typeValue) => {
+  let secondaryList = channelTypes.find((item) => item.code === typeKey);
+  let secondary_addr = "";
+  switch (secondaryList?.type) {
+    case 1:
+      if (!typeValue.card_or_addr) break;
+      const cardArr = typeValue.card_or_addr.split(".");
+      cardArr.forEach((item) => {
+        secondary_addr += strToHex(item);
+      });
+      break;
+    case 2:
+      secondary_addr = strToHex(typeValue.card_or_addr, 6);
+      break;
+    case 3:
+      secondary_addr = strToHex(typeValue.card_or_addr, 14);
+      break;
+    default:
+      break;
+  }
+  return secondary_addr;
+};
 
 // 下发指令
 const handleClickSubmit = async () => {
@@ -815,6 +933,18 @@ const handleClickSubmit = async () => {
       one_main_value,
       one_secondary_type,
       one_secondary_value,
+      two_main_type,
+      two_main_value,
+      two_secondary_type,
+      two_secondary_value,
+      three_main_type,
+      three_main_value,
+      three_secondary_type,
+      three_secondary_value,
+      four_main_type,
+      four_main_value,
+      four_secondary_type,
+      four_secondary_value,
       connect_is,
       connect_station,
       connect_time,
@@ -840,6 +970,18 @@ const handleClickSubmit = async () => {
         one_main_value,
         one_secondary_type,
         one_secondary_value,
+        two_main_type,
+        two_main_value,
+        two_secondary_type,
+        two_secondary_value,
+        three_main_type,
+        three_main_value,
+        three_secondary_type,
+        three_secondary_value,
+        four_main_type,
+        four_main_value,
+        four_secondary_type,
+        four_secondary_value,
       };
       if (collect) {
         params.Data.collect = strToHex(collect);
@@ -864,55 +1006,52 @@ const handleClickSubmit = async () => {
         );
       }
       // 主信道
-      let list = channelTypes.find((item) => item.code === one_main_type);
-      let card_or_addr = "";
-      let byte = 0;
-      switch (list?.type) {
-        case 1:
-          if (!one_main_value.card_or_addr) break;
-          const cardArr = one_main_value.card_or_addr.split(".");
-          cardArr.forEach((item) => {
-            card_or_addr += strToHex(item);
-          });
-          break;
-        case 2:
-          byte = 6;
-          break;
-        case 3:
-          byte = 14;
-          break;
-        default:
-          break;
-      }
-      console.log(one_main_value?.card_or_addr);
-      // return;
+
       params.Data.one_main_value = {
         ...one_main_value,
-        card_or_addr: one_main_value?.card_or_addr ? card_or_addr : "",
+        card_or_addr: setChannelInfo(one_main_type, one_main_value),
       };
-      let secondaryList = channelTypes.find(
-        (item) => item.code === one_secondary_type
-      );
-      let secondaryByte = 0;
-      switch (secondaryList?.type) {
-        case 1:
-          secondaryByte = 8;
-          break;
-        case 2:
-          secondaryByte = 6;
-          break;
-        case 3:
-          secondaryByte = 14;
-          break;
-        default:
-          break;
-      }
 
+      // 备用信道
       params.Data.one_secondary_value = {
         ...one_secondary_value,
-        card_or_addr: one_secondary_value?.card_or_addr
-          ? strToHex(one_secondary_value.card_or_addr, secondaryByte)
-          : "",
+        card_or_addr: setChannelInfo(one_secondary_type, one_secondary_value),
+      };
+
+      // 主2
+      params.Data.two_main_value = {
+        ...two_main_value,
+        card_or_addr: setChannelInfo(two_main_type, two_main_value),
+      };
+      // 备2
+      params.Data.two_secondary_value = {
+        ...two_secondary_value,
+        card_or_addr: setChannelInfo(two_secondary_type, two_secondary_value),
+      };
+
+      // 主3
+      params.Data.three_main_value = {
+        ...three_main_value,
+        card_or_addr: setChannelInfo(three_main_type, three_main_value),
+      };
+      // 备3
+      params.Data.three_secondary_value = {
+        ...three_secondary_value,
+        card_or_addr: setChannelInfo(
+          three_secondary_type,
+          three_secondary_value
+        ),
+      };
+
+      // 主4
+      params.Data.four_main_value = {
+        ...four_main_value,
+        card_or_addr: setChannelInfo(four_main_type, four_main_value),
+      };
+      // 备4
+      params.Data.four_secondary_value = {
+        ...four_secondary_value,
+        card_or_addr: setChannelInfo(four_secondary_type, four_secondary_value),
       };
 
       // 定时连接中心
@@ -926,7 +1065,6 @@ const handleClickSubmit = async () => {
       // 待机时长
       params.Data.standby = Number(standby);
     }
-    console.log(params);
 
     if (!isEmpty(data) && data.dateTimeRange) {
       params.Data = {
@@ -1203,7 +1341,7 @@ onUnmounted(() => {
           <el-input
             :model-value="commandForm.one_main_value.retry_timer"
             @input="
-              handleInput($event, 'one_main_value', 'retry_timer', 0, 1, 255)
+              handleInput($event, 'one_main_value', 'retry_timer', 0, 0, 255)
             "
             placeholder="重发等待时间"
           />
@@ -1219,14 +1357,13 @@ onUnmounted(() => {
             :model-value="commandForm.one_main_value.retry_count"
             placeholder="重发次数"
             @input="
-              handleInput($event, 'one_main_value', 'retry_count', 0, 1, 255)
+              handleInput($event, 'one_main_value', 'retry_count', 0, 0, 255)
             "
           ></el-input>
           <div class="func-command__unit">次</div>
         </el-form-item>
 
-        <!-- 中心站备用信道 -->
-
+        <!-- 中心站1备用信道 -->
         <el-form-item
           label="中心站1备用信道参数"
           class="func-command__line-item"
@@ -1252,7 +1389,7 @@ onUnmounted(() => {
           prop="one_secondary_value.card_or_addr"
         >
           <Ip
-            v-model="commandForm.one_main_value.card_or_addr"
+            v-model="commandForm.one_secondary_value.card_or_addr"
             v-if="channelSecondaryType === 1"
           />
           <el-input
@@ -1303,7 +1440,7 @@ onUnmounted(() => {
                 'one_secondary_value',
                 'retry_timer',
                 0,
-                1,
+                0,
                 255
               )
             "
@@ -1326,7 +1463,611 @@ onUnmounted(() => {
                 'one_secondary_value',
                 'retry_count',
                 0,
-                1,
+                0,
+                255
+              )
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站2主信道 -->
+
+        <el-form-item
+          label="中心站2主信道参数"
+          class="func-command__line-item"
+          prop="two_main_type"
+        >
+          <el-select
+            v-model="commandForm.two_main_type"
+            placeholder="信道类型"
+            @change="handleChannelChange('two_main_value')"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelTwoType && channelTwoType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="two_main_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.two_main_value.card_or_addr"
+            v-if="channelTwoType === 1"
+          />
+          <el-input
+            v-model="commandForm.two_main_value.card_or_addr"
+            v-if="channelTwoType !== 1"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'two_main_value',
+                'card_or_addr',
+                channelTwoType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelTwoType === 2
+                ? '北斗卡号'
+                : channelTwoType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__label--hidden"
+          prop="two_main_value.port"
+          v-if="channelTwoType === 1"
+        >
+          <el-input
+            v-model="commandForm.two_main_value.port"
+            placeholder="端口号"
+            @input="handleInput($event, 'two_main_value', 'port', 0, 1, 65535)"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelTwoType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="two_main_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.two_main_value.retry_timer"
+            @input="
+              handleInput($event, 'two_main_value', 'retry_timer', 0, 0, 255)
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="two_main_value.retry_count"
+          v-if="channelTwoType"
+        >
+          <el-input
+            :model-value="commandForm.two_main_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput($event, 'two_main_value', 'retry_count', 0, 0, 255)
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站2备用信道 -->
+        <el-form-item
+          label="中心站2备用信道参数"
+          class="func-command__line-item"
+          prop="two_secondary_type"
+        >
+          <el-select
+            v-model="commandForm.two_secondary_type"
+            @change="handleChannelChange('two_secondary_value')"
+            placeholder="信道类型"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelTwoSecondaryType && channelTwoSecondaryType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="two_secondary_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.two_secondary_value.card_or_addr"
+            v-if="channelTwoSecondaryType === 1"
+          />
+          <el-input
+            v-if="channelTwoSecondaryType !== 1"
+            v-model="commandForm.two_secondary_value.card_or_addr"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'two_secondary_value',
+                'card_or_addr',
+                channelTwoSecondaryType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelTwoSecondaryType === 2
+                ? '北斗卡号'
+                : channelTwoSecondaryType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          class="func-command__label--hidden"
+          label=" "
+          prop="two_secondary_value.port"
+          v-if="channelTwoSecondaryType === 1"
+        >
+          <el-input
+            :model-value="commandForm.two_secondary_value.port"
+            placeholder="端口号"
+            @input="
+              handleInput($event, 'two_secondary_value', 'port', 0, 1, 65535)
+            "
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelTwoSecondaryType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="two_secondary_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.two_secondary_value.retry_timer"
+            @input="
+              handleInput(
+                $event,
+                'two_secondary_value',
+                'retry_timer',
+                0,
+                0,
+                255
+              )
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="two_secondary_value.retry_count"
+          v-if="channelTwoSecondaryType"
+        >
+          <el-input
+            :model-value="commandForm.two_secondary_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput(
+                $event,
+                'two_secondary_value',
+                'retry_count',
+                0,
+                0,
+                255
+              )
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站3主信道 -->
+        <el-form-item
+          label="中心站3主信道参数"
+          class="func-command__line-item"
+          prop="three_main_type"
+        >
+          <el-select
+            v-model="commandForm.three_main_type"
+            placeholder="信道类型"
+            @change="handleChannelChange('three_main_value')"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelThreeType && channelThreeType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="three_main_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.three_main_value.card_or_addr"
+            v-if="channelThreeType === 1"
+          />
+          <el-input
+            v-model="commandForm.three_main_value.card_or_addr"
+            v-if="channelThreeType !== 1"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'three_main_value',
+                'card_or_addr',
+                channelThreeType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelThreeType === 2
+                ? '北斗卡号'
+                : channelThreeType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__label--hidden"
+          prop="three_main_value.port"
+          v-if="channelThreeType === 1"
+        >
+          <el-input
+            v-model="commandForm.three_main_value.port"
+            placeholder="端口号"
+            @input="
+              handleInput($event, 'three_main_value', 'port', 0, 1, 65535)
+            "
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelThreeType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="three_main_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.three_main_value.retry_timer"
+            @input="
+              handleInput($event, 'three_main_value', 'retry_timer', 0, 0, 255)
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="three_main_value.retry_count"
+          v-if="channelThreeType"
+        >
+          <el-input
+            :model-value="commandForm.three_main_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput($event, 'three_main_value', 'retry_count', 0, 0, 255)
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站3备用信道 -->
+
+        <el-form-item
+          label="中心站3备用信道参数"
+          class="func-command__line-item"
+          prop="three_secondary_type"
+        >
+          <el-select
+            v-model="commandForm.three_secondary_type"
+            @change="handleChannelChange('three_secondary_value')"
+            placeholder="信道类型"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelThreeSecondaryType && channelThreeSecondaryType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="three_secondary_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.three_secondary_value.card_or_addr"
+            v-if="channelThreeSecondaryType === 1"
+          />
+          <el-input
+            v-if="channelThreeSecondaryType !== 1"
+            v-model="commandForm.three_secondary_value.card_or_addr"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'three_secondary_value',
+                'card_or_addr',
+                channelThreeSecondaryType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelThreeSecondaryType === 2
+                ? '北斗卡号'
+                : channelThreeSecondaryType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          class="func-command__label--hidden"
+          label=" "
+          prop="three_secondary_value.port"
+          v-if="channelThreeSecondaryType === 1"
+        >
+          <el-input
+            :model-value="commandForm.three_secondary_value.port"
+            placeholder="端口号"
+            @input="
+              handleInput($event, 'three_secondary_value', 'port', 0, 1, 65535)
+            "
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelThreeSecondaryType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="three_secondary_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.three_secondary_value.retry_timer"
+            @input="
+              handleInput(
+                $event,
+                'three_secondary_value',
+                'retry_timer',
+                0,
+                0,
+                255
+              )
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="three_secondary_value.retry_count"
+          v-if="channelThreeSecondaryType"
+        >
+          <el-input
+            :model-value="commandForm.three_secondary_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput(
+                $event,
+                'three_secondary_value',
+                'retry_count',
+                0,
+                0,
+                255
+              )
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站4主信道 -->
+        <el-form-item
+          label="中心站4主信道参数"
+          class="func-command__line-item"
+          prop="four_main_type"
+        >
+          <el-select
+            v-model="commandForm.four_main_type"
+            placeholder="信道类型"
+            @change="handleChannelChange('four_main_value')"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelFourType && channelFourType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="four_main_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.four_main_value.card_or_addr"
+            v-if="channelFourType === 1"
+          />
+          <el-input
+            v-model="commandForm.four_main_value.card_or_addr"
+            v-if="channelFourType !== 1"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'four_main_value',
+                'card_or_addr',
+                channelFourType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelFourType === 2
+                ? '北斗卡号'
+                : channelFourType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__label--hidden"
+          prop="four_main_value.port"
+          v-if="channelFourType === 1"
+        >
+          <el-input
+            v-model="commandForm.four_main_value.port"
+            placeholder="端口号"
+            @input="handleInput($event, 'four_main_value', 'port', 0, 1, 65535)"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelFourType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="four_main_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.four_main_value.retry_timer"
+            @input="
+              handleInput($event, 'four_main_value', 'retry_timer', 0, 0, 255)
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="four_main_value.retry_count"
+          v-if="channelFourType"
+        >
+          <el-input
+            :model-value="commandForm.four_main_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput($event, 'four_main_value', 'retry_count', 0, 0, 255)
+            "
+          ></el-input>
+          <div class="func-command__unit">次</div>
+        </el-form-item>
+
+        <!-- 中心站4备用信道 -->
+        <el-form-item
+          label="中心站4备用信道参数"
+          class="func-command__line-item"
+          prop="four_secondary_type"
+        >
+          <el-select
+            v-model="commandForm.four_secondary_type"
+            @change="handleChannelChange('four_secondary_value')"
+            placeholder="信道类型"
+          >
+            <el-option
+              v-for="(item, index) in channelTypes"
+              :label="item.label"
+              :value="item.code"
+              :key="index"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="channelFourSecondaryType && channelFourSecondaryType !== 4"
+          class="func-command__line-item func-command__label--hidden"
+          label=" "
+          prop="four_secondary_value.card_or_addr"
+        >
+          <Ip
+            v-model="commandForm.four_secondary_value.card_or_addr"
+            v-if="channelFourSecondaryType === 1"
+          />
+          <el-input
+            v-if="channelFourSecondaryType !== 1"
+            v-model="commandForm.four_secondary_value.card_or_addr"
+            @input="
+              handleChannelLimitInput(
+                $event,
+                'four_secondary_value',
+                'card_or_addr',
+                channelFourSecondaryType === 2 ? 8 : 13
+              )
+            "
+            :placeholder="
+              channelFourSecondaryType === 2
+                ? '北斗卡号'
+                : channelFourSecondaryType === 3
+                ? '物联网卡号'
+                : ''
+            "
+          />
+        </el-form-item>
+        <el-form-item
+          class="func-command__label--hidden"
+          label=" "
+          prop="four_secondary_value.port"
+          v-if="channelFourSecondaryType === 1"
+        >
+          <el-input
+            :model-value="commandForm.four_secondary_value.port"
+            placeholder="端口号"
+            @input="
+              handleInput($event, 'four_secondary_value', 'port', 0, 1, 65535)
+            "
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="channelFourSecondaryType"
+          class="func-command__line-item func-command__group func-command__label--hidden"
+          label=" "
+          prop="four_secondary_value.retry_timer"
+        >
+          <el-input
+            :model-value="commandForm.four_secondary_value.retry_timer"
+            @input="
+              handleInput(
+                $event,
+                'four_secondary_value',
+                'retry_timer',
+                0,
+                0,
+                255
+              )
+            "
+            placeholder="重发等待时间"
+          />
+          <div class="func-command__unit">秒</div>
+        </el-form-item>
+        <el-form-item
+          label=" "
+          class="func-command__group func-command__label--hidden"
+          prop="four_secondary_value.retry_count"
+          v-if="channelFourSecondaryType"
+        >
+          <el-input
+            :model-value="commandForm.four_secondary_value.retry_count"
+            placeholder="重发次数"
+            @input="
+              handleInput(
+                $event,
+                'four_secondary_value',
+                'retry_count',
+                0,
+                0,
                 255
               )
             "
@@ -1428,7 +2169,7 @@ onUnmounted(() => {
         >
           <el-input
             :model-value="commandForm.standby"
-            @input="handleCommonInput($event, 'standby', 0, 1, 255)"
+            @input="handleCommonInput($event, 'standby', 0, 0, 255)"
             placeholder="待机时长"
           />
           <div class="func-command__unit">min</div>
@@ -1437,7 +2178,7 @@ onUnmounted(() => {
         <el-form-item label="告警短信号码1" prop="phone1">
           <el-input
             v-model="commandForm.phone1"
-              @input="handleLimitInput($event, 'phone1', 11)"
+            @input="handleLimitInput($event, 'phone1', 11)"
             placeholder="告警短信号码1"
           ></el-input>
         </el-form-item>

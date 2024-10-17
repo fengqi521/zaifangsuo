@@ -38,6 +38,7 @@ const resetOption = (option) => {
 watch(
   () => props.option,
   (values) => {
+    console.log(values)
     resetOption(values);
   },
   { deep: true, immediate: true }

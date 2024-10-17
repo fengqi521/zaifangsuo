@@ -50,7 +50,6 @@ const getReportInfo = () => {
   });
 };
 
-
 // 获取数据
 const getParse = (code) => {
   loading.value = true;
@@ -65,13 +64,10 @@ const getParse = (code) => {
   });
 };
 
-
-
 onMounted(async () => {
   const result = await getReportInfo();
   await getParse(result);
 });
-
 
 const getWay = (way) => {
   if (way < 17) {
@@ -86,7 +82,7 @@ const getWay = (way) => {
 // 解析信道参数
 const parseChannel = (channelType, value) => {
   if (!value) return "";
-  let channelStr = `中心站1${channelType}参数：`;
+  let channelStr = `中心站${channelType}参数：`;
   const defaultValue = {
     card_or_addr: "",
     port: "",
@@ -100,8 +96,10 @@ const parseChannel = (channelType, value) => {
 
   const list = channelTypes.find((item) => item.code === type);
   const channelValue = value.slice(2);
-  channelStr+=`信道类型 ${list.label}，`
+  channelStr += `信道类型 ${list.label}，`;
   // 类型为1 表示ip、端口号、重发等待时间、重发次数  00 AA D4 7A 03E8 3214
+  console.log(list.label,list.type,channelValue.length)
+  console.log(channelValue)
   if (list?.type === 1 && channelValue.length === 16) {
     const addr = [
       hexToDecimal(channelValue.slice(0, 2)),
@@ -123,15 +121,20 @@ const parseChannel = (channelType, value) => {
   }
   // 类型为3 表示物联网号、重发等待时间、重发次数 00 AA D4 7A 03
   if (list?.type === 3 && channelValue.length === 18) {
-    defaultValue.card_or_addr = hexToDecimal(channelValue.slice(0, 6));
-    defaultValue.retry_timer = hexToDecimal(channelValue.slice(6, 8));
-    defaultValue.retry_count = hexToDecimal(channelValue.slice(8));
+    defaultValue.card_or_addr = hexToDecimal(channelValue.slice(0, 14));
+    defaultValue.retry_timer = hexToDecimal(channelValue.slice(14, 16));
+    defaultValue.retry_count = hexToDecimal(channelValue.slice(16));
+  }
+
+  if(list?.type===4&&channelValue.length===4){
+    defaultValue.retry_timer = hexToDecimal(channelValue.slice(0, 2));
+    defaultValue.retry_count = hexToDecimal(channelValue.slice(2));
   }
 
   Object.keys(defaultValue).forEach((attr) => {
     const attrValue = defaultValue[attr];
     if (attr === "card_or_addr" && attrValue) {
-     const type =
+      const type =
         list.type === 1
           ? "IP地址"
           : list.type === 2
@@ -169,7 +172,7 @@ const parseBeiDou = (bd) => {
 
 // 配置数据
 const parseElementConfig = () => {
-
+  try {
     const {
       content: {
         address,
@@ -180,25 +183,42 @@ const parseElementConfig = () => {
         timer_start,
         one_main,
         one_secondary,
+        two_main,
+        two_secondary,
+        three_main,
+        three_secondary,
+        four_main,
+        four_secondary,
         phone1,
         rtu_number,
         standby,
         beidou,
         beidou_force,
         connect_center,
-        element: { addr, high, origin, threshold, the_time, sum, cycle },
+        element: {
+          addr = "",
+          high = "",
+          origin = "",
+          threshold = "",
+          the_time = "",
+          sum = "",
+          cycle = "",
+        },
       },
     } = parseData.detail;
     let addrName = "";
     let thresholdName = "";
+    let thresholdValue = "";
     switch (type) {
       case "1":
         addrName = "泥位计";
         thresholdName = "加报阈值";
+        thresholdValue = `${hexToDecimal(threshold) / 1000}m`;
         break;
       case "2":
         addrName = "雨量计";
         thresholdName = "报警阈值";
+        thresholdValue = `${hexToDecimal(threshold) / 10}mm`;
         break;
       case "3":
         addrName = "断线";
@@ -212,22 +232,23 @@ const parseElementConfig = () => {
       if (timer_start_mm <= 9) timer_start_mm = `0${timer_start_mm}`;
     }
 
-    let checkStr = `自检上报参数：`;
+    let checkStr = "";
     if (check) {
+      checkStr += `自检上报参数：`;
       var check_time = hexToDecimal(check.slice(0, 2));
       var check_num = hexToDecimal(check.slice(2));
       checkStr += `开始时刻 ${check_time} 时，每天上报次数 ${check_num} 次`;
     }
 
     // 北斗强制上报
-    let beiDouForceNum
-    let beiDouForceTime
-    if(beidou_force){
-      let beiDouForceTime = parseFloat(hexToDecimal(beidou_force.slice(0, 2)));
+    let beiDouForceNum;
+    let beiDouForceTime;
+    if (beidou_force) {
+      beiDouForceTime = parseFloat(hexToDecimal(beidou_force.slice(0, 2)));
       if (beiDouForceTime < 10) {
         beiDouForceTime = `0${beiDouForceTime}`;
       }
-       beiDouForceNum = hexToDecimal(beidou_force.slice(2));
+      beiDouForceNum = hexToDecimal(beidou_force.slice(2));
     }
 
     let connect;
@@ -248,15 +269,24 @@ const parseElementConfig = () => {
 
     return [
       address ? `遥测站地址：${address}` : "",
-      rtu_number ? `遥测站编号：${hexToDecimal(rtu_number)}` : "",
+      rtu_number ? `遥测站编号：${rtu_number}` : "",
       pass ? `密码：${pass}` : "",
       collect ? `采集周期：${hexToDecimal(collect)}min` : "",
       timer ? `定时报周期：${hexToDecimal(timer)}min` : "",
       timer_start ? `定时报开始时间：${timer_start_hh}:${timer_start_mm}` : "",
       checkStr ? checkStr : "",
-      // 主信道
-      parseChannel("主信道", one_main),
-      parseChannel("备用信道", one_secondary),
+      // 1主信道
+      parseChannel("1主信道", one_main),
+      parseChannel("1备用信道", one_secondary),
+      // 2主信道
+      parseChannel("2主信道", two_main),
+      parseChannel("2备用信道", two_secondary),
+      // 3主信道
+      parseChannel("3主信道", three_main),
+      parseChannel("3备用信道", three_secondary),
+      // 4主信道
+      parseChannel("4主信道", four_main),
+      parseChannel("4备用信道", four_secondary),
       // 北斗值守参数
       parseBeiDou(beidou),
 
@@ -266,7 +296,7 @@ const parseElementConfig = () => {
         : "",
 
       // 待机时长
-      standby ? `待机时长：${hexToDecimal(standby)}min` : "",
+      standby ? `待机时长：${standby}min` : "",
 
       // 告警号码
       phone1
@@ -278,15 +308,17 @@ const parseElementConfig = () => {
       // 定时连接参数
       connect ? connect : "",
       addr ? `${addrName}地址：${hexToDecimal(addr)}` : "",
-      high ? `安装高度：${hexToDecimal(high)}m` : "",
-      origin ? `初始值：${hexToDecimal(origin)}m` : "",
+      high ? `安装高度：${hexToDecimal(high) / 1000}m` : "",
+      origin ? `初始值：${hexToDecimal(origin) / 1000}m` : "",
 
       cycle ? `加报周期：${hexToDecimal(cycle)}min` : "",
-      threshold ? `${thresholdName}：${hexToDecimal(threshold)}m` : "",
+      threshold ? `${thresholdName}：${thresholdValue}` : "",
       the_time ? `报警阈值时长：${hexToDecimal(the_time)}min` : "",
-      sum ? `累计雨量：${hexToDecimal(sum)}mm` : "",
+      sum ? `累计雨量：${hexToDecimal(sum) / 10}mm` : "",
     ];
-  
+  } catch (error) {
+    return [];
+  }
 };
 
 // 自检数据显示
@@ -323,107 +355,112 @@ const content = computed(() => {
   const { content, operate } = parseData.detail;
   if (Array.isArray(content)) return `查询内容：${content.join("，")}`;
   if (!content) return;
-   console.log(content)
-    const {
-      collect_time,
-      data = {},
-      serial,
-      alarm_content,
-      alarm_time,
-      alarm_level,
-      alarm_sound,
-      pkg_number,
-      current_number,
-      start_time,
-      end_time,
-      datetime,
-      version,
-    } = content;
+  console.log(content);
+  const {
+    collect_time,
+    data = {},
+    serial,
+    alarm_content,
+    alarm_time,
+    alarm_level,
+    alarm_sound,
+    pkg_number,
+    current_number,
+    start_time,
+    end_time,
+    datetime,
+    version,
+    vender_collector_code,
+    alarm_switch,
+  } = content;
 
-    const {
-      collect,
-      collect2,
-      collect3,
-      muddy_addr,
-      rain_addr,
-      line_addr,
-      line_addr2,
-      line_addr3,
-      air_humidity,
-      air_temperature,
-      rain_period,
-      rain_sum,
-      rain_time,
-      wind_direction,
-      wind_speed,
-      ambient_temperature,
-      battery_voltage,
-      signal_strength,
-      atmos,
-      range,
-    } = data;
+  const {
+    collect,
+    collect2,
+    collect3,
+    muddy_addr,
+    rain_addr,
+    line_addr,
+    line_addr2,
+    line_addr3,
+    air_humidity,
+    air_temperature,
+    rain_period,
+    rain_sum,
+    rain_time,
+    wind_direction,
+    wind_speed,
+    ambient_temperature,
+    battery_voltage,
+    signal_strength,
+    atmos,
+    range,
+  } = data;
 
-    const dateTimeLabel = {
-      51: "时钟信息",
-      52: "采集时间",
-      F2: "播放时间",
-      F3: "播放时间",
-      "4A": "遥测站时钟",
-    };
-   
-    const parts = [
-      serial ? `流水号：${serial}` : "",
-      version ? `软件版本：${version}` : "",
-      collect_time ? `采集时间：${collect_time}` : "",
-      muddy_addr ? `泥位计地址：${hexToDecimal(muddy_addr)}` : "",
-      rain_addr ? `雨量计地址：${hexToDecimal(rain_addr)}` : "",
-      line_addr ? `断线1地址：${hexToDecimal(line_addr)}` : "",
-      line_addr2 ? `断线2地址：${hexToDecimal(line_addr2)}` : "",
-      line_addr2 ? `断线3地址：${hexToDecimal(line_addr2)}` : "",
+  const dateTimeLabel = {
+    51: "时钟信息",
+    52: "采集时间",
+    F2: "播放时间",
+    F3: "播放时间",
+    "4A": "遥测站时钟",
+  };
 
-      // 信道等公共配置信息解析
-      ...parseElementConfig(),
+  const parts = [
+    serial ? `流水号：${serial}` : "",
+    version ? `软件版本：${version}` : "",
+    collect_time ? `采集时间：${collect_time}` : "",
+    muddy_addr ? `泥位计地址：${hexToDecimal(muddy_addr)}` : "",
+    rain_addr ? `雨量计地址：${hexToDecimal(rain_addr)}` : "",
+    line_addr ? `断线1地址：${hexToDecimal(line_addr)}` : "",
+    line_addr2 ? `断线2地址：${hexToDecimal(line_addr2)}` : "",
+    line_addr2 ? `断线3地址：${hexToDecimal(line_addr2)}` : "",
+    vender_collector_code
+      ? `传感器地址：${hexToDecimal(vender_collector_code)}`
+      : "",
+    // 信道等公共配置信息解析
+    ...parseElementConfig(),
 
-      `${
-        collect > -1
-          ? type == 1
-            ? `泥水位：${collect}m`
-            : `断线1状态：${collect === 0 ? "正常" : "断开"}`
-          : ""
-      }`,
-      collect2 > -1 ? `断线2状态：${collect2 === 0 ? "正常" : "断开"}` : "",
-      collect3 > -1 ? `断线3状态：${collect3 === 0 ? "正常" : "断开"}` : "",
+    `${
+      collect > -1
+        ? type == 1
+          ? `泥水位：${collect}m`
+          : `断线1状态：${collect === 0 ? "正常" : "断开"}`
+        : ""
+    }`,
+    collect2 > -1 ? `断线2状态：${collect2 === 0 ? "正常" : "断开"}` : "",
+    collect3 > -1 ? `断线3状态：${collect3 === 0 ? "正常" : "断开"}` : "",
 
-      range ? `泥水位变化值：${range}m` : "",
-      rain_period > -1 ? `降雨量：${rain_period}mm` : "",
-      rain_sum > -1 ? `累计降雨量：${rain_sum}mm` : "",
-      rain_time > -1 ? `降雨时长：${rain_time}min` : "",
-      air_temperature > -1 ? `温度：${air_temperature}°C` : "",
-      air_humidity > -1 ? `湿度：${air_humidity}%RH` : "",
-      wind_direction ? `风向：${wind_direction}°` : "",
-      wind_speed ? `风速：${wind_speed}m/s` : "",
-      atmos ? `气压：${atmos}hPa` : "",
-      ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
-      battery_voltage ? `设备电压：${battery_voltage}V` : "",
-      signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
-      alarm_time ? `设备报警时间：${alarm_time}` : "",
-      alarm_content ? `报警内容：${alarm_content}` : "",
-      alarm_level > -1 ? `报警等级：${alarm["level"][alarm_level]}` : "",
-      alarm_sound > -1 ? `音量大小：${alarm["sound"][alarm_sound]}` : "",
-      datetime ? `${dateTimeLabel[operate]}：${datetime}` : "",
-      pkg_number ? `固件包包数：${pkg_number}` : "",
-      current_number ? `当前上传包数：${current_number}` : "",
-      // content?.datetime ? `播放时间：${content.datetime}` : "",
-      content?.content ? `播放内容：${content.content}` : "",
-      content?.way ? `播放方式：${getWay(content.way)}` : "",
-      start_time ? `开始时间：${start_time}` : "",
-      end_time ? `结束时间：${end_time}` : "",
+    range ? `泥水位变化值：${range}m` : "",
+    rain_period > -1 ? `降雨量：${rain_period}mm` : "",
+    rain_sum > -1 ? `累计降雨量：${rain_sum}mm` : "",
+    rain_time > -1 ? `降雨时长：${rain_time}min` : "",
+    air_temperature > -1 ? `温度：${air_temperature}°C` : "",
+    air_humidity > -1 ? `湿度：${air_humidity}%RH` : "",
+    wind_direction ? `风向：${wind_direction}°` : "",
+    wind_speed ? `风速：${wind_speed}m/s` : "",
+    atmos ? `气压：${atmos}hPa` : "",
+    ambient_temperature ? `设备温度：${ambient_temperature}℃` : "",
+    battery_voltage ? `设备电压：${battery_voltage}V` : "",
+    signal_strength ? `设备信号强度：${signal_strength}dBm` : "",
+    alarm_time ? `设备报警时间：${alarm_time}` : "",
+    alarm_content ? `报警内容：${alarm_content}` : "",
+    alarm_switch > -1 ? `广播状态：${alarm_switch ? "打开" : "关闭"}` : "",
+    alarm_level > -1 ? `报警等级：${alarm["level"][alarm_level]}` : "",
+    alarm_sound > -1 ? `音量大小：${alarm["sound"][alarm_sound]}` : "",
+    datetime ? `${dateTimeLabel[operate]}：${datetime}` : "",
+    pkg_number ? `固件包包数：${pkg_number}` : "",
+    current_number ? `当前上传包数：${current_number}` : "",
+    // content?.datetime ? `播放时间：${content.datetime}` : "",
+    content?.content ? `播放内容：${content.content}` : "",
+    content?.way ? `播放方式：${getWay(content.way)}` : "",
+    start_time ? `开始时间：${start_time}` : "",
+    end_time ? `结束时间：${end_time}` : "",
 
-      ...setSelfCheck(),
-    ];
+    ...setSelfCheck(),
+  ];
 
-    // 过滤掉空字符串并使用逗号连接
-    return parts.filter(Boolean).join("；");
+  // 过滤掉空字符串并使用逗号连接
+  return parts.filter(Boolean).join("；");
 });
 </script>
 

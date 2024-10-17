@@ -63,7 +63,7 @@ const getDeviceDetail = async (arg) => {
               id,
               type,
               name,
-              data: data[0],
+              data: data,
             });
         break;
       default:

@@ -77,7 +77,7 @@ const getRainChartData = () => {
 const loading = ref(false);
 const tableColumns = [
   { prop: "num", label: "序号" },
-  { prop: "upload_time", label: "监测时间" },
+  { prop: "collector_time", label: "监测时间" },
   { prop: "original_data", label: "降雨量(mm)" },
   { prop: "duration", label: "降雨时长(min)" },
   { prop: "data", label: "累计降雨量(mm)" },

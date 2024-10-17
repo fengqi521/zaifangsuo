@@ -72,7 +72,7 @@ export default {
       // 物联网卡号
       if (list?.type === 3) {
         if (!value) {
-          callback(new Error("北斗卡号不能为空"));
+          callback(new Error("物联网卡号不能为空"));
         } else {
           const flag = value.length !== 13;
           if (flag) callback(new Error("物联网号错误，输入13位有效数字"));

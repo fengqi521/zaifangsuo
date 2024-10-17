@@ -32,7 +32,7 @@ const searchInfo = ref({
 // 常量
 const workColumns = [
   { prop: "num", label: "序号" },
-  { prop: "upload_time", label: "监测时间" },
+  { prop: "collector_time", label: "监测时间" },
   { prop: "voltage", label: "电压(V)" },
   { prop: "temperature", label: "温度(°C)" },
 ];
